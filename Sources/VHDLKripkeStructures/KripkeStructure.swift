@@ -55,14 +55,14 @@
 
 public struct KripkeStructure: Equatable, Hashable, Codable {
 
-    public let ringlets: [Ringlet]
+    public let nodes: [Node]
 
-    public let edges: [WriteNode: [TargetNode]]
+    public let edges: [Node: [Edge]]
 
-    public let initialStates: Set<ReadNode>
+    public let initialStates: Set<Node>
 
-    public init(ringlets: [Ringlet], edges: [WriteNode: [TargetNode]], initialStates: Set<ReadNode>) {
-        self.ringlets = ringlets
+    public init(nodes: [Node], edges: [Node: [Edge]], initialStates: Set<Node>) {
+        self.nodes = nodes
         self.edges = edges
         self.initialStates = initialStates
     }

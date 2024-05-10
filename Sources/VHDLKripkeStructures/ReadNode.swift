@@ -61,9 +61,12 @@ public struct ReadNode: Codable, Equatable, Hashable, Sendable {
 
     public let executeOnEntry: Bool
 
-    public init(properties: [VariableName: SignalLiteral], executeOnEntry: Bool) {
+    public let currentState: VariableName
+
+    public init(properties: [VariableName: SignalLiteral], executeOnEntry: Bool, currentState: VariableName) {
         self.properties = properties
         self.executeOnEntry = executeOnEntry
+        self.currentState = currentState
     }
 
 }

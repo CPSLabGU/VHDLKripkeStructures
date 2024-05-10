@@ -55,11 +55,14 @@
 
 public struct Edge: Equatable, Hashable, Codable, Sendable {
 
+    public let target: Node
+
     public let time: UInt
 
     public let energy: UInt
 
-    public init(time: UInt = 0, energy: UInt = 0) {
+    public init(target: Node, time: UInt = 0, energy: UInt = 0) {
+        self.target = target
         self.time = time
         self.energy = energy
     }

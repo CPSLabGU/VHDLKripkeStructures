@@ -1,4 +1,4 @@
-// Ringlet.swift
+// Node.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -55,21 +55,46 @@
 
 import VHDLParsing
 
-public struct Ringlet: Equatable, Hashable, Codable {
+public enum Node: Equatable, Hashable, Codable, Sendable {
 
-    public let state: VariableName
+    case read(node: ReadNode)
 
-    public let read: ReadNode
+    case write(node: WriteNode)
 
-    public let write: WriteNode
+    public var currentState: VariableName {
+        switch self {
+        case .read(let node):
+            return node.currentState
+        case .write(let node):
+            return node.currentState
+        }
+    }
 
-    public let edge: Edge
+    public var executeOnEntry: Bool {
+        switch self {
+        case .read(let read):
+            return read.executeOnEntry
+        case .write(let node):
+            return node.executeOnEntry
+        }
+    }
 
-    public init(state: VariableName, read: ReadNode, write: WriteNode, edge: Edge) {
-        self.state = state
-        self.read = read
-        self.write = write
-        self.edge = edge
+    public var nextState: VariableName? {
+        switch self {
+        case .write(let node):
+            return node.nextState
+        default:
+            return nil
+        }
+    }
+
+    public var properties: [VariableName: SignalLiteral] {
+        switch self {
+        case .read(let node):
+            return node.properties
+        case .write(let node):
+            return node.properties
+        }
     }
 
 }

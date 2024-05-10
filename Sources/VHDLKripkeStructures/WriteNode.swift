@@ -63,10 +63,18 @@ public struct WriteNode: Codable, Equatable, Hashable, Sendable {
 
     public let executeOnEntry: Bool
 
-    public init(properties: [VariableName: SignalLiteral], nextState: VariableName, executeOnEntry: Bool) {
+    public let currentState: VariableName
+
+    public init(
+        properties: [VariableName: SignalLiteral],
+        nextState: VariableName,
+        executeOnEntry: Bool,
+        currentState: VariableName
+    ) {
         self.properties = properties
         self.nextState = nextState
         self.executeOnEntry = executeOnEntry
+        self.currentState = currentState
     }
 
 }
