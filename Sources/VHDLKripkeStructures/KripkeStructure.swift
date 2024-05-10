@@ -57,8 +57,11 @@ public struct KripkeStructure: Equatable, Hashable, Codable {
 
     public let ringlets: [Ringlet]
 
-    public init(ringlets: [Ringlet]) {
+    public let initialStates: Set<ReadNode>
+
+    public init(ringlets: [Ringlet], initialStates: Set<ReadNode>) {
         self.ringlets = ringlets
+        self.initialStates = initialStates
     }
 
 }
