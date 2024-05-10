@@ -1,4 +1,4 @@
-// KripkeStructure.swift
+// TargetNode.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -53,18 +53,15 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-public struct KripkeStructure: Equatable, Hashable, Codable {
+public struct TargetNode: Equatable, Hashable, Codable, Sendable {
 
-    public let ringlets: [Ringlet]
+    public let edge: Edge
 
-    public let edges: [WriteNode: [TargetNode]]
+    public let node: ReadNode
 
-    public let initialStates: Set<ReadNode>
-
-    public init(ringlets: [Ringlet], edges: [WriteNode: [TargetNode]], initialStates: Set<ReadNode>) {
-        self.ringlets = ringlets
-        self.edges = edges
-        self.initialStates = initialStates
+    public init(edge: Edge, node: ReadNode) {
+        self.edge = edge
+        self.node = node
     }
 
 }
