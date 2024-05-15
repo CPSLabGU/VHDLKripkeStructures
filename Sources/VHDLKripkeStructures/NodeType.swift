@@ -1,4 +1,4 @@
-// ReadNode.swift
+// NodeType.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -53,20 +53,10 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-import VHDLParsing
+public enum NodeType: Equatable, Hashable, Codable, Sendable, CaseIterable {
 
-public struct ReadNode: Codable, Equatable, Hashable, Sendable {
+    case read
 
-    public let properties: [VariableName: SignalLiteral]
-
-    public let executeOnEntry: Bool
-
-    public let currentState: VariableName
-
-    public init(properties: [VariableName: SignalLiteral], executeOnEntry: Bool, currentState: VariableName) {
-        self.properties = properties
-        self.executeOnEntry = executeOnEntry
-        self.currentState = currentState
-    }
+    case write
 
 }

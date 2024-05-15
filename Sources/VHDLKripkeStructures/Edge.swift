@@ -53,7 +53,7 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-public struct Edge: Equatable, Hashable, Codable, Sendable {
+public final class Edge: Equatable, Hashable, Codable {
 
     public let target: Node
 
@@ -65,6 +65,16 @@ public struct Edge: Equatable, Hashable, Codable, Sendable {
         self.target = target
         self.time = time
         self.energy = energy
+    }
+
+    public static func == (lhs: Edge, rhs: Edge) -> Bool {
+        lhs.target == rhs.target && lhs.time == rhs.time && lhs.energy == rhs.energy
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(target)
+        hasher.combine(time)
+        hasher.combine(energy)
     }
 
 }

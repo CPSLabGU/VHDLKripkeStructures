@@ -53,7 +53,7 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-public struct KripkeStructure: Equatable, Hashable, Codable {
+public class KripkeStructure: Equatable, Hashable, Codable {
 
     public let nodes: [Node]
 
@@ -65,6 +65,16 @@ public struct KripkeStructure: Equatable, Hashable, Codable {
         self.nodes = nodes
         self.edges = edges
         self.initialStates = initialStates
+    }
+
+    public static func == (lhs: KripkeStructure, rhs: KripkeStructure) -> Bool {
+        lhs.nodes == rhs.nodes && lhs.edges == rhs.edges && lhs.initialStates == rhs.initialStates
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(nodes)
+        hasher.combine(edges)
+        hasher.combine(initialStates)
     }
 
 }
