@@ -53,48 +53,49 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
+import Foundation
 import VHDLParsing
 
-public enum Node: Equatable, Hashable, Codable, Sendable {
+public final class Node: Equatable, Hashable, Codable {
 
-    case read(node: ReadNode)
+    public let type: NodeType
 
-    case write(node: WriteNode)
+    public let currentState: VariableName
 
-    public var currentState: VariableName {
-        switch self {
-        case .read(let node):
-            return node.currentState
-        case .write(let node):
-            return node.currentState
-        }
+    public let executeOnEntry: Bool
+
+    public let nextState: VariableName
+
+    public let properties: [VariableName: SignalLiteral]
+
+    public init(
+        type: NodeType,
+        currentState: VariableName,
+        executeOnEntry: Bool,
+        nextState: VariableName,
+        properties: [VariableName: SignalLiteral]
+    ) {
+        self.type = type
+        self.currentState = currentState
+        self.executeOnEntry = executeOnEntry
+        self.nextState = nextState
+        self.properties = properties
     }
 
-    public var executeOnEntry: Bool {
-        switch self {
-        case .read(let read):
-            return read.executeOnEntry
-        case .write(let node):
-            return node.executeOnEntry
-        }
+    public static func == (lhs: Node, rhs: Node) -> Bool {
+        lhs.type == rhs.type
+            && lhs.currentState == rhs.currentState
+            && lhs.executeOnEntry == rhs.executeOnEntry
+            && lhs.nextState == rhs.nextState
+            && lhs.properties == rhs.properties
     }
 
-    public var nextState: VariableName? {
-        switch self {
-        case .write(let node):
-            return node.nextState
-        default:
-            return nil
-        }
-    }
-
-    public var properties: [VariableName: SignalLiteral] {
-        switch self {
-        case .read(let node):
-            return node.properties
-        case .write(let node):
-            return node.properties
-        }
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(type)
+        hasher.combine(currentState)
+        hasher.combine(executeOnEntry)
+        hasher.combine(nextState)
+        hasher.combine(properties)
     }
 
 }
