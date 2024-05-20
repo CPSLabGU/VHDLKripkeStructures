@@ -53,10 +53,15 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
+/// A node is defined as either a `Read` or `Write` node.
+/// 
+/// This enum specifies the possible node types within a Kripke structure.
 public enum NodeType: Equatable, Hashable, Codable, Sendable, CaseIterable {
 
+    /// The node is a `Read` node.
     case read
 
+    /// The node is a `Write` node.
     case write
 
 }
