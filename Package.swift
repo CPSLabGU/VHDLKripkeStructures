@@ -30,7 +30,9 @@ let package = Package(
         ),
         .testTarget(
             name: "VHDLKripkeStructuresTests",
-            dependencies: [.target(name: "VHDLKripkeStructures")]
+            dependencies: [
+                .target(name: "VHDLKripkeStructures"), .product(name: "VHDLParsing", package: "VHDLParsing")
+            ]
         )
     ]
 )
