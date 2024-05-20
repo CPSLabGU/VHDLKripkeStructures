@@ -1,4 +1,4 @@
-// Edge.swift
+// VariableName+constants.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -53,45 +53,10 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-/// An edge between two nodes.
-/// 
-/// An edge is a pathway between a `source` node and a `target` node. Each `Edge` has an associated cost in
-/// terms of `time` and `energy`.
-public final class Edge: Equatable, Hashable, Codable {
+import VHDLParsing
 
-    /// The target node of the edge.
-    public let target: Node
+extension VariableName {
 
-    /// The amount of time it takes to traverse the edge.
-    public let time: UInt
-
-    /// The amount of energy it takes to traverse the edge.
-    public let energy: UInt
-
-    /// Create a new edge from it's stored properties.
-    /// - Parameters:
-    ///   - target: The target node of the edge.
-    ///   - time: The amount of time it takes to traverse the edge.
-    ///   - energy: The amount of energy it takes to traverse the edge.
-    @inlinable
-    public init(target: Node, time: UInt = 0, energy: UInt = 0) {
-        self.target = target
-        self.time = time
-        self.energy = energy
-    }
-
-    /// Equality conformance.
-    @inlinable
-    public static func == (lhs: Edge, rhs: Edge) -> Bool {
-        lhs.target == rhs.target && lhs.time == rhs.time && lhs.energy == rhs.energy
-    }
-
-    /// Hashable conformance.
-    @inlinable
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(target)
-        hasher.combine(time)
-        hasher.combine(energy)
-    }
+    static let initial = VariableName(rawValue: "Initial")!
 
 }
