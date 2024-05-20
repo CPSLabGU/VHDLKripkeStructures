@@ -55,8 +55,15 @@
 
 import VHDLParsing
 
+// swiftlint:disable force_unwrapping
+// swiftlint:disable missing_docs
+
+/// Add common variable names.
 extension VariableName {
 
     static let initial = VariableName(rawValue: "Initial")!
 
 }
+
+// swiftlint:enable missing_docs
+// swiftlint:enable force_unwrapping
