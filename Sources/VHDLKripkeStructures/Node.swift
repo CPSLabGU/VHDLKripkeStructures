@@ -56,18 +56,34 @@
 import Foundation
 import VHDLParsing
 
+/// A node within a Kripke Structure.
+/// 
+/// A node represents a state within a kripke structure.
 public final class Node: Equatable, Hashable, Codable {
 
+    /// The type of the node.
     public let type: NodeType
 
+    /// The state the `LLFSM` is in when the node is active.
     public let currentState: VariableName
 
+    /// Whether the `LLFSM` executes `OnEntry` during this nodes ringlet.
     public let executeOnEntry: Bool
 
+    /// The `nextState` variable within the `LLFSM`.
     public let nextState: VariableName
 
+    /// The properties within the `LLFSMs` scope.
     public let properties: [VariableName: SignalLiteral]
 
+    /// Initialise the stored properties.
+    /// - Parameters:
+    ///   - type: The type of the node.
+    ///   - currentState: The state the `LLFSM` is in when the node is active.
+    ///   - executeOnEntry: The `LLFSM` executes `OnEntry` during this nodes ringlet.
+    ///   - nextState: The `nextState` variable within the `LLFSM`.
+    ///   - properties: The properties within the `LLFSMs` scope.
+    @inlinable
     public init(
         type: NodeType,
         currentState: VariableName,
@@ -82,6 +98,8 @@ public final class Node: Equatable, Hashable, Codable {
         self.properties = properties
     }
 
+    /// Equality conformance.
+    @inlinable
     public static func == (lhs: Node, rhs: Node) -> Bool {
         lhs.type == rhs.type
             && lhs.currentState == rhs.currentState
@@ -90,6 +108,8 @@ public final class Node: Equatable, Hashable, Codable {
             && lhs.properties == rhs.properties
     }
 
+    /// Hashable conformance.
+    @inlinable
     public func hash(into hasher: inout Hasher) {
         hasher.combine(type)
         hasher.combine(currentState)

@@ -1,4 +1,4 @@
-// VariableName+constants.swift
+// NodeTests.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -53,25 +53,64 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
+@testable import VHDLKripkeStructures
 import VHDLParsing
+import XCTest
 
-// swiftlint:disable force_unwrapping
-// swiftlint:disable missing_docs
+/// Test class for ``Node``.
+final class NodeTests: XCTestCase {
 
-/// Add common variable names.
-extension VariableName {
+    /// Some test properties.
+    let properties: [VariableName: SignalLiteral] = [
+        .x: .bit(value: .low),
+        .y: .logic(value: .highImpedance),
+        .z: .integer(value: 30)
+    ]
 
-    static let initial = VariableName(rawValue: "Initial")!
+    /// A test node.
+    var node: Node {
+        Node(
+            type: .read,
+            currentState: .initial,
+            executeOnEntry: true,
+            nextState: .suspended,
+            properties: properties
+        )
+    }
 
-    static let suspended = VariableName(rawValue: "Suspended")!
+    /// Test that the init sets the stored properties correctly.
+    func testInit() {
+        XCTAssertEqual(node.type, .read)
+        XCTAssertEqual(node.currentState, .initial)
+        XCTAssertTrue(node.executeOnEntry)
+        XCTAssertEqual(node.nextState, .suspended)
+        XCTAssertEqual(node.properties, properties)
+    }
 
-    static let x = VariableName(rawValue: "x")!
+    /// Test equality conformance.
+    func testEquality() {
+        let otherNode = Node(
+            type: .read,
+            currentState: .initial,
+            executeOnEntry: true,
+            nextState: .suspended,
+            properties: properties
+        )
+        XCTAssertEqual(node, otherNode)
+    }
 
-    static let y = VariableName(rawValue: "y")!
-
-    static let z = VariableName(rawValue: "z")!
+    /// Test hashable conformance.
+    func testHashable() {
+        let otherNode = Node(
+            type: .read,
+            currentState: .initial,
+            executeOnEntry: true,
+            nextState: .suspended,
+            properties: properties
+        )
+        XCTAssertEqual(node.hashValue, otherNode.hashValue)
+        let nodes: Set<Node> = [node]
+        XCTAssertTrue(nodes.contains(otherNode))
+    }
 
 }
-
-// swiftlint:enable missing_docs
-// swiftlint:enable force_unwrapping
