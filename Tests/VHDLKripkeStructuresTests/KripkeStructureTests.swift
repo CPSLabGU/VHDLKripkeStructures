@@ -1,4 +1,4 @@
-// KripkeStructure.swift
+// KripkeStructureTests.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -53,46 +53,81 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-/// A Kripke Structure.
-///
-/// A Kripke structure represents a complete graph of possible states an `LLFSM` can be in. Each `Node`
-/// represents a collection of all variables and their respective values at different points in time during
-/// the `LLFSM` computation. Each `Edge` represents a transition between two `Node`s.
-public class KripkeStructure: Equatable, Hashable, Codable {
+@testable import VHDLKripkeStructures
+import VHDLParsing
+import XCTest
 
-    /// The nodes in the kripke structure.
-    public let nodes: [Node]
+/// Test class for ``KripkeStructure``.
+final class KripkeStructureTests: XCTestCase {
+
+    /// Some test properties.
+    let properties1: [VariableName: SignalLiteral] = [
+        .x: .bit(value: .low),
+        .y: .logic(value: .highImpedance),
+        .z: .integer(value: 30)
+    ]
+
+    /// Some more test properties.
+    let properties2: [VariableName: SignalLiteral] = [
+        .x: .bit(value: .high),
+        .y: .logic(value: .low),
+        .z: .integer(value: 20)
+    ]
+
+    /// A test node.
+    var node1: Node {
+        Node(
+            type: .read,
+            currentState: .initial,
+            executeOnEntry: true,
+            nextState: .suspended,
+            properties: properties1
+        )
+    }
+
+    /// Another test node.
+    var node2: Node {
+        Node(
+            type: .write,
+            currentState: .suspended,
+            executeOnEntry: false,
+            nextState: .initial,
+            properties: properties2
+        )
+    }
 
     /// The edges between the nodes.
-    public let edges: [Node: [Edge]]
-
-    /// The starting nodes in the structure. These nodes are the default nodes that the `LLFSM` starts in.
-    public let initialStates: Set<Node>
-
-    /// Initialise the structure from it's stored properties.
-    /// - Parameters:
-    ///  - nodes: The nodes in the kripke structure.
-    ///  - edges: The edges between the nodes.
-    ///  - initialStates: The starting nodes in the structure.
-    @inlinable
-    public init(nodes: [Node], edges: [Node: [Edge]], initialStates: Set<Node>) {
-        self.nodes = nodes
-        self.edges = edges
-        self.initialStates = initialStates
+    var edges: [Node: [Edge]] {
+        [
+            node1: [Edge(target: node2, time: 100, energy: 200)],
+            node2: [Edge(target: node1, time: 30, energy: 40)]
+        ]
     }
 
-    /// Equality conformance.
-    @inlinable
-    public static func == (lhs: KripkeStructure, rhs: KripkeStructure) -> Bool {
-        lhs.nodes == rhs.nodes && lhs.edges == rhs.edges && lhs.initialStates == rhs.initialStates
+    /// A test kripke structure.
+    var structure: KripkeStructure {
+        KripkeStructure(nodes: [node1, node2], edges: edges, initialStates: [node1])
     }
 
-    /// Hashable conformance.
-    @inlinable
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(nodes)
-        hasher.combine(edges)
-        hasher.combine(initialStates)
+    /// Test that the init sets the stored properties correctly.
+    func testInit() {
+        XCTAssertEqual(structure.nodes, [node1, node2])
+        XCTAssertEqual(structure.edges, edges)
+        XCTAssertEqual(structure.initialStates, [node1])
+    }
+
+    /// Test equality conformance.
+    func testEquality() {
+        let otherStructure = KripkeStructure(nodes: [node1, node2], edges: edges, initialStates: [node1])
+        XCTAssertEqual(structure, otherStructure)
+    }
+
+    /// Test hashable conformance.
+    func testHashable() {
+        let otherStructure = KripkeStructure(nodes: [node1, node2], edges: edges, initialStates: [node1])
+        XCTAssertEqual(structure.hashValue, otherStructure.hashValue)
+        let structures: Set<KripkeStructure> = [structure]
+        XCTAssertTrue(structures.contains(otherStructure))
     }
 
 }
