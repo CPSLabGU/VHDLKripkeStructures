@@ -37,7 +37,10 @@ let package = Package(
         .package(url: "https://github.com/CPSLabGU/VHDLKripkeStructures", from: "1.0.0")
     ],
     targets: [
-        <targets>
+        .target(
+            name: <target name>,
+            dependencies: [.product(name: "VHDLKripkeStructures", package: "VHDLKripkeStructures")]
+        )
     ]
 )
 ```
