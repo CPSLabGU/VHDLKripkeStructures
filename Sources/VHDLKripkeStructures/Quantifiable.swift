@@ -1,4 +1,4 @@
-// Edge.swift
+// Quantifiable.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -53,40 +53,10 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-/// An edge between two nodes.
-/// 
-/// An edge is a pathway between a `source` node and a `target` node. Each `Edge` has an associated cost in
-/// terms of `time` and `energy`.
-public final class Edge: Equatable, Hashable, Codable {
+/// A type that may be represented as a numeric value.
+public protocol Quantifiable {
 
-    /// The target node of the edge.
-    public let target: Node
-
-    /// The cost of taking this edge.
-    public let cost: Cost
-
-    /// Create a new edge from it's stored properties.
-    /// - Parameters:
-    ///   - target: The target node of the edge.
-    ///   - time: The amount of time it takes to traverse the edge.
-    ///   - energy: The amount of energy it takes to traverse the edge.
-    @inlinable
-    public init(target: Node, cost: Cost) {
-        self.target = target
-        self.cost = cost
-    }
-
-    /// Equality conformance.
-    @inlinable
-    public static func == (lhs: Edge, rhs: Edge) -> Bool {
-        lhs.target == rhs.target && lhs.cost == rhs.cost
-    }
-
-    /// Hashable conformance.
-    @inlinable
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(target)
-        hasher.combine(cost)
-    }
+    /// The quantity of the type.
+    var quantity: Double { get }
 
 }

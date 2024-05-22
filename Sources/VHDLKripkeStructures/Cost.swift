@@ -1,4 +1,4 @@
-// Edge.swift
+// Cost.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -53,40 +53,23 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-/// An edge between two nodes.
-/// 
-/// An edge is a pathway between a `source` node and a `target` node. Each `Edge` has an associated cost in
-/// terms of `time` and `energy`.
-public final class Edge: Equatable, Hashable, Codable {
+/// A cost associated with performing some function.
+public struct Cost: Equatable, Hashable, Codable, Sendable {
 
-    /// The target node of the edge.
-    public let target: Node
+    /// The amount of time elapsed.
+    public let time: ScientificQuantity
 
-    /// The cost of taking this edge.
-    public let cost: Cost
+    /// The amount of energy expended.
+    public let energy: ScientificQuantity
 
-    /// Create a new edge from it's stored properties.
+    /// Creates a new cost.
     /// - Parameters:
-    ///   - target: The target node of the edge.
-    ///   - time: The amount of time it takes to traverse the edge.
-    ///   - energy: The amount of energy it takes to traverse the edge.
+    ///   - time: The amount of time elapsed.
+    ///   - energy: The amount of energy expended.
     @inlinable
-    public init(target: Node, cost: Cost) {
-        self.target = target
-        self.cost = cost
-    }
-
-    /// Equality conformance.
-    @inlinable
-    public static func == (lhs: Edge, rhs: Edge) -> Bool {
-        lhs.target == rhs.target && lhs.cost == rhs.cost
-    }
-
-    /// Hashable conformance.
-    @inlinable
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(target)
-        hasher.combine(cost)
+    public init(time: ScientificQuantity, energy: ScientificQuantity) {
+        self.time = time
+        self.energy = energy
     }
 
 }

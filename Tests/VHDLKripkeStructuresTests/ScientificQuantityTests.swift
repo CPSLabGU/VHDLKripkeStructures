@@ -1,4 +1,4 @@
-// Edge.swift
+// ScientificQuantityTests.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -53,40 +53,29 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-/// An edge between two nodes.
-/// 
-/// An edge is a pathway between a `source` node and a `target` node. Each `Edge` has an associated cost in
-/// terms of `time` and `energy`.
-public final class Edge: Equatable, Hashable, Codable {
+@testable import VHDLKripkeStructures
+import XCTest
 
-    /// The target node of the edge.
-    public let target: Node
+/// Test class for ``ScientificQuantity``.
+final class ScientificQuantityTests: XCTestCase {
 
-    /// The cost of taking this edge.
-    public let cost: Cost
+    /// The quantity to test.
+    let quantity = ScientificQuantity(coefficient: 2, exponent: 3)
 
-    /// Create a new edge from it's stored properties.
-    /// - Parameters:
-    ///   - target: The target node of the edge.
-    ///   - time: The amount of time it takes to traverse the edge.
-    ///   - energy: The amount of energy it takes to traverse the edge.
-    @inlinable
-    public init(target: Node, cost: Cost) {
-        self.target = target
-        self.cost = cost
+    /// Test that the stored properties are set correctly.
+    func testInit() {
+        XCTAssertEqual(quantity.coefficient, 2)
+        XCTAssertEqual(quantity.exponent, 3)
     }
 
-    /// Equality conformance.
-    @inlinable
-    public static func == (lhs: Edge, rhs: Edge) -> Bool {
-        lhs.target == rhs.target && lhs.cost == rhs.cost
+    /// Test that the SI init works.
+    func testSIInit() {
+        XCTAssertEqual(ScientificQuantity(SIValue: quantity), quantity)
     }
 
-    /// Hashable conformance.
-    @inlinable
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(target)
-        hasher.combine(cost)
+    /// Test that the quantity is calculated correctly.
+    func testQuantity() {
+        XCTAssertEqual(quantity.quantity, 2000.0)
     }
 
 }

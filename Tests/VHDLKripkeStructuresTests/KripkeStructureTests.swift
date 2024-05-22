@@ -99,8 +99,24 @@ final class KripkeStructureTests: XCTestCase {
     /// The edges between the nodes.
     var edges: [Node: [Edge]] {
         [
-            node1: [Edge(target: node2, time: 100, energy: 200)],
-            node2: [Edge(target: node1, time: 30, energy: 40)]
+            node1: [
+                Edge(
+                    target: node2,
+                    cost: Cost(
+                        time: ScientificQuantity(coefficient: 1, exponent: 2),
+                        energy: ScientificQuantity(coefficient: 2, exponent: 2)
+                    )
+                )
+            ],
+            node2: [
+                Edge(
+                    target: node1,
+                    cost: Cost(
+                        time: ScientificQuantity(coefficient: 3, exponent: 1),
+                        energy: ScientificQuantity(coefficient: 4, exponent: 1)
+                    )
+                )
+            ]
         ]
     }
 

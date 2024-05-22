@@ -65,16 +65,21 @@ final class EdgeTests: XCTestCase {
         type: .read, currentState: .initial, executeOnEntry: true, nextState: .initial, properties: [:]
     )
 
+    /// The cost of the edge.
+    let cost = Cost(
+        time: ScientificQuantity(coefficient: 1, exponent: 2),
+        energy: ScientificQuantity(coefficient: 2, exponent: 2)
+    )
+
     /// An edge to test.
     var edge: Edge {
-        Edge(target: target, time: 100, energy: 200)
+        Edge(target: target, cost: cost)
     }
 
     /// Test that the init sets the stored properties correctly.
     func testInit() {
         XCTAssertEqual(edge.target, target)
-        XCTAssertEqual(edge.time, 100)
-        XCTAssertEqual(edge.energy, 200)
+        XCTAssertEqual(edge.cost, cost)
     }
 
     /// Test equality conformance.
