@@ -68,7 +68,7 @@ extension KripkeStructure: GraphvizConvertible {
                 guard let id2 = nodes[$0.target] else {
                     fatalError("Failed to create graphviz edge for node \($0.target)")
                 }
-                return "\"\(id)\" -> \"\(id2)\" [label=\"\($0.cost.graphviz)\"]"
+                return "\"\(id)\" -> \"\(id2)\" [label=\($0.cost.graphviz)]"
             }
         }
         .joined(separator: "\n")
