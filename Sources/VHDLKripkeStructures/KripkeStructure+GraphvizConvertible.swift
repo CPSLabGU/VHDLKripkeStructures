@@ -68,7 +68,7 @@ extension KripkeStructure: GraphvizConvertible {
                 guard let id2 = nodes[$0.target] else {
                     fatalError("Failed to create graphviz edge for node \($0.target)")
                 }
-                return "\"\(id)\" -> \"\(id2)\""
+                return "\"\(id)\" -> \"\(id2)\" [label=\"\($0.cost.graphviz)\"]"
             }
         }
         .joined(separator: "\n")
@@ -95,6 +95,26 @@ extension Node: GraphvizConvertible {
         \\ nextState: \(self.nextState.rawValue)
         \(properties)
         """
+    }
+
+}
+
+extension Cost: GraphvizConvertible {
+
+    public var graphviz: String {
+        "\"t: \(self.time), E: \(self.energy)\""
+    }
+
+}
+
+extension ScientificQuantity: CustomStringConvertible {
+
+    public var description: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .scientific
+        formatter.positiveFormat = "0.###E+0"
+        formatter.exponentSymbol = "e"
+        return formatter.string(for: quantity) ?? "\(self.coefficient)e\(self.exponent)"
     }
 
 }
