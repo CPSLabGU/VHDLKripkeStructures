@@ -74,7 +74,7 @@ extension KripkeStructure: GraphvizConvertible {
         .joined(separator: "\n")
         return """
         digraph {
-        \(nodes.map { "\($0.value) [label=\"\($0.key.graphviz)\"]" }.joined(separator: "\n"))
+        \(nodes.map { "\"\($0.value)\" [label=\"\($0.key.graphviz)\"]" }.joined(separator: "\n"))
         \(edges)
         }
         """
@@ -86,13 +86,13 @@ extension Node: GraphvizConvertible {
 
     public var graphviz: String {
         let properties = self.properties.sorted { $0.key < $1.key }
-            .map { "\\\($0.rawValue): \($1.rawValue)" }
+            .map { "\\ \($0.rawValue): \($1.rawValue)" }
             .joined(separator: ",\n")
         return """
-        \\currentState: \(self.currentState.rawValue),
-        \\type: \(self.type),
-        \\executeOnEntry: \(self.executeOnEntry),
-        \\nextState: \(self.nextState.rawValue)
+        \\ currentState: \(self.currentState.rawValue),
+        \\ type: \(self.type),
+        \\ executeOnEntry: \(self.executeOnEntry),
+        \\ nextState: \(self.nextState.rawValue)
         \(properties)
         """
     }
