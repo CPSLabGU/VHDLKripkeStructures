@@ -74,7 +74,7 @@ extension KripkeStructure: GraphvizConvertible {
         .joined(separator: "\n")
         return """
         digraph {
-        \(nodes.map { "\($0.value) [label=\"\($0.key.graphviz)\"]" })
+        \(nodes.map { "\($0.value) [label=\"\($0.key.graphviz)\"]" }.joined(separator: "\n"))
         \(edges)
         }
         """
