@@ -150,14 +150,14 @@ final class KripkeStructureTests: XCTestCase {
     func testGraphvizRepresentation() {
         let expected = """
         digraph {
-            \"0\" [label=\"\\ currentState: Initial,
+            \"0\" [style=rounded shape=rectangle label=\"\\ currentState: Initial,
             \\ type: read,
             \\ executeOnEntry: true,
             \\ nextState: Suspended,
             \\ x: '0',
             \\ y: 'Z',
             \\ z: 30\"]
-            \"1\" [label=\"\\ currentState: Suspended,
+            \"1\" [style=rounded shape=rectangle label=\"\\ currentState: Suspended,
             \\ type: write,
             \\ executeOnEntry: false,
             \\ nextState: Initial,
