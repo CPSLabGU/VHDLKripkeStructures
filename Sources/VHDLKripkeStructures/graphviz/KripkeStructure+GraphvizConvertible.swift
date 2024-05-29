@@ -78,7 +78,13 @@ extension KripkeStructure: GraphvizConvertible {
             }
         .joined(separator: "\n")
         let nodesString = nodes.lazy.sorted { $0.value < $1.value }
-            .map { "\"\($0.value)\" [style=rounded shape=rectangle label=\"\($0.key.graphviz)\"]" }
+            .map {
+                let nodeStr = "\"\($0.value)\" [style=rounded shape=rectangle label=\"\($0.key.graphviz)\"]"
+                guard self.initialStates.contains($0.key) else {
+                    return nodeStr
+                }
+                return "\"\($0.value)-0\" [shape=point]\n\(nodeStr)\n\"\($0.value)-0\" -> \"\($0.value)\""
+            }
             .joined(separator: "\n")
             .indent(amount: 1)
         return """
