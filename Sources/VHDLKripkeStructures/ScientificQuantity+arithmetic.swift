@@ -63,23 +63,19 @@ extension ScientificQuantity: Numeric, ExpressibleByFloatLiteral {
 
     public typealias IntegerLiteralType = UInt
 
-    public static let zero = ScientificQuantity(coefficient: 0, exponent: 0)
+    public static let zero = ScientificQuantity(normalisedCoefficient: 0, normalisedExponent: 0)
 
     public var magnitude: Double {
-        Double(self.coefficient) * pow(10.0, Double(self.exponent))
+        self.quantity
     }
 
     public init(floatLiteral value: Double) {
-        guard value.isFinite else {
+        guard value.isFinite, value >= 0.0 else {
             fatalError("Integer overflow trying to create Scientific Quantity for \(value)")
-        }
-        guard !value.isZero else {
-            self.init(coefficient: 0, exponent: 0)
-            return
         }
         let components = String(value).components(separatedBy: ".")
         guard components.count == 2 else {
-            self.init(quantity: ScientificQuantity(coefficient: UInt(value), exponent: 0))
+            self.init(coefficient: UInt(value), exponent: 0)
             return
         }
         let exponent = -components[1].count
@@ -113,17 +109,7 @@ extension ScientificQuantity: Numeric, ExpressibleByFloatLiteral {
     }
 
     public init(integerLiteral value: UInt) {
-        let trailingZeros = value.trailingZeros
-        self.init(
-            coefficient: value / UInt(pow(10.0, Double(trailingZeros)).rounded()), exponent: trailingZeros
-        )
-    }
-
-    public init(quantity: ScientificQuantity) {
-        let rawCoefficient = quantity.coefficient
-        let newExponent = quantity.exponent + rawCoefficient.trailingZeros
-        let newCoefficient = rawCoefficient / UInt(pow(10.0, Double(rawCoefficient.trailingZeros)).rounded())
-        self.init(coefficient: newCoefficient, exponent: newExponent)
+        self.init(coefficient: value, exponent: 0)
     }
 
     public static func + (lhs: ScientificQuantity, rhs: ScientificQuantity) -> ScientificQuantity {
@@ -135,7 +121,7 @@ extension ScientificQuantity: Numeric, ExpressibleByFloatLiteral {
     }
 
     public static func * (lhs: ScientificQuantity, rhs: ScientificQuantity) -> ScientificQuantity {
-        Self.binaryOperation(lhs: lhs, rhs: rhs, operation: *)
+        Self.binaryOperation(lhs: lhs, rhs: rhs, operation: *, exponentOperation: +)
     }
 
     public static func *= (lhs: inout ScientificQuantity, rhs: ScientificQuantity) {
@@ -143,18 +129,20 @@ extension ScientificQuantity: Numeric, ExpressibleByFloatLiteral {
     }
 
     static func binaryOperation(
-        lhs: ScientificQuantity, rhs: ScientificQuantity, operation: (UInt, UInt) -> UInt
+        lhs: ScientificQuantity,
+        rhs: ScientificQuantity,
+        operation: (UInt, UInt) -> UInt,
+        exponentOperation: (Int, Int) -> Int = { min($0, $1) }
     ) -> ScientificQuantity {
         guard lhs.exponent != rhs.exponent else {
             return ScientificQuantity(
-                quantity: ScientificQuantity(
-                    coefficient: operation(lhs.coefficient, rhs.coefficient), exponent: lhs.exponent
-                )
+                coefficient: operation(lhs.coefficient, rhs.coefficient),
+                exponent: exponentOperation(lhs.exponent, lhs.exponent)
             )
         }
         let minExponent = min(lhs.exponent, rhs.exponent)
-        let lhsDiff = lhs.exponent - minExponent
-        let rhsDiff = rhs.exponent - minExponent
+        let lhsDiff = abs(lhs.exponent - minExponent)
+        let rhsDiff = abs(rhs.exponent - minExponent)
         let lhsAmount: UInt
         let rhsAmount: UInt
         let exponent: Int
@@ -167,9 +155,9 @@ extension ScientificQuantity: Numeric, ExpressibleByFloatLiteral {
             lhsAmount = lhs.coefficient
             rhsAmount = rhs.coefficient * UInt(pow(10.0, Double(rhsDiff)).rounded())
         }
-        let newCoefficient = operation(lhsAmount, rhsAmount)
         return ScientificQuantity(
-            quantity: ScientificQuantity(coefficient: newCoefficient, exponent: exponent)
+            coefficient: operation(lhsAmount, rhsAmount),
+            exponent: exponentOperation(exponent, exponent)
         )
     }
 
@@ -177,7 +165,7 @@ extension ScientificQuantity: Numeric, ExpressibleByFloatLiteral {
 
 extension UInt {
 
-    var trailingZeros: Int {
+    @inlinable var trailingZeros: Int {
         let description = String(String(self).reversed())
         guard let firstIndex = description.firstIndex(where: { $0 != "0" }) else {
             return 0

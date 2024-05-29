@@ -62,6 +62,15 @@ final class ScientificQuantityTests: XCTestCase {
     /// The quantity to test.
     let quantity = ScientificQuantity(coefficient: 2, exponent: 3)
 
+    /// Another quantity to test.
+    let quantity2 = ScientificQuantity(coefficient: 4, exponent: 5)
+
+    /// A third quantity to test.
+    let quantity3 = ScientificQuantity(coefficient: 2, exponent: -2)
+
+    /// A fourth quantity to test.
+    let quantity4 = ScientificQuantity(coefficient: 5, exponent: -3)
+
     /// Test that the stored properties are set correctly.
     func testInit() {
         XCTAssertEqual(quantity.coefficient, 2)
@@ -76,6 +85,116 @@ final class ScientificQuantityTests: XCTestCase {
     /// Test that the quantity is calculated correctly.
     func testQuantity() {
         XCTAssertEqual(quantity.quantity, 2000.0)
+    }
+
+    /// Test that the magnitude is correct.
+    func testMagnitude() {
+        XCTAssertEqual(quantity.magnitude, 2000.0)
+    }
+
+    /// Test integer literal creation.
+    func testIntegerLiteral() {
+        XCTAssertEqual(500, ScientificQuantity(coefficient: 5, exponent: 2))
+        XCTAssertEqual(501, ScientificQuantity(coefficient: 501, exponent: 0))
+        XCTAssertEqual(560, ScientificQuantity(coefficient: 56, exponent: 1))
+        XCTAssertEqual(0, ScientificQuantity.zero)
+    }
+
+    /// Test exactly init.
+    func testExactly() {
+        XCTAssertEqual(ScientificQuantity(exactly: 500), ScientificQuantity(coefficient: 5, exponent: 2))
+        XCTAssertEqual(ScientificQuantity(exactly: 501), ScientificQuantity(coefficient: 501, exponent: 0))
+        XCTAssertEqual(ScientificQuantity(exactly: 560), ScientificQuantity(coefficient: 56, exponent: 1))
+        XCTAssertEqual(ScientificQuantity(exactly: 0), ScientificQuantity.zero)
+        XCTAssertNil(ScientificQuantity(exactly: -1))
+    }
+
+    /// Test the quantity init.
+    func testQuantityInit() {
+        XCTAssertEqual(
+            ScientificQuantity(quantity: ScientificQuantity(coefficient: 20, exponent: 2)), quantity
+        )
+        XCTAssertEqual(
+            ScientificQuantity(quantity: ScientificQuantity(coefficient: 200, exponent: 1)), quantity
+        )
+        XCTAssertEqual(
+            ScientificQuantity(quantity: ScientificQuantity(coefficient: 2000, exponent: 0)), quantity
+        )
+        XCTAssertEqual(ScientificQuantity(quantity: quantity), quantity)
+    }
+
+    /// Test that the description is correct.
+    func testDescription() {
+        XCTAssertEqual(quantity.description, "2e+3")
+        XCTAssertEqual(quantity2.description, "4e+5")
+        XCTAssertEqual(ScientificQuantity.zero.description, "0e+0")
+        XCTAssertEqual(ScientificQuantity(coefficient: 1, exponent: -2).description, "1e-2")
+    }
+
+    /// Test that addition works correctly.
+    func testAddition() {
+        XCTAssertEqual(quantity + quantity2, ScientificQuantity(coefficient: 402, exponent: 3))
+        XCTAssertEqual(quantity2 + quantity, ScientificQuantity(coefficient: 402, exponent: 3))
+        XCTAssertEqual(quantity2 + quantity2, ScientificQuantity(coefficient: 8, exponent: 5))
+        XCTAssertEqual(
+            quantity + ScientificQuantity(coefficient: 20, exponent: 2),
+            ScientificQuantity(coefficient: 4, exponent: 3)
+        )
+        XCTAssertEqual(quantity + quantity3, ScientificQuantity(coefficient: 200002, exponent: -2))
+        XCTAssertEqual(quantity3 + quantity, ScientificQuantity(coefficient: 200002, exponent: -2))
+        XCTAssertEqual(quantity4 + quantity3, ScientificQuantity(coefficient: 25, exponent: -3))
+        XCTAssertEqual(quantity3 + quantity4, ScientificQuantity(coefficient: 25, exponent: -3))
+    }
+
+    /// Test subtraction.
+    func testSubtraction() {
+        XCTAssertEqual(quantity2 - quantity, ScientificQuantity(coefficient: 398, exponent: 3))
+        XCTAssertEqual(quantity - ScientificQuantity(coefficient: 20, exponent: 2), .zero)
+        XCTAssertEqual(quantity - quantity3, ScientificQuantity(coefficient: 199998, exponent: -2))
+        XCTAssertEqual(quantity3 - quantity4, ScientificQuantity(coefficient: 15, exponent: -3))
+    }
+
+    /// Test multiplication.
+    func testMultiplication() {
+        XCTAssertEqual(quantity * quantity2, ScientificQuantity(coefficient: 8, exponent: 8))
+        XCTAssertEqual(quantity2 * quantity, ScientificQuantity(coefficient: 8, exponent: 8))
+        XCTAssertEqual(quantity2 * quantity2, ScientificQuantity(coefficient: 16, exponent: 10))
+        XCTAssertEqual(quantity * quantity3, ScientificQuantity(coefficient: 4, exponent: 1))
+        XCTAssertEqual(quantity3 * quantity, ScientificQuantity(coefficient: 4, exponent: 1))
+        XCTAssertEqual(quantity4 * quantity3, ScientificQuantity(coefficient: 1, exponent: -4))
+        XCTAssertEqual(quantity3 * quantity4, ScientificQuantity(coefficient: 1, exponent: -4))
+        XCTAssertEqual(quantity * .zero, .zero)
+        XCTAssertEqual(quantity3 * .zero, .zero)
+        XCTAssertEqual(quantity4 * .zero, .zero)
+        XCTAssertEqual(.zero * quantity, .zero)
+        XCTAssertEqual(.zero * quantity3, .zero)
+        XCTAssertEqual(.zero * quantity4, .zero)
+    }
+
+    /// Test `*=`.
+    func testMutatingMultiply() {
+        var quantity = quantity
+        quantity *= quantity2
+        XCTAssertEqual(quantity, ScientificQuantity(coefficient: 8, exponent: 8))
+    }
+
+    /// Test uint trailing zeros.
+    func testUIntTrailingZeros() {
+        XCTAssertEqual(UInt(500).trailingZeros, 2)
+        XCTAssertEqual(UInt(501).trailingZeros, 0)
+        XCTAssertEqual(UInt(560).trailingZeros, 1)
+        XCTAssertEqual(UInt(0).trailingZeros, 0)
+    }
+
+    /// Test float creation.
+    func testFloatCreation() {
+        XCTAssertEqual(2000.0, quantity)
+        XCTAssertEqual(400000.0, quantity2)
+        XCTAssertEqual(0.02, quantity3)
+        XCTAssertEqual(0.005, quantity4)
+        XCTAssertEqual(0.0, ScientificQuantity.zero)
+        let value = Double(2000.0)
+        XCTAssertEqual(ScientificQuantity(floatLiteral: value), quantity)
     }
 
 }
