@@ -55,9 +55,11 @@
 
 import Foundation
 
+/// Add debug-friendly descriptions.
 extension ScientificQuantity: CustomStringConvertible {
 
-    public var description: String {
+    /// The description of this quantity in scientific notation.
+    @inlinable public var description: String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .scientific
         formatter.positiveFormat = "0.###E+0"
