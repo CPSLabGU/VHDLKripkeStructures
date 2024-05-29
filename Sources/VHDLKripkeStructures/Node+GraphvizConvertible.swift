@@ -53,9 +53,19 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
+/// Add graphviz representation.
 extension Node: GraphvizConvertible {
 
-    public var graphviz: String {
+    /// The label for the node in graphviz.
+    @inlinable public var graphviz: String {
+        guard !properties.isEmpty else {
+            return """
+            \\ currentState: \(self.currentState.rawValue),
+            \\ type: \(self.type),
+            \\ executeOnEntry: \(self.executeOnEntry),
+            \\ nextState: \(self.nextState.rawValue)
+            """
+        }
         let properties = self.properties.sorted { $0.key < $1.key }
             .map { "\\ \($0.rawValue): \($1.rawValue)" }
             .joined(separator: ",\n")
@@ -63,7 +73,7 @@ extension Node: GraphvizConvertible {
         \\ currentState: \(self.currentState.rawValue),
         \\ type: \(self.type),
         \\ executeOnEntry: \(self.executeOnEntry),
-        \\ nextState: \(self.nextState.rawValue)
+        \\ nextState: \(self.nextState.rawValue),
         \(properties)
         """
     }

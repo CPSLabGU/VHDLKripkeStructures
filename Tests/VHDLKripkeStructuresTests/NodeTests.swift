@@ -113,4 +113,32 @@ final class NodeTests: XCTestCase {
         XCTAssertTrue(nodes.contains(otherNode))
     }
 
+    /// Test graphviz representation.
+    func testGraphvizRepresentation() {
+        let expected = """
+        \\ currentState: Initial,
+        \\ type: read,
+        \\ executeOnEntry: true,
+        \\ nextState: Suspended,
+        \\ x: '0',
+        \\ y: 'Z',
+        \\ z: 30
+        """
+        XCTAssertEqual(node.graphviz, expected)
+        let node2 = Node(
+            type: node.type,
+            currentState: node.currentState,
+            executeOnEntry: node.executeOnEntry,
+            nextState: node.nextState,
+            properties: [:]
+        )
+        let expected2 = """
+        \\ currentState: Initial,
+        \\ type: read,
+        \\ executeOnEntry: true,
+        \\ nextState: Suspended
+        """
+        XCTAssertEqual(node2.graphviz, expected2)
+    }
+
 }
