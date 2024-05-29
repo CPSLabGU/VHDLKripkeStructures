@@ -106,15 +106,3 @@ extension Cost: GraphvizConvertible {
     }
 
 }
-
-extension ScientificQuantity: CustomStringConvertible {
-
-    public var description: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .scientific
-        formatter.positiveFormat = "0.###E+0"
-        formatter.exponentSymbol = "e"
-        return formatter.string(for: quantity) ?? "\(self.coefficient)e\(self.exponent)"
-    }
-
-}
