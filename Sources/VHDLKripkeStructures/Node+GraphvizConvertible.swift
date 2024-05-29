@@ -1,4 +1,4 @@
-// KripkeStructure+GraphvizConvertible.swift
+// Node+GraphvizConvertible.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -53,30 +53,18 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-import Foundation
-import VHDLParsing
-
-extension KripkeStructure: GraphvizConvertible {
+extension Node: GraphvizConvertible {
 
     public var graphviz: String {
-        let nodes = Dictionary(uniqueKeysWithValues: self.nodes.map { ($0, UUID()) })
-        let edges = self.edges.flatMap {
-            guard let id = nodes[$0.key] else {
-                fatalError("Failed to create graphviz edge for node \($0)")
-            }
-            return $0.value.map {
-                guard let id2 = nodes[$0.target] else {
-                    fatalError("Failed to create graphviz edge for node \($0.target)")
-                }
-                return "\"\(id)\" -> \"\(id2)\" [label=\($0.cost.graphviz)]"
-            }
-        }
-        .joined(separator: "\n")
+        let properties = self.properties.sorted { $0.key < $1.key }
+            .map { "\\ \($0.rawValue): \($1.rawValue)" }
+            .joined(separator: ",\n")
         return """
-        digraph {
-        \(nodes.map { "\"\($0.value)\" [label=\"\($0.key.graphviz)\"]" }.joined(separator: "\n"))
-        \(edges)
-        }
+        \\ currentState: \(self.currentState.rawValue),
+        \\ type: \(self.type),
+        \\ executeOnEntry: \(self.executeOnEntry),
+        \\ nextState: \(self.nextState.rawValue)
+        \(properties)
         """
     }
 
