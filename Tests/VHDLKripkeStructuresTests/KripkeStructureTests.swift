@@ -64,14 +64,16 @@ final class KripkeStructureTests: XCTestCase {
     let properties1: [VariableName: SignalLiteral] = [
         .x: .bit(value: .low),
         .y: .logic(value: .highImpedance),
-        .z: .integer(value: 30)
+        .z: .integer(value: 30),
+        .xs: .vector(value: .bits(value: BitVector(values: [.high, .high])))
     ]
 
     /// Some more test properties.
     let properties2: [VariableName: SignalLiteral] = [
         .x: .bit(value: .high),
         .y: .logic(value: .low),
-        .z: .integer(value: 20)
+        .z: .integer(value: 20),
+        .xs: .vector(value: .bits(value: BitVector(values: [.low, .low])))
     ]
 
     /// A test node.
@@ -156,6 +158,7 @@ final class KripkeStructureTests: XCTestCase {
             \\ executeOnEntry: true,
             \\ nextState: Suspended,
             \\ x: '0',
+            \\ xs: \\\"11\\\",
             \\ y: 'Z',
             \\ z: 30\"]
             \"0-0\" -> \"0\"
@@ -164,6 +167,7 @@ final class KripkeStructureTests: XCTestCase {
             \\ executeOnEntry: false,
             \\ nextState: Initial,
             \\ x: '1',
+            \\ xs: \\\"00\\\",
             \\ y: '0',
             \\ z: 20\"]
             \"0\" -> \"1\" [label=\"t: 1e+2, E: 2e+2\"]

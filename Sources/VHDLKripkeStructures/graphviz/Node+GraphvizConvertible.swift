@@ -69,7 +69,7 @@ extension Node: GraphvizConvertible {
             """
         }
         let properties = self.properties.sorted { $0.key < $1.key }
-            .map { "\\ \($0.rawValue): \($1.rawValue)" }
+            .map { "\\ \($0.rawValue): \($1.rawValue)".replacingOccurrences(of: "\"", with: "\\\"") }
             .joined(separator: ",\n")
         return """
         \\ currentState: \(self.currentState.rawValue),

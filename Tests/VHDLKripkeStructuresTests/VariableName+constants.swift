@@ -67,6 +67,8 @@ extension VariableName {
 
     static let x = VariableName(rawValue: "x")!
 
+    static let xs = VariableName(rawValue: "xs")!
+
     static let y = VariableName(rawValue: "y")!
 
     static let z = VariableName(rawValue: "z")!
