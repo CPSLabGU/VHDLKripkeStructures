@@ -26,7 +26,10 @@ let package = Package(
         // depends on.
         .target(
             name: "VHDLKripkeStructures",
-            dependencies: [.product(name: "VHDLParsing", package: "VHDLParsing")]
+            dependencies: [
+                .product(name: "VHDLParsing", package: "VHDLParsing"),
+                .product(name: "StringHelpers", package: "VHDLParsing")
+            ]
         ),
         .testTarget(
             name: "VHDLKripkeStructuresTests",
