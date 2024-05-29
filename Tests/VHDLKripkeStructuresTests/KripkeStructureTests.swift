@@ -146,4 +146,29 @@ final class KripkeStructureTests: XCTestCase {
         XCTAssertTrue(structures.contains(otherStructure))
     }
 
+    /// Test the graphviz representation.
+    func testGraphvizRepresentation() {
+        let expected = """
+        digraph {
+            \"0\" [label=\"\\ currentState: Initial,
+            \\ type: read,
+            \\ executeOnEntry: true,
+            \\ nextState: Suspended,
+            \\ x: '0',
+            \\ y: 'Z',
+            \\ z: 30\"]
+            \"1\" [label=\"\\ currentState: Suspended,
+            \\ type: write,
+            \\ executeOnEntry: false,
+            \\ nextState: Initial,
+            \\ x: '1',
+            \\ y: '0',
+            \\ z: 20\"]
+            \"0\" -> \"1\" [label=\"t: 1e+2, E: 2e+2\"]
+            \"1\" -> \"0\" [label=\"t: 3e+1, E: 4e+1\"]
+        }
+        """
+        XCTAssertEqual(structure.graphviz, expected, "\(structure.graphviz.difference(from: expected))")
+    }
+
 }

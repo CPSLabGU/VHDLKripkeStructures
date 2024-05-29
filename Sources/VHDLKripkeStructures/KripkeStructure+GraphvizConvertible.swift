@@ -56,28 +56,38 @@
 import Foundation
 import VHDLParsing
 
+/// Add graphviz representation.
 extension KripkeStructure: GraphvizConvertible {
 
-    public var graphviz: String {
-        let nodes = Dictionary(uniqueKeysWithValues: self.nodes.map { ($0, UUID()) })
-        let edges = self.edges.flatMap {
-            guard let id = nodes[$0.key] else {
-                fatalError("Failed to create graphviz edge for node \($0)")
-            }
-            return $0.value.map {
-                guard let id2 = nodes[$0.target] else {
-                    fatalError("Failed to create graphviz edge for node \($0.target)")
+    // swiftlint:disable force_unwrapping
+
+    /// The graphviz representation as a digraph.
+    @inlinable public var graphviz: String {
+        let nodes = Dictionary(uniqueKeysWithValues: self.nodes.enumerated().map { ($1, $0) })
+        let edges = self.edges.lazy.filter { nodes[$0.key] != nil }
+            .sorted { nodes[$0.key]! < nodes[$1.key]! }
+            .flatMap {
+                let id = nodes[$0.key]!
+                return $0.value.map {
+                    guard let id2 = nodes[$0.target] else {
+                        fatalError("Failed to create graphviz edge for node \($0.target)")
+                    }
+                    return "\"\(id)\" -> \"\(id2)\" [label=\($0.cost.graphviz)]"
                 }
-                return "\"\(id)\" -> \"\(id2)\" [label=\($0.cost.graphviz)]"
             }
-        }
         .joined(separator: "\n")
+        let nodesString = nodes.lazy.sorted { $0.value < $1.value }
+            .map { "\"\($0.value)\" [label=\"\($0.key.graphviz)\"]" }
+            .joined(separator: "\n")
+            .indent(amount: 1)
         return """
         digraph {
-        \(nodes.map { "\"\($0.value)\" [label=\"\($0.key.graphviz)\"]" }.joined(separator: "\n"))
-        \(edges)
+        \(nodesString)
+        \(edges.indent(amount: 1))
         }
         """
     }
+
+    // swiftlint:enable force_unwrapping
 
 }
