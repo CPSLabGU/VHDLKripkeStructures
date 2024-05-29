@@ -53,9 +53,11 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
+/// Add graphivz conversion.
 extension Cost: GraphvizConvertible {
 
-    public var graphviz: String {
+    /// The graphviz label.
+    @inlinable public var graphviz: String {
         "\"t: \(self.time), E: \(self.energy)\""
     }
 
