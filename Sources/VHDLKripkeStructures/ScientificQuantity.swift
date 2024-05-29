@@ -75,8 +75,9 @@ public struct ScientificQuantity: Equatable, Hashable, Codable, Sendable, Quanti
     ///   - exponent: The exponent of the base-10 quantity.
     @inlinable
     public init(coefficient: UInt, exponent: Int) {
-        self.coefficient = coefficient
-        self.exponent = exponent
+        self.init(
+            quantity: ScientificQuantity(normalisedCoefficient: coefficient, normalisedExponent: exponent)
+        )
     }
 
     /// Creates a new `ScientificQuantity` from a `SIRepresentable` value.
@@ -84,6 +85,30 @@ public struct ScientificQuantity: Equatable, Hashable, Codable, Sendable, Quanti
     @inlinable
     public init<T>(SIValue value: T) where T: SIRepresentable {
         self.init(coefficient: value.coefficient, exponent: value.exponent)
+    }
+
+    /// Create the quantity assuming the coefficient is normalised with the exponent.
+    /// - Parameters:
+    ///   - normalisedCoefficient: The normalised coefficient.
+    ///   - normalisedExponent: The normalised exponent.
+    @inlinable
+    init(normalisedCoefficient: UInt, normalisedExponent: Int) {
+        self.coefficient = normalisedCoefficient
+        self.exponent = normalisedExponent
+    }
+
+    /// Normalise a given quantity into it's lowest possible representation.
+    /// - Parameter quantity: The quantity to normalise.
+    @inlinable
+    init(quantity: ScientificQuantity) {
+        guard quantity.coefficient != 0 else {
+            self = .zero
+            return
+        }
+        let rawCoefficient = quantity.coefficient
+        let newExponent = quantity.exponent + rawCoefficient.trailingZeros
+        let newCoefficient = rawCoefficient / UInt(pow(10.0, Double(rawCoefficient.trailingZeros)).rounded())
+        self.init(normalisedCoefficient: newCoefficient, normalisedExponent: newExponent)
     }
 
 }

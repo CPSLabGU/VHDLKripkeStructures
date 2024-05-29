@@ -1,4 +1,4 @@
-// CostTests.swift
+// ScientificQuantity+CustomStringConvertible.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -53,71 +53,18 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-@testable import VHDLKripkeStructures
-import XCTest
+import Foundation
 
-/// Test class for ``Cost``.
-final class CostTests: XCTestCase {
+/// Add debug-friendly descriptions.
+extension ScientificQuantity: CustomStringConvertible {
 
-    /// A time value.
-    let time = ScientificQuantity(coefficient: 2, exponent: -6)
-
-    /// An energy value.
-    let energy = ScientificQuantity(coefficient: 1, exponent: -3)
-
-    /// A cost.
-    let cost1 = Cost(
-        time: ScientificQuantity(coefficient: 1, exponent: 2),
-        energy: ScientificQuantity(coefficient: 1, exponent: 1)
-    )
-
-    /// A second cost.
-    let cost2 = Cost(
-        time: ScientificQuantity(coefficient: 1, exponent: 1),
-        energy: ScientificQuantity(coefficient: 1, exponent: 0)
-    )
-
-    /// A test `Cost`.
-    var cost: Cost {
-        Cost(time: time, energy: energy)
-    }
-
-    /// Test that `init` sets the stored properties correctly.
-    func testInit() {
-        XCTAssertEqual(cost.time, time)
-        XCTAssertEqual(cost.energy, energy)
-    }
-
-    /// Test `zero`.
-    func testZero() {
-        XCTAssertEqual(Cost(time: .zero, energy: .zero), .zero)
-    }
-
-    /// Test addition.
-    func testAddition() {
-        XCTAssertEqual(
-            cost1 + cost2,
-            Cost(
-                time: ScientificQuantity(coefficient: 11, exponent: 1),
-                energy: ScientificQuantity(coefficient: 11, exponent: 0)
-            )
-        )
-    }
-
-    /// Test subtraction.
-    func testSubtraction() {
-        XCTAssertEqual(
-            cost1 - cost2,
-            Cost(
-                time: ScientificQuantity(coefficient: 9, exponent: 1),
-                energy: ScientificQuantity(coefficient: 9, exponent: 0)
-            )
-        )
-    }
-
-    /// Test graphivz convertible conformance.
-    func testGraphvizRepresentation() {
-        XCTAssertEqual(cost1.graphviz, "\"t: 1e+2, E: 1e+1\"")
+    /// The description of this quantity in scientific notation.
+    @inlinable public var description: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .scientific
+        formatter.positiveFormat = "0.###E+0"
+        formatter.exponentSymbol = "e"
+        return formatter.string(for: quantity) ?? "\(self.coefficient)e\(self.exponent)"
     }
 
 }

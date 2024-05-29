@@ -1,4 +1,4 @@
-// CostTests.swift
+// KripkeStructure+GraphvizConvertible.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -53,71 +53,41 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-@testable import VHDLKripkeStructures
-import XCTest
+import Foundation
+import VHDLParsing
 
-/// Test class for ``Cost``.
-final class CostTests: XCTestCase {
+/// Add graphviz representation.
+extension KripkeStructure: GraphvizConvertible {
 
-    /// A time value.
-    let time = ScientificQuantity(coefficient: 2, exponent: -6)
+    // swiftlint:disable force_unwrapping
 
-    /// An energy value.
-    let energy = ScientificQuantity(coefficient: 1, exponent: -3)
-
-    /// A cost.
-    let cost1 = Cost(
-        time: ScientificQuantity(coefficient: 1, exponent: 2),
-        energy: ScientificQuantity(coefficient: 1, exponent: 1)
-    )
-
-    /// A second cost.
-    let cost2 = Cost(
-        time: ScientificQuantity(coefficient: 1, exponent: 1),
-        energy: ScientificQuantity(coefficient: 1, exponent: 0)
-    )
-
-    /// A test `Cost`.
-    var cost: Cost {
-        Cost(time: time, energy: energy)
+    /// The graphviz representation as a digraph.
+    @inlinable public var graphviz: String {
+        let nodes = Dictionary(uniqueKeysWithValues: self.nodes.enumerated().map { ($1, $0) })
+        let edges = self.edges.lazy.filter { nodes[$0.key] != nil }
+            .sorted { nodes[$0.key]! < nodes[$1.key]! }
+            .flatMap {
+                let id = nodes[$0.key]!
+                return $0.value.map {
+                    guard let id2 = nodes[$0.target] else {
+                        fatalError("Failed to create graphviz edge for node \($0.target)")
+                    }
+                    return "\"\(id)\" -> \"\(id2)\" [label=\($0.cost.graphviz)]"
+                }
+            }
+        .joined(separator: "\n")
+        let nodesString = nodes.lazy.sorted { $0.value < $1.value }
+            .map { "\"\($0.value)\" [label=\"\($0.key.graphviz)\"]" }
+            .joined(separator: "\n")
+            .indent(amount: 1)
+        return """
+        digraph {
+        \(nodesString)
+        \(edges.indent(amount: 1))
+        }
+        """
     }
 
-    /// Test that `init` sets the stored properties correctly.
-    func testInit() {
-        XCTAssertEqual(cost.time, time)
-        XCTAssertEqual(cost.energy, energy)
-    }
-
-    /// Test `zero`.
-    func testZero() {
-        XCTAssertEqual(Cost(time: .zero, energy: .zero), .zero)
-    }
-
-    /// Test addition.
-    func testAddition() {
-        XCTAssertEqual(
-            cost1 + cost2,
-            Cost(
-                time: ScientificQuantity(coefficient: 11, exponent: 1),
-                energy: ScientificQuantity(coefficient: 11, exponent: 0)
-            )
-        )
-    }
-
-    /// Test subtraction.
-    func testSubtraction() {
-        XCTAssertEqual(
-            cost1 - cost2,
-            Cost(
-                time: ScientificQuantity(coefficient: 9, exponent: 1),
-                energy: ScientificQuantity(coefficient: 9, exponent: 0)
-            )
-        )
-    }
-
-    /// Test graphivz convertible conformance.
-    func testGraphvizRepresentation() {
-        XCTAssertEqual(cost1.graphviz, "\"t: 1e+2, E: 1e+1\"")
-    }
+    // swiftlint:enable force_unwrapping
 
 }

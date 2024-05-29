@@ -1,4 +1,4 @@
-// CostTests.swift
+// Node+GraphvizConvertible.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -53,71 +53,29 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-@testable import VHDLKripkeStructures
-import XCTest
+/// Add graphviz representation.
+extension Node: GraphvizConvertible {
 
-/// Test class for ``Cost``.
-final class CostTests: XCTestCase {
-
-    /// A time value.
-    let time = ScientificQuantity(coefficient: 2, exponent: -6)
-
-    /// An energy value.
-    let energy = ScientificQuantity(coefficient: 1, exponent: -3)
-
-    /// A cost.
-    let cost1 = Cost(
-        time: ScientificQuantity(coefficient: 1, exponent: 2),
-        energy: ScientificQuantity(coefficient: 1, exponent: 1)
-    )
-
-    /// A second cost.
-    let cost2 = Cost(
-        time: ScientificQuantity(coefficient: 1, exponent: 1),
-        energy: ScientificQuantity(coefficient: 1, exponent: 0)
-    )
-
-    /// A test `Cost`.
-    var cost: Cost {
-        Cost(time: time, energy: energy)
-    }
-
-    /// Test that `init` sets the stored properties correctly.
-    func testInit() {
-        XCTAssertEqual(cost.time, time)
-        XCTAssertEqual(cost.energy, energy)
-    }
-
-    /// Test `zero`.
-    func testZero() {
-        XCTAssertEqual(Cost(time: .zero, energy: .zero), .zero)
-    }
-
-    /// Test addition.
-    func testAddition() {
-        XCTAssertEqual(
-            cost1 + cost2,
-            Cost(
-                time: ScientificQuantity(coefficient: 11, exponent: 1),
-                energy: ScientificQuantity(coefficient: 11, exponent: 0)
-            )
-        )
-    }
-
-    /// Test subtraction.
-    func testSubtraction() {
-        XCTAssertEqual(
-            cost1 - cost2,
-            Cost(
-                time: ScientificQuantity(coefficient: 9, exponent: 1),
-                energy: ScientificQuantity(coefficient: 9, exponent: 0)
-            )
-        )
-    }
-
-    /// Test graphivz convertible conformance.
-    func testGraphvizRepresentation() {
-        XCTAssertEqual(cost1.graphviz, "\"t: 1e+2, E: 1e+1\"")
+    /// The label for the node in graphviz.
+    @inlinable public var graphviz: String {
+        guard !properties.isEmpty else {
+            return """
+            \\ currentState: \(self.currentState.rawValue),
+            \\ type: \(self.type),
+            \\ executeOnEntry: \(self.executeOnEntry),
+            \\ nextState: \(self.nextState.rawValue)
+            """
+        }
+        let properties = self.properties.sorted { $0.key < $1.key }
+            .map { "\\ \($0.rawValue): \($1.rawValue)" }
+            .joined(separator: ",\n")
+        return """
+        \\ currentState: \(self.currentState.rawValue),
+        \\ type: \(self.type),
+        \\ executeOnEntry: \(self.executeOnEntry),
+        \\ nextState: \(self.nextState.rawValue),
+        \(properties)
+        """
     }
 
 }
