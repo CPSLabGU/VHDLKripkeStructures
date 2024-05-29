@@ -1,4 +1,4 @@
-// KripkeStructure+GraphvizConvertible.swift
+// ScientificQuantity+CustomStringConvertible.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -54,55 +54,15 @@
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
 import Foundation
-import VHDLParsing
 
-extension KripkeStructure: GraphvizConvertible {
+extension ScientificQuantity: CustomStringConvertible {
 
-    public var graphviz: String {
-        let nodes = Dictionary(uniqueKeysWithValues: self.nodes.map { ($0, UUID()) })
-        let edges = self.edges.flatMap {
-            guard let id = nodes[$0.key] else {
-                fatalError("Failed to create graphviz edge for node \($0)")
-            }
-            return $0.value.map {
-                guard let id2 = nodes[$0.target] else {
-                    fatalError("Failed to create graphviz edge for node \($0.target)")
-                }
-                return "\"\(id)\" -> \"\(id2)\" [label=\($0.cost.graphviz)]"
-            }
-        }
-        .joined(separator: "\n")
-        return """
-        digraph {
-        \(nodes.map { "\"\($0.value)\" [label=\"\($0.key.graphviz)\"]" }.joined(separator: "\n"))
-        \(edges)
-        }
-        """
-    }
-
-}
-
-extension Node: GraphvizConvertible {
-
-    public var graphviz: String {
-        let properties = self.properties.sorted { $0.key < $1.key }
-            .map { "\\ \($0.rawValue): \($1.rawValue)" }
-            .joined(separator: ",\n")
-        return """
-        \\ currentState: \(self.currentState.rawValue),
-        \\ type: \(self.type),
-        \\ executeOnEntry: \(self.executeOnEntry),
-        \\ nextState: \(self.nextState.rawValue)
-        \(properties)
-        """
-    }
-
-}
-
-extension Cost: GraphvizConvertible {
-
-    public var graphviz: String {
-        "\"t: \(self.time), E: \(self.energy)\""
+    public var description: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .scientific
+        formatter.positiveFormat = "0.###E+0"
+        formatter.exponentSymbol = "e"
+        return formatter.string(for: quantity) ?? "\(self.coefficient)e\(self.exponent)"
     }
 
 }
