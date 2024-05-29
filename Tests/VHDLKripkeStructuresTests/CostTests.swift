@@ -65,6 +65,18 @@ final class CostTests: XCTestCase {
     /// An energy value.
     let energy = ScientificQuantity(coefficient: 1, exponent: -3)
 
+    /// A cost.
+    let cost1 = Cost(
+        time: ScientificQuantity(coefficient: 1, exponent: 2),
+        energy: ScientificQuantity(coefficient: 1, exponent: 1)
+    )
+
+    /// A second cost.
+    let cost2 = Cost(
+        time: ScientificQuantity(coefficient: 1, exponent: 1),
+        energy: ScientificQuantity(coefficient: 1, exponent: 0)
+    )
+
     /// A test `Cost`.
     var cost: Cost {
         Cost(time: time, energy: energy)
@@ -74,6 +86,33 @@ final class CostTests: XCTestCase {
     func testInit() {
         XCTAssertEqual(cost.time, time)
         XCTAssertEqual(cost.energy, energy)
+    }
+
+    /// Test `zero`.
+    func testZero() {
+        XCTAssertEqual(Cost(time: .zero, energy: .zero), .zero)
+    }
+
+    /// Test addition.
+    func testAddition() {
+        XCTAssertEqual(
+            cost1 + cost2,
+            Cost(
+                time: ScientificQuantity(coefficient: 11, exponent: 1),
+                energy: ScientificQuantity(coefficient: 11, exponent: 0)
+            )
+        )
+    }
+
+    /// Test subtraction.
+    func testSubtraction() {
+        XCTAssertEqual(
+            cost1 - cost2,
+            Cost(
+                time: ScientificQuantity(coefficient: 9, exponent: 1),
+                energy: ScientificQuantity(coefficient: 9, exponent: 0)
+            )
+        )
     }
 
 }

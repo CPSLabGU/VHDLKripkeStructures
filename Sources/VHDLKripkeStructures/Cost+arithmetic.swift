@@ -53,10 +53,14 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
+/// Add conformance to `AdditiveArithmetic`.
 extension Cost: AdditiveArithmetic {
 
+    /// The zero value for `Cost`.
     public static let zero = Cost(time: .zero, energy: .zero)
 
+    /// Addition.
+    @inlinable
     public static func + (lhs: Cost, rhs: Cost) -> Cost {
         Cost(
             time: lhs.time + rhs.time,
@@ -64,6 +68,8 @@ extension Cost: AdditiveArithmetic {
         )
     }
 
+    /// Subtraction.
+    @inlinable
     public static func - (lhs: Cost, rhs: Cost) -> Cost {
         Cost(time: lhs.time - rhs.time, energy: lhs.energy - rhs.energy)
     }
