@@ -80,11 +80,6 @@ public struct ScientificQuantity: Equatable, Hashable, Codable, Sendable, Quanti
         )
     }
 
-    @inlinable init(normalisedCoefficient: UInt, normalisedExponent: Int) {
-        self.coefficient = normalisedCoefficient
-        self.exponent = normalisedExponent
-    }
-
     /// Creates a new `ScientificQuantity` from a `SIRepresentable` value.
     /// - Parameter value: The value to create the quantity from.
     @inlinable
@@ -92,7 +87,20 @@ public struct ScientificQuantity: Equatable, Hashable, Codable, Sendable, Quanti
         self.init(coefficient: value.coefficient, exponent: value.exponent)
     }
 
-    @inlinable init(quantity: ScientificQuantity) {
+    /// Create the quantity assuming the coefficient is normalised with the exponent.
+    /// - Parameters:
+    ///   - normalisedCoefficient: The normalised coefficient.
+    ///   - normalisedExponent: The normalised exponent.
+    @inlinable
+    init(normalisedCoefficient: UInt, normalisedExponent: Int) {
+        self.coefficient = normalisedCoefficient
+        self.exponent = normalisedExponent
+    }
+
+    /// Normalise a given quantity into it's lowest possible representation.
+    /// - Parameter quantity: The quantity to normalise.
+    @inlinable
+    init(quantity: ScientificQuantity) {
         guard quantity.coefficient != 0 else {
             self = .zero
             return

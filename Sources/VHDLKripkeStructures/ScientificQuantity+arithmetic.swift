@@ -55,20 +55,29 @@
 
 import Foundation
 
+/// Add Arithmetic conformance.
 extension ScientificQuantity: Numeric, ExpressibleByFloatLiteral {
 
+    /// The float literal type.
     public typealias FloatLiteralType = Double
 
+    /// The magnitude type.
     public typealias Magnitude = Double
 
+    /// The integer type.
     public typealias IntegerLiteralType = UInt
 
+    /// The zero value.
     public static let zero = ScientificQuantity(normalisedCoefficient: 0, normalisedExponent: 0)
 
-    public var magnitude: Double {
+    /// The absolute value of this quantity.
+    @inlinable public var magnitude: Double {
         self.quantity
     }
 
+    /// Create this quantity from a floating-point literal value.
+    /// - Parameter value: The value to convert to a scientific quantity.
+    @inlinable
     public init(floatLiteral value: Double) {
         guard value.isFinite, value >= 0.0 else {
             fatalError("Integer overflow trying to create Scientific Quantity for \(value)")
@@ -101,6 +110,9 @@ extension ScientificQuantity: Numeric, ExpressibleByFloatLiteral {
         self.init(quantity: ScientificQuantity(coefficient: newCoefficient, exponent: exponent))
     }
 
+    /// Create a quantity from an integer representation.
+    /// - Parameter source: The integer to convert.
+    @inlinable
     public init?<T>(exactly source: T) where T: BinaryInteger {
         guard source >= 0 else {
             return nil
@@ -108,26 +120,45 @@ extension ScientificQuantity: Numeric, ExpressibleByFloatLiteral {
         self.init(integerLiteral: UInt(source))
     }
 
+    /// Create a quantity from an integer literal.
+    /// - Parameter value: The integer to convert to a scientific quantity.
+    @inlinable
     public init(integerLiteral value: UInt) {
         self.init(coefficient: value, exponent: 0)
     }
 
+    /// Addition.
+    @inlinable
     public static func + (lhs: ScientificQuantity, rhs: ScientificQuantity) -> ScientificQuantity {
         Self.binaryOperation(lhs: lhs, rhs: rhs, operation: +)
     }
 
+    /// Subtraction.
+    @inlinable
     public static func - (lhs: ScientificQuantity, rhs: ScientificQuantity) -> ScientificQuantity {
         Self.binaryOperation(lhs: lhs, rhs: rhs, operation: -)
     }
 
+    /// Multiplication.
+    @inlinable
     public static func * (lhs: ScientificQuantity, rhs: ScientificQuantity) -> ScientificQuantity {
         Self.binaryOperation(lhs: lhs, rhs: rhs, operation: *, exponentOperation: +)
     }
 
+    /// Multiplication mutation.
+    @inlinable
     public static func *= (lhs: inout ScientificQuantity, rhs: ScientificQuantity) {
         lhs = lhs * rhs
     }
 
+    /// Perform a binary operation between two quantities.
+    /// - Parameters:
+    ///   - lhs: The lhs quantity.
+    ///   - rhs: The rhs quantity.
+    ///   - operation: The operaiton to perform on the coefficients.
+    ///   - exponentOperation: The operation to perform on the exponents.
+    /// - Returns: The resulting quantity from the computation.
+    @inlinable
     static func binaryOperation(
         lhs: ScientificQuantity,
         rhs: ScientificQuantity,
@@ -163,8 +194,10 @@ extension ScientificQuantity: Numeric, ExpressibleByFloatLiteral {
 
 }
 
+/// Add helper for trailing zeros.
 extension UInt {
 
+    /// The number of trailing zeros in the integer.
     @inlinable var trailingZeros: Int {
         let description = String(String(self).reversed())
         guard let firstIndex = description.firstIndex(where: { $0 != "0" }) else {
