@@ -116,8 +116,7 @@ final class NodeTests: XCTestCase {
     /// Test graphviz representation.
     func testGraphvizRepresentation() {
         let expected = """
-        \\ «Read»
-        \\ Initial\\lexecuteOnEntry: true,\\lnextState: Suspended,\\lx: '0',\\ly: 'Z',\\lz: 30
+        \\ «Read»\\cInitial\\lexecuteOnEntry: true,\\lnextState: Suspended,\\lx: '0',\\ly: 'Z',\\lz: 30
         """
         XCTAssertEqual(node.graphviz, expected)
         let node2 = Node(
@@ -128,8 +127,7 @@ final class NodeTests: XCTestCase {
             properties: [:]
         )
         let expected2 = """
-        \\ «Read»
-        \\ Initial\\lexecuteOnEntry: true,\\lnextState: Suspended
+        \\ «Read»\\cInitial\\lexecuteOnEntry: true,\\lnextState: Suspended
         """
         XCTAssertEqual(node2.graphviz, expected2)
     }
