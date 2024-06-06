@@ -60,9 +60,11 @@ extension Node: GraphvizConvertible {
 
     /// The label for the node in graphviz.
     @inlinable public var graphviz: String {
+        // swiftlint:disable line_length
         let defaultLabel = """
-        \\ «\("\(self.type)".capitalized)»\\n\(self.currentState.rawValue)<hr></hr>\\lexecuteOnEntry: \(self.executeOnEntry),\\lnextState: \(self.nextState.rawValue)
+        \\ «\("\(self.type)".capitalized)»\\n\(self.currentState.rawValue)\\lexecuteOnEntry: \(self.executeOnEntry),\\lnextState: \(self.nextState.rawValue)
         """
+        // swiftlint:enable line_length
         guard !properties.isEmpty else {
             return defaultLabel + "\\l"
         }
