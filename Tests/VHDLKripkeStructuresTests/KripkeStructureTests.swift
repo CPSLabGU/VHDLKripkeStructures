@@ -154,9 +154,9 @@ final class KripkeStructureTests: XCTestCase {
         let expected = """
         digraph {
             \"0-0\" [shape=point]
-            \"0\" [style=rounded shape=rectangle label=\"\\ «Read»\\nInitial\\lexecuteOnEntry: true,\\lnextState: Suspended,\\lx: '0',\\lxs: \\\"11\\\",\\ly: 'Z',\\lz: 30\\l\"]
+            \"0\" [style=rounded shape=rectangle label=\"\\ «Read»\\nInitial\\nexecuteOnEntry: true,\\lnextState: Suspended,\\lx: '0',\\lxs: \\\"11\\\",\\ly: 'Z',\\lz: 30\\l\"]
             \"0-0\" -> \"0\"
-            \"1\" [style=rounded shape=rectangle label=\"\\ «Write»\\nSuspended\\lexecuteOnEntry: false,\\lnextState: Initial,\\lx: '1',\\lxs: \\\"00\\\",\\ly: '0',\\lz: 20\\l\"]
+            \"1\" [style=rounded shape=rectangle label=\"\\ «Write»\\nSuspended\\nexecuteOnEntry: false,\\lnextState: Initial,\\lx: '1',\\lxs: \\\"00\\\",\\ly: '0',\\lz: 20\\l\"]
             \"0\" -> \"1\" [label=\"t: 1×10², E: 2×10²\"]
             \"1\" -> \"0\" [label=\"t: 3×10¹, E: 4×10¹\"]
         }
