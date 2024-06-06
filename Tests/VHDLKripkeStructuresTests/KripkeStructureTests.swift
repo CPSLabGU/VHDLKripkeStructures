@@ -153,8 +153,8 @@ final class KripkeStructureTests: XCTestCase {
         let expected = """
         digraph {
             \"0-0\" [shape=point]
-            \"0\" [style=rounded shape=rectangle label=\"\\ currentState: Initial,
-            \\ type: read,
+            \"0\" [style=rounded shape=rectangle label=\"\\ «Read»
+            \\ Initial
             \\ executeOnEntry: true,
             \\ nextState: Suspended,
             \\ x: '0',
@@ -162,8 +162,8 @@ final class KripkeStructureTests: XCTestCase {
             \\ y: 'Z',
             \\ z: 30\"]
             \"0-0\" -> \"0\"
-            \"1\" [style=rounded shape=rectangle label=\"\\ currentState: Suspended,
-            \\ type: write,
+            \"1\" [style=rounded shape=rectangle label=\"\\ «Write»
+            \\ Suspended
             \\ executeOnEntry: false,
             \\ nextState: Initial,
             \\ x: '1',

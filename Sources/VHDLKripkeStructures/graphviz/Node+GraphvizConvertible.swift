@@ -60,24 +60,19 @@ extension Node: GraphvizConvertible {
 
     /// The label for the node in graphviz.
     @inlinable public var graphviz: String {
+        let defaultLabel = """
+        \\ «\("\(self.type)".capitalized)»
+        \\ \(self.currentState.rawValue)
+        \\ executeOnEntry: \(self.executeOnEntry),
+        \\ nextState: \(self.nextState.rawValue)
+        """
         guard !properties.isEmpty else {
-            return """
-            \\ currentState: \(self.currentState.rawValue),
-            \\ type: \(self.type),
-            \\ executeOnEntry: \(self.executeOnEntry),
-            \\ nextState: \(self.nextState.rawValue)
-            """
+            return defaultLabel
         }
         let properties = self.properties.sorted { $0.key < $1.key }
             .map { "\\ \($0.rawValue): \($1.rawValue)".replacingOccurrences(of: "\"", with: "\\\"") }
             .joined(separator: ",\n")
-        return """
-        \\ currentState: \(self.currentState.rawValue),
-        \\ type: \(self.type),
-        \\ executeOnEntry: \(self.executeOnEntry),
-        \\ nextState: \(self.nextState.rawValue),
-        \(properties)
-        """
+        return defaultLabel + ",\n" + properties
     }
 
 }
