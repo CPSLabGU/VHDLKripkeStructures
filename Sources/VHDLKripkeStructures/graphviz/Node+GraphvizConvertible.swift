@@ -61,8 +61,7 @@ extension Node: GraphvizConvertible {
     /// The label for the node in graphviz.
     @inlinable public var graphviz: String {
         let defaultLabel = """
-        \\ «\("\(self.type)".capitalized)»
-        \\ \(self.currentState.rawValue)\\lexecuteOnEntry: \(self.executeOnEntry),\\lnextState: \(self.nextState.rawValue)
+        \\ «\("\(self.type)".capitalized)»\\n\(self.currentState.rawValue)<hr></hr>\\lexecuteOnEntry: \(self.executeOnEntry),\\lnextState: \(self.nextState.rawValue)
         """
         guard !properties.isEmpty else {
             return defaultLabel + "\\l"
