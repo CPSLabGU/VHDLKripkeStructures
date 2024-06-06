@@ -54,6 +54,16 @@
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
 /// An unnormalised scientific quantity.
+///
+/// A scientific quantity is simply a value expressed in scientific notation, i.e.
+/// `coefficient * 10^exponent`.
+/// Quantities in this representation are not normalised, i.e. they are not reduced to their lowest possible
+/// representation. Equality between these types depends on the equality of the stored properties and not
+/// the equivalent value that they represent. For example,
+/// `UnnormalisedScientificQuantity(coefficient: 1, exponent: 1)` is not equal to
+/// `UnnormalisedScientificQuantity(coefficient: 10, exponent: 0)`. If this is not the intended behaviour,
+/// please use the ``ScientificQuantity`` type that normalised representations before comparison.
+/// - SeeAlso: ``ScientificQuantity``.
 public struct UnnormalisedScientificQuantity: Equatable, Hashable, Codable, Sendable, SIRepresentable {
 
     /// The coefficient of the quantity.

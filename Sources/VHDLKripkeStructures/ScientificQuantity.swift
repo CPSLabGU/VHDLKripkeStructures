@@ -56,6 +56,14 @@
 import Foundation
 
 /// A quantity in scientific notation.
+///
+/// A scientific quantity is simply a value expressed in scientific notation, i.e.
+/// `coefficient * 10^exponent`.
+/// The quantity in this type or *normalised*, i.e. they are reduced to their lowest possible representation.
+/// All equality checks are done on the normalised form of the quantity to ensure that different
+/// representations that are equivalent are considered equal. For unnormalised quantities where this is not
+/// the intended behaviour, see ``UnnormalisedScientificQuantity``.
+/// - SeeAlso: ``UnnormalisedScientificQuantity``.
 public struct ScientificQuantity: Equatable, Hashable, Codable, Sendable, Quantifiable, SIRepresentable {
 
     /// The coefficient of the quantity.
