@@ -117,7 +117,7 @@ final class CostTests: XCTestCase {
 
     /// Test graphivz convertible conformance.
     func testGraphvizRepresentation() {
-        XCTAssertEqual(cost1.graphviz, "\"t: 1e+2, E: 1e+1\"")
+        XCTAssertEqual(cost1.graphviz, "\"t: 1×10², E: 1×10¹\"")
     }
 
 }

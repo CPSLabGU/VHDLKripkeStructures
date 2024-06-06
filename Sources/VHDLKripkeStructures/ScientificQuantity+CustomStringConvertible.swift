@@ -60,11 +60,59 @@ extension ScientificQuantity: CustomStringConvertible {
 
     /// The description of this quantity in scientific notation.
     @inlinable public var description: String {
+        guard self.coefficient != 0 else {
+            return "0"
+        }
         let formatter = NumberFormatter()
         formatter.numberStyle = .scientific
-        formatter.positiveFormat = "0.###E+0"
-        formatter.exponentSymbol = "e"
-        return formatter.string(for: quantity) ?? "\(self.coefficient)e\(self.exponent)"
+        formatter.positiveFormat = "0.###E0"
+        formatter.exponentSymbol = "×10"
+        guard let representation = formatter.string(for: quantity) else {
+            return "\(self.coefficient)×10\("\(self.exponent)".superscript)"
+        }
+        let components = representation.components(separatedBy: "×10")
+        guard components.count == 2 else {
+            return "\(self.coefficient)×10\("\(self.exponent)".superscript)"
+        }
+        return "\(components[0])×10\(components[1].superscript)"
+    }
+
+}
+
+extension String {
+
+    @inlinable var superscript: String {
+        self.map {
+            switch $0 {
+            case "0":
+                return "⁰"
+            case "1":
+                return "¹"
+            case "2":
+                return "²"
+            case "3":
+                return "³"
+            case "4":
+                return "⁴"
+            case "5":
+                return "⁵"
+            case "6":
+                return "⁶"
+            case "7":
+                return "⁷"
+            case "8":
+                return "⁸"
+            case "9":
+                return "⁹"
+            case "+":
+                return "⁺"
+            case "-":
+                return "⁻"
+            default:
+                return String($0)
+            }
+        }
+        .joined()
     }
 
 }

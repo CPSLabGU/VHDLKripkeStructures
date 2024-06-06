@@ -125,10 +125,10 @@ final class ScientificQuantityTests: XCTestCase {
 
     /// Test that the description is correct.
     func testDescription() {
-        XCTAssertEqual(quantity.description, "2e+3")
-        XCTAssertEqual(quantity2.description, "4e+5")
-        XCTAssertEqual(ScientificQuantity.zero.description, "0e+0")
-        XCTAssertEqual(ScientificQuantity(coefficient: 1, exponent: -2).description, "1e-2")
+        XCTAssertEqual(quantity.description, "2×10³")
+        XCTAssertEqual(quantity2.description, "4×10⁵")
+        XCTAssertEqual(ScientificQuantity.zero.description, "0")
+        XCTAssertEqual(ScientificQuantity(coefficient: 1, exponent: -2).description, "1×10⁻²")
     }
 
     /// Test that addition works correctly.

@@ -170,8 +170,8 @@ final class KripkeStructureTests: XCTestCase {
             \\ xs: \\\"00\\\",
             \\ y: '0',
             \\ z: 20\"]
-            \"0\" -> \"1\" [label=\"t: 1e+2, E: 2e+2\"]
-            \"1\" -> \"0\" [label=\"t: 3e+1, E: 4e+1\"]
+            \"0\" -> \"1\" [label=\"t: 1×10², E: 2×10²\"]
+            \"1\" -> \"0\" [label=\"t: 3×10¹, E: 4×10¹\"]
         }
         """
         XCTAssertEqual(structure.graphviz, expected, "\(structure.graphviz.difference(from: expected))")
