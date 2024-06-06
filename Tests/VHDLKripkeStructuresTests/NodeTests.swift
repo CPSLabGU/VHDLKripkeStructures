@@ -117,7 +117,7 @@ final class NodeTests: XCTestCase {
     func testGraphvizRepresentation() {
         let expected = """
         \\ «Read»
-        \\ Initial
+        \\ Initial\\l
         \\ executeOnEntry: true,
         \\ nextState: Suspended,
         \\ x: '0',
@@ -134,7 +134,7 @@ final class NodeTests: XCTestCase {
         )
         let expected2 = """
         \\ «Read»
-        \\ Initial
+        \\ Initial\\l
         \\ executeOnEntry: true,
         \\ nextState: Suspended
         """

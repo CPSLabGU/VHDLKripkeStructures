@@ -62,7 +62,7 @@ extension Node: GraphvizConvertible {
     @inlinable public var graphviz: String {
         let defaultLabel = """
         \\ «\("\(self.type)".capitalized)»
-        \\ \(self.currentState.rawValue)
+        \\ \(self.currentState.rawValue)\\l
         \\ executeOnEntry: \(self.executeOnEntry),
         \\ nextState: \(self.nextState.rawValue)
         """

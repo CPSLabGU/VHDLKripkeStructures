@@ -154,7 +154,7 @@ final class KripkeStructureTests: XCTestCase {
         digraph {
             \"0-0\" [shape=point]
             \"0\" [style=rounded shape=rectangle label=\"\\ «Read»
-            \\ Initial
+            \\ Initial\\l
             \\ executeOnEntry: true,
             \\ nextState: Suspended,
             \\ x: '0',
@@ -163,7 +163,7 @@ final class KripkeStructureTests: XCTestCase {
             \\ z: 30\"]
             \"0-0\" -> \"0\"
             \"1\" [style=rounded shape=rectangle label=\"\\ «Write»
-            \\ Suspended
+            \\ Suspended\\l
             \\ executeOnEntry: false,
             \\ nextState: Initial,
             \\ x: '1',
