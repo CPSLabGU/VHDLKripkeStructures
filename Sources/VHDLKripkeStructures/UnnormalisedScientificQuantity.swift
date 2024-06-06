@@ -1,4 +1,4 @@
-// Cost+GraphvizConvertible.swift
+// UnnormalisedScientificQuantity.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -53,65 +53,27 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-/// Add graphivz conversion.
-extension Cost: GraphvizConvertible {
+/// An unnormalised scientific quantity.
+public struct UnnormalisedScientificQuantity: Equatable, Hashable, Codable, Sendable, SIRepresentable {
 
-    /// The graphviz label.
-    @inlinable public var graphviz: String {
-        "\"t: \(self.time.siValue.timeStr), E: \(self.energy.siValue.energyStr)\""
+    /// The coefficient of the quantity.
+    public let coefficient: UInt
+
+    /// The exponent of the base-10 quantity.
+    public let exponent: Int
+
+    /// Create the quantity from its stored properties
+    @inlinable
+    public init(coefficient: UInt, exponent: Int) {
+        self.coefficient = coefficient
+        self.exponent = exponent
     }
 
-}
-
-/// Add print-friendly versions of quantities.
-extension UnnormalisedScientificQuantity {
-
-    /// A value represented in time units.
-    @inlinable var timeStr: String {
-        switch exponent {
-        case 0:
-            return "\(self.coefficient) s"
-        case -3:
-            return "\(self.coefficient) ms"
-        case -6:
-            return "\(self.coefficient) μs"
-        case -9:
-            return "\(self.coefficient) ns"
-        case -12:
-            return "\(self.coefficient) ps"
-        case -15:
-            return "\(self.coefficient) fs"
-        default:
-            return "\(ScientificQuantity(coefficient: self.coefficient, exponent: self.exponent)) s"
-        }
-    }
-
-    /// A quantity represented in energy units.
-    @inlinable var energyStr: String {
-        switch exponent {
-        case 12:
-            return "\(self.coefficient) TJ"
-        case 9:
-            return "\(self.coefficient) GJ"
-        case 6:
-            return "\(self.coefficient) MJ"
-        case 3:
-            return "\(self.coefficient) kJ"
-        case 0:
-            return "\(self.coefficient) J"
-        case -3:
-            return "\(self.coefficient) mJ"
-        case -6:
-            return "\(self.coefficient) μJ"
-        case -9:
-            return "\(self.coefficient) nJ"
-        case -12:
-            return "\(self.coefficient) pJ"
-        case -15:
-            return "\(self.coefficient) fJ"
-        default:
-            return "\(ScientificQuantity(coefficient: self.coefficient, exponent: self.exponent)) J"
-        }
+    /// Copy a scientific quantity into an unnormalised scientific quantity. The new quantity is also
+    /// normalised.
+    @inlinable
+    public init(quantity: ScientificQuantity) {
+        self.init(coefficient: quantity.coefficient, exponent: quantity.exponent)
     }
 
 }

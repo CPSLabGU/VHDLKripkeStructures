@@ -1,4 +1,4 @@
-// CostTests.swift
+// UnnormalisedScientificQuantityTests.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -56,68 +56,48 @@
 @testable import VHDLKripkeStructures
 import XCTest
 
-/// Test class for ``Cost``.
-final class CostTests: XCTestCase {
+/// Test class for ``UnnormalisedScientificQuantity``.
+final class UnnormalisedScientificQuantityTests: XCTestCase {
 
-    /// A time value.
-    let time = ScientificQuantity(coefficient: 2, exponent: -6)
-
-    /// An energy value.
-    let energy = ScientificQuantity(coefficient: 1, exponent: -3)
-
-    /// A cost.
-    let cost1 = Cost(
-        time: ScientificQuantity(coefficient: 1, exponent: 2),
-        energy: ScientificQuantity(coefficient: 1, exponent: 1)
-    )
-
-    /// A second cost.
-    let cost2 = Cost(
-        time: ScientificQuantity(coefficient: 1, exponent: 1),
-        energy: ScientificQuantity(coefficient: 1, exponent: 0)
-    )
-
-    /// A test `Cost`.
-    var cost: Cost {
-        Cost(time: time, energy: energy)
-    }
-
-    /// Test that `init` sets the stored properties correctly.
+    /// Test init sets stored properties correctly.
     func testInit() {
-        XCTAssertEqual(cost.time, time)
-        XCTAssertEqual(cost.energy, energy)
+        let value = UnnormalisedScientificQuantity(coefficient: 20, exponent: 3)
+        XCTAssertEqual(value.coefficient, 20)
+        XCTAssertEqual(value.exponent, 3)
     }
 
-    /// Test `zero`.
-    func testZero() {
-        XCTAssertEqual(Cost(time: .zero, energy: .zero), .zero)
+    /// Test conversion from normalised form.
+    func testNormalisedInit() {
+        let value = ScientificQuantity(coefficient: 200, exponent: 0)
+        let unnormalised = UnnormalisedScientificQuantity(quantity: value)
+        XCTAssertEqual(unnormalised.coefficient, 2)
+        XCTAssertEqual(unnormalised.exponent, 2)
     }
 
-    /// Test addition.
-    func testAddition() {
-        XCTAssertEqual(
-            cost1 + cost2,
-            Cost(
-                time: ScientificQuantity(coefficient: 11, exponent: 1),
-                energy: ScientificQuantity(coefficient: 11, exponent: 0)
-            )
-        )
+    /// Test time string.
+    func testTimeStr() {
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: 0).timeStr, "2 s")
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -3).timeStr, "2 ms")
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -6).timeStr, "2 μs")
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -9).timeStr, "2 ns")
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -12).timeStr, "2 ps")
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -15).timeStr, "2 fs")
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -2).timeStr, "2×10⁻² s")
     }
 
-    /// Test subtraction.
-    func testSubtraction() {
-        XCTAssertEqual(
-            cost1 - cost2,
-            Cost(
-                time: ScientificQuantity(coefficient: 9, exponent: 1),
-                energy: ScientificQuantity(coefficient: 9, exponent: 0)
-            )
-        )
-    }
-
-    /// Test graphivz convertible conformance.
-    func testGraphvizRepresentation() {
-        XCTAssertEqual(cost1.graphviz, "\"t: 100 s, E: 10 J\"")
+    /// Test energy string.
+    func testEnergyStr() {
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: 12).energyStr, "2 TJ")
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: 9).energyStr, "2 GJ")
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: 6).energyStr, "2 MJ")
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: 3).energyStr, "2 kJ")
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: 0).energyStr, "2 J")
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -3).energyStr, "2 mJ")
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -6).energyStr, "2 μJ")
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -9).energyStr, "2 nJ")
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -12).energyStr, "2 pJ")
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -15).energyStr, "2 fJ")
+        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -2).energyStr, "2×10⁻² J")
     }
 
 }

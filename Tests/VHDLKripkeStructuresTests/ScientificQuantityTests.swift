@@ -197,4 +197,80 @@ final class ScientificQuantityTests: XCTestCase {
         XCTAssertEqual(ScientificQuantity(floatLiteral: value), quantity)
     }
 
+    /// Test `siValue` computes the correct value.
+    func testSIValuePositive() {
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: 1).siValue,
+            UnnormalisedScientificQuantity(coefficient: 20, exponent: 0)
+        )
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: 2).siValue,
+            UnnormalisedScientificQuantity(coefficient: 200, exponent: 0)
+        )
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: 3).siValue,
+            UnnormalisedScientificQuantity(coefficient: 2, exponent: 3)
+        )
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: 4).siValue,
+            UnnormalisedScientificQuantity(coefficient: 20, exponent: 3)
+        )
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: 5).siValue,
+            UnnormalisedScientificQuantity(coefficient: 200, exponent: 3)
+        )
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: 6).siValue,
+            UnnormalisedScientificQuantity(coefficient: 2, exponent: 6)
+        )
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: 7).siValue,
+            UnnormalisedScientificQuantity(coefficient: 20, exponent: 6)
+        )
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: 0).siValue,
+            UnnormalisedScientificQuantity(coefficient: 2, exponent: 0)
+        )
+    }
+
+    /// Test negative exponents of `siValue` property.
+    func testSIValueNegative() {
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: -1).siValue,
+            UnnormalisedScientificQuantity(coefficient: 200, exponent: -3)
+        )
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: -2).siValue,
+            UnnormalisedScientificQuantity(coefficient: 20, exponent: -3)
+        )
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: -3).siValue,
+            UnnormalisedScientificQuantity(coefficient: 2, exponent: -3)
+        )
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: -4).siValue,
+            UnnormalisedScientificQuantity(coefficient: 200, exponent: -6)
+        )
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: -5).siValue,
+            UnnormalisedScientificQuantity(coefficient: 20, exponent: -6)
+        )
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: -6).siValue,
+            UnnormalisedScientificQuantity(coefficient: 2, exponent: -6)
+        )
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: -7).siValue,
+            UnnormalisedScientificQuantity(coefficient: 200, exponent: -9)
+        )
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: -8).siValue,
+            UnnormalisedScientificQuantity(coefficient: 20, exponent: -9)
+        )
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: -9).siValue,
+            UnnormalisedScientificQuantity(coefficient: 2, exponent: -9)
+        )
+    }
+
 }

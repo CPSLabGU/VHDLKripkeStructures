@@ -69,6 +69,33 @@ public struct ScientificQuantity: Equatable, Hashable, Codable, Sendable, Quanti
         Double(coefficient) * pow(10.0, Double(exponent))
     }
 
+    /// The quantity represented to the closest SI-prefix (exponent multiple of 3).
+    @inlinable public var siValue: UnnormalisedScientificQuantity {
+        guard self.exponent >= 0 else {
+            let dividend = abs(self.exponent % 3)
+            guard dividend != 0 else {
+                return UnnormalisedScientificQuantity(quantity: self)
+            }
+            let remainder = 3 - dividend
+            let newExponent = self.exponent - remainder
+            guard let base10 = UInt("1\(String(repeating: "0", count: remainder))") else {
+                return UnnormalisedScientificQuantity(quantity: self)
+            }
+            let newCoefficient = self.coefficient * base10
+            return UnnormalisedScientificQuantity(coefficient: newCoefficient, exponent: newExponent)
+        }
+        let remainder = self.exponent % 3
+        guard remainder != 0 else {
+            return UnnormalisedScientificQuantity(quantity: self)
+        }
+        let newExponent = self.exponent - remainder
+        guard let base10 = UInt("1\(String(repeating: "0", count: remainder))") else {
+            return UnnormalisedScientificQuantity(quantity: self)
+        }
+        let newCoefficient = self.coefficient * base10
+        return UnnormalisedScientificQuantity(coefficient: newCoefficient, exponent: newExponent)
+    }
+
     /// Creates a new `ScientificQuantity` from the stored properties.
     /// - Parameters:
     ///   - coefficient: The coefficient of the quantity.
