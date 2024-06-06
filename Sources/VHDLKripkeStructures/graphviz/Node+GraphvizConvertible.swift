@@ -62,17 +62,15 @@ extension Node: GraphvizConvertible {
     @inlinable public var graphviz: String {
         let defaultLabel = """
         \\ «\("\(self.type)".capitalized)»
-        \\ \(self.currentState.rawValue)\\l
-        \\ executeOnEntry: \(self.executeOnEntry),
-        \\ nextState: \(self.nextState.rawValue)
+        \\ \(self.currentState.rawValue)\\lexecuteOnEntry: \(self.executeOnEntry),\\lnextState: \(self.nextState.rawValue)
         """
         guard !properties.isEmpty else {
             return defaultLabel
         }
         let properties = self.properties.sorted { $0.key < $1.key }
-            .map { "\\ \($0.rawValue): \($1.rawValue)".replacingOccurrences(of: "\"", with: "\\\"") }
-            .joined(separator: ",\n")
-        return defaultLabel + ",\n" + properties
+            .map { "\\l\($0.rawValue): \($1.rawValue)".replacingOccurrences(of: "\"", with: "\\\"") }
+            .joined(separator: ",")
+        return defaultLabel + "," + properties
     }
 
 }

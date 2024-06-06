@@ -154,22 +154,10 @@ final class KripkeStructureTests: XCTestCase {
         digraph {
             \"0-0\" [shape=point]
             \"0\" [style=rounded shape=rectangle label=\"\\ «Read»
-            \\ Initial\\l
-            \\ executeOnEntry: true,
-            \\ nextState: Suspended,
-            \\ x: '0',
-            \\ xs: \\\"11\\\",
-            \\ y: 'Z',
-            \\ z: 30\"]
+            \\ Initial\\lexecuteOnEntry: true,\\lnextState: Suspended,\\lx: '0',\\lxs: \\\"11\\\",\\ly: 'Z',\\lz: 30\"]
             \"0-0\" -> \"0\"
             \"1\" [style=rounded shape=rectangle label=\"\\ «Write»
-            \\ Suspended\\l
-            \\ executeOnEntry: false,
-            \\ nextState: Initial,
-            \\ x: '1',
-            \\ xs: \\\"00\\\",
-            \\ y: '0',
-            \\ z: 20\"]
+            \\ Suspended\\lexecuteOnEntry: false,\\lnextState: Initial,\\lx: '1',\\lxs: \\\"00\\\",\\ly: '0',\\lz: 20\"]
             \"0\" -> \"1\" [label=\"t: 1×10², E: 2×10²\"]
             \"1\" -> \"0\" [label=\"t: 3×10¹, E: 4×10¹\"]
         }
