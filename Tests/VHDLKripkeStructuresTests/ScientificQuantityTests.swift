@@ -200,6 +200,14 @@ final class ScientificQuantityTests: XCTestCase {
     /// Test `siValue` computes the correct value.
     func testSIValuePositive() {
         XCTAssertEqual(
+            ScientificQuantity(coefficient: 0, exponent: 5).siValue,
+            UnnormalisedScientificQuantity(coefficient: 0, exponent: 0)
+        )
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 2, exponent: 0).siValue,
+            UnnormalisedScientificQuantity(coefficient: 2, exponent: 0)
+        )
+        XCTAssertEqual(
             ScientificQuantity(coefficient: 2, exponent: 1).siValue,
             UnnormalisedScientificQuantity(coefficient: 20, exponent: 0)
         )
@@ -235,6 +243,10 @@ final class ScientificQuantityTests: XCTestCase {
 
     /// Test negative exponents of `siValue` property.
     func testSIValueNegative() {
+        XCTAssertEqual(
+            ScientificQuantity(coefficient: 0, exponent: -5).siValue,
+            UnnormalisedScientificQuantity(coefficient: 0, exponent: 0)
+        )
         XCTAssertEqual(
             ScientificQuantity(coefficient: 2, exponent: -1).siValue,
             UnnormalisedScientificQuantity(coefficient: 200, exponent: -3)

@@ -71,6 +71,9 @@ public struct ScientificQuantity: Equatable, Hashable, Codable, Sendable, Quanti
 
     /// The quantity represented to the closest SI-prefix (exponent multiple of 3).
     @inlinable public var siValue: UnnormalisedScientificQuantity {
+        guard self.coefficient != 0 else {
+            return UnnormalisedScientificQuantity(coefficient: 0, exponent: 0)
+        }
         guard self.exponent >= 0 else {
             let dividend = abs(self.exponent % 3)
             guard dividend != 0 else {
