@@ -62,7 +62,7 @@ extension Node: GraphvizConvertible {
     @inlinable public var graphviz: String {
         // swiftlint:disable line_length
         let defaultLabel = """
-        {\\ «\("\(self.type)".capitalized)»\\n\(self.currentState.rawValue)\\n | executeOnEntry: \(self.executeOnEntry),\\lnextState: \(self.nextState.rawValue)
+        {\\ «\("\(self.type)".capitalized)»\\n\(self.currentState.rawValue) | executeOnEntry: \(self.executeOnEntry),\\lnextState: \(self.nextState.rawValue)
         """
         // swiftlint:enable line_length
         guard !properties.isEmpty else {
