@@ -1,4 +1,4 @@
-// ScientificQuantity+CustomStringConvertible.swift
+// StringTests.swift
 // VHDLKripkeStructures
 // 
 // Created by Morgan McColl.
@@ -53,28 +53,27 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-import Foundation
+@testable import VHDLKripkeStructures
+import XCTest
 
-/// Add debug-friendly descriptions.
-extension ScientificQuantity: CustomStringConvertible {
+/// Test class for `String` extensions.
+final class StringTests: XCTestCase {
 
-    /// The description of this quantity in scientific notation.
-    @inlinable public var description: String {
-        guard self.coefficient != 0 else {
-            return "0"
-        }
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .scientific
-        formatter.positiveFormat = "0.###E0"
-        formatter.exponentSymbol = "×10"
-        guard let representation = formatter.string(for: quantity) else {
-            return "\(self.coefficient)×10\("\(self.exponent)".superscript)"
-        }
-        let components = representation.components(separatedBy: "×10")
-        guard components.count == 2 else {
-            return "\(self.coefficient)×10\("\(self.exponent)".superscript)"
-        }
-        return "\(components[0])×10\(components[1].superscript)"
+    /// Test that the superscript property works correctly.
+    func testSuperscript() {
+        XCTAssertEqual("+".superscript, "⁺")
+        XCTAssertEqual("-".superscript, "⁻")
+        XCTAssertEqual("0".superscript, "⁰")
+        XCTAssertEqual("1".superscript, "¹")
+        XCTAssertEqual("2".superscript, "²")
+        XCTAssertEqual("3".superscript, "³")
+        XCTAssertEqual("4".superscript, "⁴")
+        XCTAssertEqual("5".superscript, "⁵")
+        XCTAssertEqual("6".superscript, "⁶")
+        XCTAssertEqual("7".superscript, "⁷")
+        XCTAssertEqual("8".superscript, "⁸")
+        XCTAssertEqual("9".superscript, "⁹")
+        XCTAssertEqual("A".superscript, "A")
     }
 
 }
