@@ -62,16 +62,16 @@ extension Node: GraphvizConvertible {
     @inlinable public var graphviz: String {
         // swiftlint:disable line_length
         let defaultLabel = """
-        \\ «\("\(self.type)".capitalized)»\\n\(self.currentState.rawValue)\\nexecuteOnEntry: \(self.executeOnEntry),\\lnextState: \(self.nextState.rawValue)
+        {\\ «\("\(self.type)".capitalized)»\\n\(self.currentState.rawValue)\\n | executeOnEntry: \(self.executeOnEntry),\\lnextState: \(self.nextState.rawValue)
         """
         // swiftlint:enable line_length
         guard !properties.isEmpty else {
-            return defaultLabel + "\\l"
+            return defaultLabel + "\\l}"
         }
         let properties = self.properties.sorted { $0.key < $1.key }
             .map { "\($0.rawValue): \($1.rawValue)".replacingOccurrences(of: "\"", with: "\\\"") }
             .joined(separator: ",\\l")
-        return defaultLabel + ",\\l" + properties + "\\l"
+        return defaultLabel + ",\\l" + properties + "\\l}"
     }
 
 }

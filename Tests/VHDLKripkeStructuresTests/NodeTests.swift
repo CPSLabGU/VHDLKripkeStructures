@@ -115,9 +115,11 @@ final class NodeTests: XCTestCase {
 
     /// Test graphviz representation.
     func testGraphvizRepresentation() {
+        // swiftlint:disable line_length
         let expected = """
-        \\ «Read»\\nInitial\\nexecuteOnEntry: true,\\lnextState: Suspended,\\lx: '0',\\ly: 'Z',\\lz: 30\\l
+        {\\ «Read»\\nInitial\\n | executeOnEntry: true,\\lnextState: Suspended,\\lx: '0',\\ly: 'Z',\\lz: 30\\l}
         """
+        // swiftlint:enable line_length
         XCTAssertEqual(node.graphviz, expected)
         let node2 = Node(
             type: node.type,
@@ -127,7 +129,7 @@ final class NodeTests: XCTestCase {
             properties: [:]
         )
         let expected2 = """
-        \\ «Read»\\nInitial\\nexecuteOnEntry: true,\\lnextState: Suspended\\l
+        {\\ «Read»\\nInitial\\n | executeOnEntry: true,\\lnextState: Suspended\\l}
         """
         XCTAssertEqual(node2.graphviz, expected2)
     }
