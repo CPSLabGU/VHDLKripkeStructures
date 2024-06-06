@@ -74,6 +74,7 @@ final class StringTests: XCTestCase {
         XCTAssertEqual("8".superscript, "⁸")
         XCTAssertEqual("9".superscript, "⁹")
         XCTAssertEqual("A".superscript, "A")
+        XCTAssertEqual("+-0123456789A".superscript, "⁺⁻⁰¹²³⁴⁵⁶⁷⁸⁹A")
     }
 
 }
