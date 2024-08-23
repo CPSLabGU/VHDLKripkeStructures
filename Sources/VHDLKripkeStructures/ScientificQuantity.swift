@@ -66,6 +66,9 @@ import Foundation
 /// - SeeAlso: ``UnnormalisedScientificQuantity``.
 public struct ScientificQuantity: Equatable, Hashable, Codable, Sendable, Quantifiable, SIRepresentable {
 
+    /// The maximum possible value for a `ScientificQuantity`.
+    public static let max = ScientificQuantity(coefficient: .max, exponent: .max)
+
     /// The coefficient of the quantity.
     public let coefficient: UInt
 
