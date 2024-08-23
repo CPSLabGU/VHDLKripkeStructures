@@ -285,4 +285,27 @@ final class ScientificQuantityTests: XCTestCase {
         )
     }
 
+    /// Test `Comparable` conformance.
+    func testComparable() {
+        XCTAssertTrue(
+            ScientificQuantity(coefficient: 1, exponent: 2) < ScientificQuantity(coefficient: 2, exponent: 2)
+        )
+        XCTAssertFalse(
+            // swiftlint:disable:next identical_operands
+            ScientificQuantity(coefficient: 1, exponent: 2) < ScientificQuantity(coefficient: 1, exponent: 2)
+        )
+        XCTAssertTrue(
+            ScientificQuantity(coefficient: 1, exponent: 2) < ScientificQuantity(coefficient: 1, exponent: 3)
+        )
+        XCTAssertTrue(
+            ScientificQuantity(coefficient: 10, exponent: 2) < ScientificQuantity(coefficient: 2, exponent: 3)
+        )
+        XCTAssertFalse(
+            ScientificQuantity(coefficient: 20, exponent: 2) < ScientificQuantity(coefficient: 1, exponent: 3)
+        )
+        XCTAssertTrue(
+            ScientificQuantity(coefficient: 0, exponent: 2) < ScientificQuantity(coefficient: 2, exponent: -3)
+        )
+    }
+
 }
