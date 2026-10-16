@@ -54,10 +54,11 @@
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
 @testable import VHDLKripkeStructures
-import XCTest
+import Testing
 
 /// Test class for ``Cost``.
-final class CostTests: XCTestCase {
+@Suite
+struct CostTests {
 
     /// A time value.
     let time = ScientificQuantity(coefficient: 2, exponent: -6)
@@ -83,41 +84,46 @@ final class CostTests: XCTestCase {
     }
 
     /// Test that `init` sets the stored properties correctly.
+    @Test
     func testInit() {
-        XCTAssertEqual(cost.time, time)
-        XCTAssertEqual(cost.energy, energy)
+        #expect(cost.time == time)
+        #expect(cost.energy == energy)
     }
 
     /// Test `zero`.
+    @Test
     func testZero() {
-        XCTAssertEqual(Cost(time: .zero, energy: .zero), .zero)
+        #expect(Cost(time: .zero, energy: .zero) == .zero)
     }
 
     /// Test addition.
+    @Test
     func testAddition() {
-        XCTAssertEqual(
-            cost1 + cost2,
-            Cost(
-                time: ScientificQuantity(coefficient: 11, exponent: 1),
-                energy: ScientificQuantity(coefficient: 11, exponent: 0)
-            )
+        #expect(
+            cost1 + cost2
+                == Cost(
+                    time: ScientificQuantity(coefficient: 11, exponent: 1),
+                    energy: ScientificQuantity(coefficient: 11, exponent: 0)
+                )
         )
     }
 
     /// Test subtraction.
+    @Test
     func testSubtraction() {
-        XCTAssertEqual(
-            cost1 - cost2,
-            Cost(
-                time: ScientificQuantity(coefficient: 9, exponent: 1),
-                energy: ScientificQuantity(coefficient: 9, exponent: 0)
-            )
+        #expect(
+            cost1 - cost2
+                == Cost(
+                    time: ScientificQuantity(coefficient: 9, exponent: 1),
+                    energy: ScientificQuantity(coefficient: 9, exponent: 0)
+                )
         )
     }
 
     /// Test graphivz convertible conformance.
+    @Test
     func testGraphvizRepresentation() {
-        XCTAssertEqual(cost1.graphviz, "\"t: 100 s, E: 10 J\"")
+        #expect(cost1.graphviz == "\"t: 100 s, E: 10 J\"")
     }
 
 }

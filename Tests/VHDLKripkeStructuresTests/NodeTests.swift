@@ -55,10 +55,11 @@
 
 @testable import VHDLKripkeStructures
 import VHDLParsing
-import XCTest
+import Testing
 
 /// Test class for ``Node``.
-final class NodeTests: XCTestCase {
+@Suite
+struct NodeTests {
 
     /// Some test properties.
     let properties: [VariableName: SignalLiteral] = [
@@ -79,15 +80,17 @@ final class NodeTests: XCTestCase {
     }
 
     /// Test that the init sets the stored properties correctly.
+    @Test
     func testInit() {
-        XCTAssertEqual(node.type, .read)
-        XCTAssertEqual(node.currentState, .initial)
-        XCTAssertTrue(node.executeOnEntry)
-        XCTAssertEqual(node.nextState, .suspended)
-        XCTAssertEqual(node.properties, properties)
+        #expect(node.type == .read)
+        #expect(node.currentState == .initial)
+        #expect(node.executeOnEntry)
+        #expect(node.nextState == .suspended)
+        #expect(node.properties == properties)
     }
 
     /// Test equality conformance.
+    @Test
     func testEquality() {
         let otherNode = Node(
             type: .read,
@@ -96,10 +99,11 @@ final class NodeTests: XCTestCase {
             nextState: .suspended,
             properties: properties
         )
-        XCTAssertEqual(node, otherNode)
+        #expect(node == otherNode)
     }
 
     /// Test hashable conformance.
+    @Test
     func testHashable() {
         let otherNode = Node(
             type: .read,
@@ -108,19 +112,20 @@ final class NodeTests: XCTestCase {
             nextState: .suspended,
             properties: properties
         )
-        XCTAssertEqual(node.hashValue, otherNode.hashValue)
+        #expect(node.hashValue == otherNode.hashValue)
         let nodes: Set<Node> = [node]
-        XCTAssertTrue(nodes.contains(otherNode))
+        #expect(nodes.contains(otherNode))
     }
 
     /// Test graphviz representation.
+    @Test
     func testGraphvizRepresentation() {
         // swiftlint:disable line_length
         let expected = """
             {\\ «Read»\\nInitial | executeOnEntry: true,\\lnextState: Suspended,\\lx: '0',\\ly: 'Z',\\lz: 30\\l}
             """
         // swiftlint:enable line_length
-        XCTAssertEqual(node.graphviz, expected)
+        #expect(node.graphviz == expected)
         let node2 = Node(
             type: node.type,
             currentState: node.currentState,
@@ -131,7 +136,24 @@ final class NodeTests: XCTestCase {
         let expected2 = """
             {\\ «Read»\\nInitial | executeOnEntry: true,\\lnextState: Suspended\\l}
             """
-        XCTAssertEqual(node2.graphviz, expected2)
+        #expect(node2.graphviz == expected2)
+    }
+
+    @Test
+    func testDescription() {
+        let expected = """
+            Node(
+                currentState: Initial,
+                type: read,
+                executeOnEntry: true,
+                nextState: Suspended,
+                properties:
+                    x: '0',
+                    y: 'Z',
+                    z: 30
+            )
+            """
+        #expect(node.description == expected)
     }
 
 }

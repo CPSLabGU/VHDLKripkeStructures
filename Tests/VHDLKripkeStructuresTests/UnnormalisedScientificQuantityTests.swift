@@ -54,50 +54,55 @@
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
 @testable import VHDLKripkeStructures
-import XCTest
+import Testing
 
 /// Test class for ``UnnormalisedScientificQuantity``.
-final class UnnormalisedScientificQuantityTests: XCTestCase {
+@Suite
+struct UnnormalisedScientificQuantityTests {
 
     /// Test init sets stored properties correctly.
+    @Test
     func testInit() {
         let value = UnnormalisedScientificQuantity(coefficient: 20, exponent: 3)
-        XCTAssertEqual(value.coefficient, 20)
-        XCTAssertEqual(value.exponent, 3)
+        #expect(value.coefficient == 20)
+        #expect(value.exponent == 3)
     }
 
     /// Test conversion from normalised form.
+    @Test
     func testNormalisedInit() {
         let value = ScientificQuantity(coefficient: 200, exponent: 0)
         let unnormalised = UnnormalisedScientificQuantity(quantity: value)
-        XCTAssertEqual(unnormalised.coefficient, 2)
-        XCTAssertEqual(unnormalised.exponent, 2)
+        #expect(unnormalised.coefficient == 2)
+        #expect(unnormalised.exponent == 2)
     }
 
     /// Test time string.
+    @Test
     func testTimeStr() {
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: 0).timeStr, "2 s")
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -3).timeStr, "2 ms")
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -6).timeStr, "2 μs")
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -9).timeStr, "2 ns")
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -12).timeStr, "2 ps")
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -15).timeStr, "2 fs")
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -2).timeStr, "2×10⁻² s")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: 0).timeStr == "2 s")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: -3).timeStr == "2 ms")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: -6).timeStr == "2 μs")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: -9).timeStr == "2 ns")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: -12).timeStr == "2 ps")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: -15).timeStr == "2 fs")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: -2).timeStr == "2×10⁻² s")
     }
 
     /// Test energy string.
+    @Test
     func testEnergyStr() {
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: 12).energyStr, "2 TJ")
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: 9).energyStr, "2 GJ")
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: 6).energyStr, "2 MJ")
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: 3).energyStr, "2 kJ")
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: 0).energyStr, "2 J")
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -3).energyStr, "2 mJ")
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -6).energyStr, "2 μJ")
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -9).energyStr, "2 nJ")
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -12).energyStr, "2 pJ")
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -15).energyStr, "2 fJ")
-        XCTAssertEqual(UnnormalisedScientificQuantity(coefficient: 2, exponent: -2).energyStr, "2×10⁻² J")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: 12).energyStr == "2 TJ")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: 9).energyStr == "2 GJ")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: 6).energyStr == "2 MJ")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: 3).energyStr == "2 kJ")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: 0).energyStr == "2 J")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: -3).energyStr == "2 mJ")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: -6).energyStr == "2 μJ")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: -9).energyStr == "2 nJ")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: -12).energyStr == "2 pJ")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: -15).energyStr == "2 fJ")
+        #expect(UnnormalisedScientificQuantity(coefficient: 2, exponent: -2).energyStr == "2×10⁻² J")
     }
 
 }

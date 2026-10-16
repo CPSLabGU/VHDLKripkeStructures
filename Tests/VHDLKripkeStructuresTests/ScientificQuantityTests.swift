@@ -54,10 +54,11 @@
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
 @testable import VHDLKripkeStructures
-import XCTest
+import Testing
 
 /// Test class for ``ScientificQuantity``.
-final class ScientificQuantityTests: XCTestCase {
+@Suite
+struct ScientificQuantityTests {
 
     /// The quantity to test.
     let quantity = ScientificQuantity(coefficient: 2, exponent: 3)
@@ -72,241 +73,256 @@ final class ScientificQuantityTests: XCTestCase {
     let quantity4 = ScientificQuantity(coefficient: 5, exponent: -3)
 
     /// Test that the stored properties are set correctly.
+    @Test
     func testInit() {
-        XCTAssertEqual(quantity.coefficient, 2)
-        XCTAssertEqual(quantity.exponent, 3)
+        #expect(quantity.coefficient == 2)
+        #expect(quantity.exponent == 3)
     }
 
     /// Test that the SI init works.
+    @Test
     func testSIInit() {
-        XCTAssertEqual(ScientificQuantity(SIValue: quantity), quantity)
+        #expect(ScientificQuantity(SIValue: quantity) == quantity)
     }
 
     /// Test that the quantity is calculated correctly.
+    @Test
     func testQuantity() {
-        XCTAssertEqual(quantity.quantity, 2000.0)
+        #expect(quantity.quantity == 2000.0)
     }
 
     /// Test that the magnitude is correct.
+    @Test
     func testMagnitude() {
-        XCTAssertEqual(quantity.magnitude, 2000.0)
+        #expect(quantity.magnitude == 2000.0)
     }
 
     /// Test integer literal creation.
+    @Test
     func testIntegerLiteral() {
-        XCTAssertEqual(500, ScientificQuantity(coefficient: 5, exponent: 2))
-        XCTAssertEqual(501, ScientificQuantity(coefficient: 501, exponent: 0))
-        XCTAssertEqual(560, ScientificQuantity(coefficient: 56, exponent: 1))
-        XCTAssertEqual(0, ScientificQuantity.zero)
+        #expect(500 == ScientificQuantity(coefficient: 5, exponent: 2))
+        #expect(501 == ScientificQuantity(coefficient: 501, exponent: 0))
+        #expect(560 == ScientificQuantity(coefficient: 56, exponent: 1))
+        #expect(0 == ScientificQuantity.zero)
     }
 
     /// Test exactly init.
+    @Test
     func testExactly() {
-        XCTAssertEqual(ScientificQuantity(exactly: 500), ScientificQuantity(coefficient: 5, exponent: 2))
-        XCTAssertEqual(ScientificQuantity(exactly: 501), ScientificQuantity(coefficient: 501, exponent: 0))
-        XCTAssertEqual(ScientificQuantity(exactly: 560), ScientificQuantity(coefficient: 56, exponent: 1))
-        XCTAssertEqual(ScientificQuantity(exactly: 0), ScientificQuantity.zero)
-        XCTAssertNil(ScientificQuantity(exactly: -1))
+        #expect(ScientificQuantity(exactly: 500) == ScientificQuantity(coefficient: 5, exponent: 2))
+        #expect(ScientificQuantity(exactly: 501) == ScientificQuantity(coefficient: 501, exponent: 0))
+        #expect(ScientificQuantity(exactly: 560) == ScientificQuantity(coefficient: 56, exponent: 1))
+        #expect(ScientificQuantity(exactly: 0) == ScientificQuantity.zero)
+        #expect(ScientificQuantity(exactly: -1) == nil)
     }
 
     /// Test the quantity init.
+    @Test
     func testQuantityInit() {
-        XCTAssertEqual(
-            ScientificQuantity(quantity: ScientificQuantity(coefficient: 20, exponent: 2)),
-            quantity
+        #expect(
+            ScientificQuantity(quantity: ScientificQuantity(coefficient: 20, exponent: 2)) == quantity
         )
-        XCTAssertEqual(
-            ScientificQuantity(quantity: ScientificQuantity(coefficient: 200, exponent: 1)),
-            quantity
+        #expect(
+            ScientificQuantity(quantity: ScientificQuantity(coefficient: 200, exponent: 1)) == quantity
         )
-        XCTAssertEqual(
-            ScientificQuantity(quantity: ScientificQuantity(coefficient: 2000, exponent: 0)),
-            quantity
+        #expect(
+            ScientificQuantity(quantity: ScientificQuantity(coefficient: 2000, exponent: 0)) == quantity
         )
-        XCTAssertEqual(ScientificQuantity(quantity: quantity), quantity)
+        #expect(ScientificQuantity(quantity: quantity) == quantity)
     }
 
     /// Test that the description is correct.
+    @Test
     func testDescription() {
-        XCTAssertEqual(quantity.description, "2×10³")
-        XCTAssertEqual(quantity2.description, "4×10⁵")
-        XCTAssertEqual(ScientificQuantity.zero.description, "0")
-        XCTAssertEqual(ScientificQuantity(coefficient: 1, exponent: -2).description, "1×10⁻²")
+        #expect(quantity.description == "2×10³")
+        #expect(quantity2.description == "4×10⁵")
+        #expect(ScientificQuantity.zero.description == "0")
+        #expect(ScientificQuantity(coefficient: 1, exponent: -2).description == "1×10⁻²")
     }
 
     /// Test that addition works correctly.
+    @Test
     func testAddition() {
-        XCTAssertEqual(quantity + quantity2, ScientificQuantity(coefficient: 402, exponent: 3))
-        XCTAssertEqual(quantity2 + quantity, ScientificQuantity(coefficient: 402, exponent: 3))
-        XCTAssertEqual(quantity2 + quantity2, ScientificQuantity(coefficient: 8, exponent: 5))
-        XCTAssertEqual(
-            quantity + ScientificQuantity(coefficient: 20, exponent: 2),
-            ScientificQuantity(coefficient: 4, exponent: 3)
+        #expect(quantity + quantity2 == ScientificQuantity(coefficient: 402, exponent: 3))
+        #expect(quantity2 + quantity == ScientificQuantity(coefficient: 402, exponent: 3))
+        #expect(quantity2 + quantity2 == ScientificQuantity(coefficient: 8, exponent: 5))
+        #expect(
+            quantity + ScientificQuantity(coefficient: 20, exponent: 2)
+                == ScientificQuantity(coefficient: 4, exponent: 3)
         )
-        XCTAssertEqual(quantity + quantity3, ScientificQuantity(coefficient: 200002, exponent: -2))
-        XCTAssertEqual(quantity3 + quantity, ScientificQuantity(coefficient: 200002, exponent: -2))
-        XCTAssertEqual(quantity4 + quantity3, ScientificQuantity(coefficient: 25, exponent: -3))
-        XCTAssertEqual(quantity3 + quantity4, ScientificQuantity(coefficient: 25, exponent: -3))
+        #expect(quantity + quantity3 == ScientificQuantity(coefficient: 200002, exponent: -2))
+        #expect(quantity3 + quantity == ScientificQuantity(coefficient: 200002, exponent: -2))
+        #expect(quantity4 + quantity3 == ScientificQuantity(coefficient: 25, exponent: -3))
+        #expect(quantity3 + quantity4 == ScientificQuantity(coefficient: 25, exponent: -3))
     }
 
     /// Test subtraction.
+    @Test
     func testSubtraction() {
-        XCTAssertEqual(quantity2 - quantity, ScientificQuantity(coefficient: 398, exponent: 3))
-        XCTAssertEqual(quantity - ScientificQuantity(coefficient: 20, exponent: 2), .zero)
-        XCTAssertEqual(quantity - quantity3, ScientificQuantity(coefficient: 199998, exponent: -2))
-        XCTAssertEqual(quantity3 - quantity4, ScientificQuantity(coefficient: 15, exponent: -3))
+        #expect(quantity2 - quantity == ScientificQuantity(coefficient: 398, exponent: 3))
+        #expect(quantity - ScientificQuantity(coefficient: 20, exponent: 2) == .zero)
+        #expect(quantity - quantity3 == ScientificQuantity(coefficient: 199998, exponent: -2))
+        #expect(quantity3 - quantity4 == ScientificQuantity(coefficient: 15, exponent: -3))
     }
 
     /// Test multiplication.
+    @Test
     func testMultiplication() {
-        XCTAssertEqual(quantity * quantity2, ScientificQuantity(coefficient: 8, exponent: 8))
-        XCTAssertEqual(quantity2 * quantity, ScientificQuantity(coefficient: 8, exponent: 8))
-        XCTAssertEqual(quantity2 * quantity2, ScientificQuantity(coefficient: 16, exponent: 10))
-        XCTAssertEqual(quantity * quantity3, ScientificQuantity(coefficient: 4, exponent: 1))
-        XCTAssertEqual(quantity3 * quantity, ScientificQuantity(coefficient: 4, exponent: 1))
-        XCTAssertEqual(quantity4 * quantity3, ScientificQuantity(coefficient: 1, exponent: -4))
-        XCTAssertEqual(quantity3 * quantity4, ScientificQuantity(coefficient: 1, exponent: -4))
-        XCTAssertEqual(quantity * .zero, .zero)
-        XCTAssertEqual(quantity3 * .zero, .zero)
-        XCTAssertEqual(quantity4 * .zero, .zero)
-        XCTAssertEqual(.zero * quantity, .zero)
-        XCTAssertEqual(.zero * quantity3, .zero)
-        XCTAssertEqual(.zero * quantity4, .zero)
+        #expect(quantity * quantity2 == ScientificQuantity(coefficient: 8, exponent: 8))
+        #expect(quantity2 * quantity == ScientificQuantity(coefficient: 8, exponent: 8))
+        #expect(quantity2 * quantity2 == ScientificQuantity(coefficient: 16, exponent: 10))
+        #expect(quantity * quantity3 == ScientificQuantity(coefficient: 4, exponent: 1))
+        #expect(quantity3 * quantity == ScientificQuantity(coefficient: 4, exponent: 1))
+        #expect(quantity4 * quantity3 == ScientificQuantity(coefficient: 1, exponent: -4))
+        #expect(quantity3 * quantity4 == ScientificQuantity(coefficient: 1, exponent: -4))
+        #expect(quantity * .zero == .zero)
+        #expect(quantity3 * .zero == .zero)
+        #expect(quantity4 * .zero == .zero)
+        #expect(.zero * quantity == .zero)
+        #expect(.zero * quantity3 == .zero)
+        #expect(.zero * quantity4 == .zero)
     }
 
     /// Test `*=`.
+    @Test
     func testMutatingMultiply() {
         var quantity = quantity
         quantity *= quantity2
-        XCTAssertEqual(quantity, ScientificQuantity(coefficient: 8, exponent: 8))
+        #expect(quantity == ScientificQuantity(coefficient: 8, exponent: 8))
     }
 
     /// Test uint trailing zeros.
+    @Test
     func testUIntTrailingZeros() {
-        XCTAssertEqual(UInt(500).trailingZeros, 2)
-        XCTAssertEqual(UInt(501).trailingZeros, 0)
-        XCTAssertEqual(UInt(560).trailingZeros, 1)
-        XCTAssertEqual(UInt(0).trailingZeros, 0)
+        #expect(UInt(500).trailingZeros == 2)
+        #expect(UInt(501).trailingZeros == 0)
+        #expect(UInt(560).trailingZeros == 1)
+        #expect(UInt(0).trailingZeros == 0)
     }
 
     /// Test float creation.
+    @Test
     func testFloatCreation() {
-        XCTAssertEqual(2000.0, quantity)
-        XCTAssertEqual(400000.0, quantity2)
-        XCTAssertEqual(0.02, quantity3)
-        XCTAssertEqual(0.005, quantity4)
-        XCTAssertEqual(0.0, ScientificQuantity.zero)
+        #expect(2000.0 == quantity)
+        #expect(400000.0 == quantity2)
+        #expect(0.02 == quantity3)
+        #expect(0.005 == quantity4)
+        #expect(0.0 == ScientificQuantity.zero)
         let value = Double(2000.0)
-        XCTAssertEqual(ScientificQuantity(floatLiteral: value), quantity)
+        #expect(ScientificQuantity(floatLiteral: value) == quantity)
     }
 
     /// Test `siValue` computes the correct value.
+    @Test
     func testSIValuePositive() {
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 0, exponent: 5).siValue,
-            UnnormalisedScientificQuantity(coefficient: 0, exponent: 0)
+        #expect(
+            ScientificQuantity(coefficient: 0, exponent: 5).siValue
+                == UnnormalisedScientificQuantity(coefficient: 0, exponent: 0)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: 0).siValue,
-            UnnormalisedScientificQuantity(coefficient: 2, exponent: 0)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: 0).siValue
+                == UnnormalisedScientificQuantity(coefficient: 2, exponent: 0)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: 1).siValue,
-            UnnormalisedScientificQuantity(coefficient: 20, exponent: 0)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: 1).siValue
+                == UnnormalisedScientificQuantity(coefficient: 20, exponent: 0)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: 2).siValue,
-            UnnormalisedScientificQuantity(coefficient: 200, exponent: 0)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: 2).siValue
+                == UnnormalisedScientificQuantity(coefficient: 200, exponent: 0)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: 3).siValue,
-            UnnormalisedScientificQuantity(coefficient: 2, exponent: 3)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: 3).siValue
+                == UnnormalisedScientificQuantity(coefficient: 2, exponent: 3)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: 4).siValue,
-            UnnormalisedScientificQuantity(coefficient: 20, exponent: 3)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: 4).siValue
+                == UnnormalisedScientificQuantity(coefficient: 20, exponent: 3)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: 5).siValue,
-            UnnormalisedScientificQuantity(coefficient: 200, exponent: 3)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: 5).siValue
+                == UnnormalisedScientificQuantity(coefficient: 200, exponent: 3)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: 6).siValue,
-            UnnormalisedScientificQuantity(coefficient: 2, exponent: 6)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: 6).siValue
+                == UnnormalisedScientificQuantity(coefficient: 2, exponent: 6)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: 7).siValue,
-            UnnormalisedScientificQuantity(coefficient: 20, exponent: 6)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: 7).siValue
+                == UnnormalisedScientificQuantity(coefficient: 20, exponent: 6)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: 0).siValue,
-            UnnormalisedScientificQuantity(coefficient: 2, exponent: 0)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: 0).siValue
+                == UnnormalisedScientificQuantity(coefficient: 2, exponent: 0)
         )
     }
 
     /// Test negative exponents of `siValue` property.
+    @Test
     func testSIValueNegative() {
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 0, exponent: -5).siValue,
-            UnnormalisedScientificQuantity(coefficient: 0, exponent: 0)
+        #expect(
+            ScientificQuantity(coefficient: 0, exponent: -5).siValue
+                == UnnormalisedScientificQuantity(coefficient: 0, exponent: 0)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: -1).siValue,
-            UnnormalisedScientificQuantity(coefficient: 200, exponent: -3)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: -1).siValue
+                == UnnormalisedScientificQuantity(coefficient: 200, exponent: -3)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: -2).siValue,
-            UnnormalisedScientificQuantity(coefficient: 20, exponent: -3)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: -2).siValue
+                == UnnormalisedScientificQuantity(coefficient: 20, exponent: -3)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: -3).siValue,
-            UnnormalisedScientificQuantity(coefficient: 2, exponent: -3)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: -3).siValue
+                == UnnormalisedScientificQuantity(coefficient: 2, exponent: -3)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: -4).siValue,
-            UnnormalisedScientificQuantity(coefficient: 200, exponent: -6)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: -4).siValue
+                == UnnormalisedScientificQuantity(coefficient: 200, exponent: -6)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: -5).siValue,
-            UnnormalisedScientificQuantity(coefficient: 20, exponent: -6)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: -5).siValue
+                == UnnormalisedScientificQuantity(coefficient: 20, exponent: -6)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: -6).siValue,
-            UnnormalisedScientificQuantity(coefficient: 2, exponent: -6)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: -6).siValue
+                == UnnormalisedScientificQuantity(coefficient: 2, exponent: -6)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: -7).siValue,
-            UnnormalisedScientificQuantity(coefficient: 200, exponent: -9)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: -7).siValue
+                == UnnormalisedScientificQuantity(coefficient: 200, exponent: -9)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: -8).siValue,
-            UnnormalisedScientificQuantity(coefficient: 20, exponent: -9)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: -8).siValue
+                == UnnormalisedScientificQuantity(coefficient: 20, exponent: -9)
         )
-        XCTAssertEqual(
-            ScientificQuantity(coefficient: 2, exponent: -9).siValue,
-            UnnormalisedScientificQuantity(coefficient: 2, exponent: -9)
+        #expect(
+            ScientificQuantity(coefficient: 2, exponent: -9).siValue
+                == UnnormalisedScientificQuantity(coefficient: 2, exponent: -9)
         )
     }
 
     /// Test `Comparable` conformance.
+    @Test
     func testComparable() {
-        XCTAssertTrue(
+        #expect(
             ScientificQuantity(coefficient: 1, exponent: 2) < ScientificQuantity(coefficient: 2, exponent: 2)
         )
-        XCTAssertFalse(
-            // swiftlint:disable:next identical_operands
-            ScientificQuantity(coefficient: 1, exponent: 2) < ScientificQuantity(coefficient: 1, exponent: 2)
+        #expect(
+            !(ScientificQuantity(coefficient: 1, exponent: 2)
+                < ScientificQuantity(coefficient: 1, exponent: 2))
         )
-        XCTAssertTrue(
+        #expect(
             ScientificQuantity(coefficient: 1, exponent: 2) < ScientificQuantity(coefficient: 1, exponent: 3)
         )
-        XCTAssertTrue(
+        #expect(
             ScientificQuantity(coefficient: 10, exponent: 2) < ScientificQuantity(coefficient: 2, exponent: 3)
         )
-        XCTAssertFalse(
-            ScientificQuantity(coefficient: 20, exponent: 2) < ScientificQuantity(coefficient: 1, exponent: 3)
+        #expect(
+            !(ScientificQuantity(coefficient: 20, exponent: 2)
+                < ScientificQuantity(coefficient: 1, exponent: 3))
         )
-        XCTAssertTrue(
+        #expect(
             ScientificQuantity(coefficient: 0, exponent: 2) < ScientificQuantity(coefficient: 2, exponent: -3)
         )
     }
