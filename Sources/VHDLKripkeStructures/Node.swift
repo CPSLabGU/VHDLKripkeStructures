@@ -59,7 +59,7 @@ import VHDLParsing
 /// A node within a Kripke Structure.
 ///
 /// A node represents a state within a kripke structure.
-public final class Node: Equatable, Hashable, Codable {
+public final class Node: Equatable, Hashable, Codable, Sendable {
 
     /// The type of the node.
     public let type: NodeType
@@ -116,6 +116,29 @@ public final class Node: Equatable, Hashable, Codable {
         hasher.combine(executeOnEntry)
         hasher.combine(nextState)
         hasher.combine(properties)
+    }
+
+}
+
+/// Add description for Node.
+extension Node: CustomStringConvertible {
+
+    /// A textual representation of this instance.
+    public var description: String {
+        """
+        Node(
+            currentState: \(self.currentState.rawValue),
+            type: \(self.type),
+            executeOnEntry: \(self.executeOnEntry),
+            nextState: \(self.nextState.rawValue),
+            properties:
+        \(
+            self.properties.sorted { $0.key < $1.key }
+                .map { "\($0.rawValue): \($1)".indent(amount: 2) }
+                .joined(separator: ",\n")
+        )
+        )
+        """
     }
 
 }

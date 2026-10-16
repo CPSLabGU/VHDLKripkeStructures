@@ -54,27 +54,29 @@
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
 @testable import VHDLKripkeStructures
-import XCTest
+import Testing
 
 /// Test class for `String` extensions.
-final class StringTests: XCTestCase {
+@Suite
+struct StringTests {
 
     /// Test that the superscript property works correctly.
+    @Test
     func testSuperscript() {
-        XCTAssertEqual("+".superscript, "⁺")
-        XCTAssertEqual("-".superscript, "⁻")
-        XCTAssertEqual("0".superscript, "⁰")
-        XCTAssertEqual("1".superscript, "¹")
-        XCTAssertEqual("2".superscript, "²")
-        XCTAssertEqual("3".superscript, "³")
-        XCTAssertEqual("4".superscript, "⁴")
-        XCTAssertEqual("5".superscript, "⁵")
-        XCTAssertEqual("6".superscript, "⁶")
-        XCTAssertEqual("7".superscript, "⁷")
-        XCTAssertEqual("8".superscript, "⁸")
-        XCTAssertEqual("9".superscript, "⁹")
-        XCTAssertEqual("A".superscript, "A")
-        XCTAssertEqual("+-0123456789A".superscript, "⁺⁻⁰¹²³⁴⁵⁶⁷⁸⁹A")
+        #expect("+".superscript == "⁺")
+        #expect("-".superscript == "⁻")
+        #expect("0".superscript == "⁰")
+        #expect("1".superscript == "¹")
+        #expect("2".superscript == "²")
+        #expect("3".superscript == "³")
+        #expect("4".superscript == "⁴")
+        #expect("5".superscript == "⁵")
+        #expect("6".superscript == "⁶")
+        #expect("7".superscript == "⁷")
+        #expect("8".superscript == "⁸")
+        #expect("9".superscript == "⁹")
+        #expect("A".superscript == "A")
+        #expect("+-0123456789A".superscript == "⁺⁻⁰¹²³⁴⁵⁶⁷⁸⁹A")
     }
 
 }

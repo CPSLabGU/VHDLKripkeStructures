@@ -55,10 +55,11 @@
 
 @testable import VHDLKripkeStructures
 import VHDLParsing
-import XCTest
+import Testing
 
 /// Test class for ``KripkeStructure``.
-final class KripkeStructureTests: XCTestCase {
+@Suite
+struct KripkeStructureTests {
 
     /// Some test properties.
     let properties1: [VariableName: SignalLiteral] = [
@@ -128,27 +129,31 @@ final class KripkeStructureTests: XCTestCase {
     }
 
     /// Test that the init sets the stored properties correctly.
+    @Test
     func testInit() {
-        XCTAssertEqual(structure.nodes, [node1, node2])
-        XCTAssertEqual(structure.edges, edges)
-        XCTAssertEqual(structure.initialStates, [node1])
+        #expect(structure.nodes == [node1, node2])
+        #expect(structure.edges == edges)
+        #expect(structure.initialStates == [node1])
     }
 
     /// Test equality conformance.
+    @Test
     func testEquality() {
         let otherStructure = KripkeStructure(nodes: [node1, node2], edges: edges, initialStates: [node1])
-        XCTAssertEqual(structure, otherStructure)
+        #expect(structure == otherStructure)
     }
 
     /// Test hashable conformance.
+    @Test
     func testHashable() {
         let otherStructure = KripkeStructure(nodes: [node1, node2], edges: edges, initialStates: [node1])
-        XCTAssertEqual(structure.hashValue, otherStructure.hashValue)
+        #expect(structure.hashValue == otherStructure.hashValue)
         let structures: Set<KripkeStructure> = [structure]
-        XCTAssertTrue(structures.contains(otherStructure))
+        #expect(structures.contains(otherStructure))
     }
 
     /// Test the graphviz representation.
+    @Test
     func testGraphvizRepresentation() {
         // swiftlint:disable line_length
         let expected = """
@@ -162,7 +167,7 @@ final class KripkeStructureTests: XCTestCase {
             }
             """
         // swiftlint:enable line_length
-        XCTAssertEqual(structure.graphviz, expected, "\(structure.graphviz.difference(from: expected))")
+        #expect(structure.graphviz == expected)
     }
 
 }

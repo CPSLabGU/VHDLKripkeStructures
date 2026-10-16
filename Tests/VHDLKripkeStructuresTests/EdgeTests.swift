@@ -55,10 +55,11 @@
 
 @testable import VHDLKripkeStructures
 import VHDLParsing
-import XCTest
+import Testing
 
 /// Test class for ``Edge``.
-final class EdgeTests: XCTestCase {
+@Suite
+struct EdgeTests {
 
     /// The target node of the test edge.
     let target = Node(
@@ -81,23 +82,26 @@ final class EdgeTests: XCTestCase {
     }
 
     /// Test that the init sets the stored properties correctly.
+    @Test
     func testInit() {
-        XCTAssertEqual(edge.target, target)
-        XCTAssertEqual(edge.cost, cost)
+        #expect(edge.target == target)
+        #expect(edge.cost == cost)
     }
 
     /// Test equality conformance.
+    @Test
     func testEquality() {
         let edge1 = edge
         let edge2 = edge
-        XCTAssertNotIdentical(edge1, edge2)
-        XCTAssertEqual(edge1, edge2)
+        #expect(edge1 !== edge2)
+        #expect(edge1 == edge2)
     }
 
     /// Test `Hashable` conformance.
+    @Test
     func testHashable() {
         let edges: Set<Edge> = [edge]
-        XCTAssertTrue(edges.contains(edge))
+        #expect(edges.contains(edge))
     }
 
 }
