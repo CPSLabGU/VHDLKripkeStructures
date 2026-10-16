@@ -58,7 +58,7 @@
 /// A Kripke structure represents a complete graph of possible states an `LLFSM` can be in. Each `Node`
 /// represents a collection of all variables and their respective values at different points in time during
 /// the `LLFSM` computation. Each `Edge` represents a transition between two `Node`s.
-public class KripkeStructure: Equatable, Hashable, Codable {
+public final class KripkeStructure: Equatable, Hashable, Codable, Sendable {
 
     /// The nodes in the kripke structure.
     public let nodes: [Node]
