@@ -57,7 +57,7 @@
 ///
 /// An edge is a pathway between a `source` node and a `target` node. Each `Edge` has an associated cost in
 /// terms of `time` and `energy`.
-public final class Edge: Equatable, Hashable, Codable {
+public final class Edge: Equatable, Hashable, Codable, Sendable {
 
     /// The target node of the edge.
     public let target: Node
