@@ -53,8 +53,8 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-@testable import VHDLKripkeStructures
 import Testing
+@testable import VHDLKripkeStructures
 
 /// Test class for ``Cost``.
 @Suite

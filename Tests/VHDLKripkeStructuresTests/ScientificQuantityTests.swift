@@ -53,8 +53,8 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
-@testable import VHDLKripkeStructures
 import Testing
+@testable import VHDLKripkeStructures
 
 /// Test class for ``ScientificQuantity``.
 @Suite
@@ -309,6 +309,7 @@ struct ScientificQuantityTests {
             ScientificQuantity(coefficient: 1, exponent: 2) < ScientificQuantity(coefficient: 2, exponent: 2)
         )
         #expect(
+            // swiftlint:disable:next identical_operands
             !(ScientificQuantity(coefficient: 1, exponent: 2)
                 < ScientificQuantity(coefficient: 1, exponent: 2))
         )

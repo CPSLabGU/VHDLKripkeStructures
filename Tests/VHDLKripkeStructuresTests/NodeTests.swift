@@ -53,9 +53,9 @@
 // or write to the Free Software Foundation, Inc., 51 Franklin Street,
 // Fifth Floor, Boston, MA  02110-1301, USA.
 
+import Testing
 @testable import VHDLKripkeStructures
 import VHDLParsing
-import Testing
 
 /// Test class for ``Node``.
 @Suite
@@ -139,6 +139,7 @@ struct NodeTests {
         #expect(node2.graphviz == expected2)
     }
 
+    /// Test description strings are generated correctly.
     @Test
     func testDescription() {
         let expected = """
