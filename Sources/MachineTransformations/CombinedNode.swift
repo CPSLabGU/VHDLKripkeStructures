@@ -2,7 +2,7 @@ import VHDLKripkeStructures
 import VHDLParsing
 
 /// A collection of nodes that need to be processed when creating an Arrangements Kripke structure.
-struct CombinedNode: Hashable, Codable, Sendable, Equatable {
+final class CombinedNode: Hashable, Codable, Sendable, Equatable {
     /// The nodes sharing the same instance of execution.
     let nodes: [Node]
 
@@ -27,6 +27,22 @@ struct CombinedNode: Hashable, Codable, Sendable, Equatable {
         }
         self.nodes = nodes
         self.instanceNames = instanceNames
+    }
+
+    /// Conversion init.
+    convenience init(scopedNodes: [ScopedNode]) {
+        self.init(nodes: scopedNodes.map { $0.node }, instanceNames: scopedNodes.map { $0.instanceName })
+    }
+
+    /// Equality conformance.
+    static func == (lhs: CombinedNode, rhs: CombinedNode) -> Bool {
+        lhs.nodes == rhs.nodes && lhs.instanceNames == rhs.instanceNames
+    }
+
+    /// Hashing function.
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(nodes)
+        hasher.combine(instanceNames)
     }
 
     /// Derive the scoped properties for the combined node.
