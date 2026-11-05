@@ -1,4 +1,5 @@
 import VHDLKripkeStructures
+import VHDLMachines
 import VHDLParsing
 
 /// A node scoped to an instance.
@@ -28,14 +29,13 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable {
 
     /// Checks whether another node as the same values for their external variables if they exist.
     func hasSameExternals(
-        other: ScopedNode,
-        externalMappings: [VariableName: [VariableName: VariableName]],
-        reverseMappings: [VariableName: [VariableName: VariableName]]
+        as other: ScopedNode,
+        in arrangement: Arrangement
     )
         -> Bool
     {
-        guard let reverseMapping = reverseMappings[self.instanceName],
-            let otherMapping = externalMappings[other.instanceName]
+        guard let reverseMapping = arrangement.reverseExternalMappings[self.instanceName],
+            let otherMapping = arrangement.externalMappings[other.instanceName]
         else {
             return true
         }
