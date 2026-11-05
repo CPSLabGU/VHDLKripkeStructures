@@ -12,13 +12,15 @@ let package = Package(
         .library(
             name: "VHDLKripkeStructures",
             targets: ["VHDLKripkeStructures"]
-        )
+        ),
+        .library(name: "MachineTransformations", targets: ["MachineTransformations"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.3.0"),
         .package(url: "https://github.com/mipalgu/VHDLParsing", from: "2.4.1"),
+        .package(url: "https://github.com/mipalgu/VHDLMachines.git", from: "4.1.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -31,10 +33,19 @@ let package = Package(
                 .product(name: "StringHelpers", package: "VHDLParsing"),
             ]
         ),
+        .target(
+            name: "MachineTransformations",
+            dependencies: [
+                .product(name: "VHDLParsing", package: "VHDLParsing"),
+                .product(name: "VHDLMachines", package: "VHDLMachines"),
+                .target(name: "VHDLKripkeStructures"),
+            ]
+        ),
         .testTarget(
             name: "VHDLKripkeStructuresTests",
             dependencies: [
-                .target(name: "VHDLKripkeStructures"), .product(name: "VHDLParsing", package: "VHDLParsing"),
+                .target(name: "VHDLKripkeStructures"),
+                .product(name: "VHDLParsing", package: "VHDLParsing"),
             ]
         ),
     ]
