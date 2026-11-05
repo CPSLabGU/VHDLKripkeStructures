@@ -5,8 +5,18 @@ extension Array where Element == CombinedNode {
 
     // swiftlint:disable function_body_length
 
+    /// Combined nodes from multiple kripke structures in arrangement.
+    init(nodes: [[ScopedNode]], arrangement: Arrangement) {
+        self.init(
+            accumulator: [],
+            nodeIndexes: [Int](repeating: 0, count: nodes.count),
+            nodes: nodes,
+            arrangement: arrangement
+        )
+    }
+
     /// Attempt to combine kripke structures.
-    init(
+    private init(
         accumulator: [CombinedNode],
         nodeIndexes: [Int],
         nodes: [[ScopedNode]],

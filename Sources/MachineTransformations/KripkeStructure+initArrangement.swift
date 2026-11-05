@@ -14,25 +14,17 @@ extension KripkeStructure {
     public convenience init(arrangement: Arrangement, kripkeStructures: [MachineInstance: KripkeStructure])
         throws
     {
-        let initialNodes = Dictionary(
-            uniqueKeysWithValues: arrangement.machines.keys.map { instance in
-                guard let structure = kripkeStructures[instance] else {
-                    fatalError("Kripke structure not found for machine instance \(instance)")
-                }
-                return (
-                    instance.name,
-                    structure.initialStates.map { ScopedNode(instanceName: instance.name, node: $0) }
-                )
+        let scopedNodes = arrangement.machines.keys.map { instance in
+            guard let structure = kripkeStructures[instance] else {
+                fatalError("Kripke structure not found for machine instance \(instance)")
             }
-        )
-        let scopedNodes = Array(initialNodes.values)
-        var jobs = [CombinedNode](
-            accumulator: [],
-            nodeIndexes: [Int](repeating: 0, count: scopedNodes.count),
-            nodes: scopedNodes,
-            arrangement: arrangement
-        )
+            return structure.initialStates.map { ScopedNode(instanceName: instance.name, node: $0) }
+        }
+        var jobs = [CombinedNode](nodes: scopedNodes, arrangement: arrangement)
         var processedJobs: Set<CombinedNode> = []
+        let initialNodes = Set(jobs)
+        var nodes: Set<CombinedNode> = initialNodes
+        var edges: [CombinedNode: [CombinedNode]] = [:]
         while let job = jobs.popLast() {
             guard !processedJobs.contains(job) else {
                 continue

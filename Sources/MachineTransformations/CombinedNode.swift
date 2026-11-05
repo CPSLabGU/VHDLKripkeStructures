@@ -9,6 +9,14 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable {
     /// The name of the instance associated with these nodes.
     let instanceNames: [VariableName]
 
+    /// The type of the combined node.
+    let type: NodeType
+
+    /// Whether all nodes in the combined node execute onEntry.
+    var executeOnEntry: Bool {
+        nodes.allSatisfy(\.executeOnEntry)
+    }
+
     /// The name of the combined node.
     var name: VariableName {
         let rawName = zip(instanceNames, nodes)
@@ -20,13 +28,28 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable {
         return VariableName(rawValue: rawName)!
     }
 
+    /// The name of the next state.
+    var nextState: VariableName {
+        let nextStates = zip(instanceNames, nodes.map(\.nextState))
+            .map { "\($0.0.rawValue)_\($0.1.rawValue)" }
+            .joined(separator: "__")
+        // swiftlint:disable:next force_unwrapping
+        return VariableName(rawValue: nextStates)!
+    }
+
     /// Initialise the combined node.
     init(nodes: [Node], instanceNames: [VariableName]) {
-        guard !nodes.isEmpty, nodes.count == instanceNames.count else {
-            fatalError("The number of nodes must match the number of instance names.")
+        guard !nodes.isEmpty, nodes.count == instanceNames.count,
+            nodes.allSatisfy({ $0.type == nodes[0].type })
+        else {
+            fatalError(
+                "The nodes are invalid. The number of nodes must match the number of instance names "
+                    + "and must all have the same type."
+            )
         }
         self.nodes = nodes
         self.instanceNames = instanceNames
+        self.type = nodes[0].type
     }
 
     /// Conversion init.
