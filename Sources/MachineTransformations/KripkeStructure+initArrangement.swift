@@ -25,15 +25,13 @@ extension KripkeStructure {
                 )
             }
         )
-        let externalMappings = arrangement.externalMappings
-        let reverseMappings = arrangement.reverseExternalMappings
         let scopedNodes = Array(initialNodes.values)
         var jobs = [CombinedNode](
             accumulator: [],
             nodeIndexes: [Int](repeating: 0, count: scopedNodes.count),
             nodes: scopedNodes,
-            externalMappings: externalMappings,
-            reverseMappings: reverseMappings
+            externalMappings: arrangement.externalMappings,
+            reverseMappings: arrangement.reverseExternalMappings
         )
         var processedJobs: Set<CombinedNode> = []
         while let job = jobs.popLast() {
