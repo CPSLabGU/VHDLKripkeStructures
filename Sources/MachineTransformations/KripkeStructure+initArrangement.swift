@@ -22,14 +22,22 @@ extension KripkeStructure {
         }
         var jobs = [CombinedNode](nodes: scopedNodes, arrangement: arrangement)
         var processedJobs: Set<CombinedNode> = []
-        let initialNodes = Set(jobs)
-        var nodes: Set<CombinedNode> = initialNodes
-        var edges: [CombinedNode: [CombinedNode]] = [:]
+        let initialNodes = Set(jobs.map { Node(node: $0) })
+        var nodes = initialNodes
+        var edges: [Node: [Edge]] = [:]
         while let job = jobs.popLast() {
             guard !processedJobs.contains(job) else {
                 continue
             }
             processedJobs.insert(job)
+            nodes.insert(Node(node: job))
         }
+        print("\(nodes.count) Nodes found!")
+        print("\(edges.values.reduce(0) { $0 + $1.count }) Edges found!")
+        self.init(
+            nodes: Array(nodes),
+            edges: edges,
+            initialStates: initialNodes
+        )
     }
 }

@@ -1,4 +1,5 @@
 import VHDLKripkeStructures
+import VHDLMachines
 import VHDLParsing
 
 /// A collection of nodes that need to be processed when creating an Arrangements Kripke structure.
@@ -6,8 +7,13 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable {
     /// The nodes sharing the same instance of execution.
     let nodes: [Node]
 
+    /// The machine instances associated with these nodes.
+    let instances: [MachineInstance]
+
     /// The name of the instance associated with these nodes.
-    let instanceNames: [VariableName]
+    var instanceNames: [VariableName] {
+        self.instances.map(\.name)
+    }
 
     /// The type of the combined node.
     let type: NodeType
@@ -38,8 +44,8 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable {
     }
 
     /// Initialise the combined node.
-    init(nodes: [Node], instanceNames: [VariableName]) {
-        guard !nodes.isEmpty, nodes.count == instanceNames.count,
+    init(nodes: [Node], instances: [MachineInstance]) {
+        guard !nodes.isEmpty, nodes.count == instances.count,
             nodes.allSatisfy({ $0.type == nodes[0].type })
         else {
             fatalError(
@@ -48,24 +54,24 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable {
             )
         }
         self.nodes = nodes
-        self.instanceNames = instanceNames
+        self.instances = instances
         self.type = nodes[0].type
     }
 
     /// Conversion init.
     convenience init(scopedNodes: [ScopedNode]) {
-        self.init(nodes: scopedNodes.map { $0.node }, instanceNames: scopedNodes.map { $0.instanceName })
+        self.init(nodes: scopedNodes.map { $0.node }, instances: scopedNodes.map { $0.instance })
     }
 
     /// Equality conformance.
     static func == (lhs: CombinedNode, rhs: CombinedNode) -> Bool {
-        lhs.nodes == rhs.nodes && lhs.instanceNames == rhs.instanceNames
+        lhs.nodes == rhs.nodes && lhs.instances == rhs.instances
     }
 
     /// Hashing function.
     func hash(into hasher: inout Hasher) {
         hasher.combine(nodes)
-        hasher.combine(instanceNames)
+        hasher.combine(instances)
     }
 
     /// Derive the scoped properties for the combined node.
@@ -79,6 +85,10 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable {
                 let newName = VariableName(rawValue: "\(instanceName.rawValue)_\(propertyName.rawValue)")!
                 properties[newName] = propertyValue
             }
+            // swiftlint:disable:next force_unwrapping
+            properties[VariableName(rawValue: "\(instanceName.rawValue)_executeOnEntry")!] = .boolean(
+                value: node.executeOnEntry
+            )
         }
         return properties
     }

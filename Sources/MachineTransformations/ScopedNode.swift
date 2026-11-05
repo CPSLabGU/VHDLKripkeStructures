@@ -5,25 +5,30 @@ import VHDLParsing
 /// A node scoped to an instance.
 final class ScopedNode: Hashable, Equatable, Codable, Sendable {
     /// The name of the instance the node belongs too.
-    let instanceName: VariableName
+    let instance: MachineInstance
 
     /// The node itself.
     let node: Node
 
+    /// The name of the instance.
+    var instanceName: VariableName {
+        self.instance.name
+    }
+
     /// Property init.
-    init(instanceName: VariableName, node: Node) {
-        self.instanceName = instanceName
+    init(instance: MachineInstance, node: Node) {
+        self.instance = instance
         self.node = node
     }
 
     /// Equality conformance.
     static func == (lhs: ScopedNode, rhs: ScopedNode) -> Bool {
-        lhs.instanceName == rhs.instanceName && lhs.node == rhs.node
+        lhs.instance == rhs.instance && lhs.node == rhs.node
     }
 
     /// Hashing function.
     func hash(into hasher: inout Hasher) {
-        hasher.combine(instanceName)
+        hasher.combine(instance)
         hasher.combine(node)
     }
 
