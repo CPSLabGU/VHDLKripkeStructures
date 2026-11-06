@@ -82,4 +82,60 @@ struct ScopedNodeTests {
         #expect(!nodeSet.contains(differentInstanceNode))
     }
 
+    /// Test hasSameExternals
+    @Test("hasSameExternals returns true for node without external mappings.")
+    func testHasSameExternalsWithoutVars() {
+        let nodeWithoutExternals = ScopedNode(
+            instance: MachineInstance(name: .x, type: .x),
+            node: Node(
+                type: .read,
+                currentState: .initial,
+                executeOnEntry: true,
+                nextState: .ping,
+                properties: [:]
+            )
+        )
+        #expect(node.hasSameExternals(as: nodeWithoutExternals, in: .testArrangement))
+    }
+
+    /// Shared global variables with different values.
+    @Test("hasSameExternals returns false for node with shared global variables but different values.")
+    func testSharedGlobalsWithDifferentValues() {
+        #expect(
+            !node.hasSameExternals(
+                as: ScopedNode(
+                    instance: .timer(),
+                    node: Node(
+                        type: .read,
+                        currentState: .countTime,
+                        executeOnEntry: false,
+                        nextState: .countTime,
+                        properties: [.pulse: .bit(value: .low), .counter: .integer(value: 27)]
+                    )
+                ),
+                in: .testArrangement
+            )
+        )
+    }
+
+    /// Shared global variables with the same values.
+    @Test("hasSameExternals returns true for node with shared global variables and the same values.")
+    func testSharedGlobalsWithSameValues() {
+        #expect(
+            node.hasSameExternals(
+                as: ScopedNode(
+                    instance: .timer(),
+                    node: Node(
+                        type: .read,
+                        currentState: .countTime,
+                        executeOnEntry: false,
+                        nextState: .countTime,
+                        properties: [.pulse: .bit(value: .high), .counter: .integer(value: 0)]
+                    )
+                ),
+                in: .testArrangement
+            )
+        )
+    }
+
 }
