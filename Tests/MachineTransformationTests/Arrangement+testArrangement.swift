@@ -6,7 +6,7 @@ extension Arrangement {
     /// Add test arrangement.
     static let testArrangement = Arrangement(
         mappings: [
-            MachineInstance(name: .m0, type: .pingPong): MachineMapping(
+            .pingPong(): MachineMapping(
                 machine: .pingPong,
                 with: [VariableMapping(source: .extY, destination: .y)]
                 // swiftlint:disable:next force_unwrapping
@@ -22,4 +22,12 @@ extension Arrangement {
         clocks: [Clock(name: .clk, frequency: 50, unit: .MHz)]
         // swiftlint:disable:next force_unwrapping
     )!
+}
+
+/// Add ping pong machine instance.
+extension MachineInstance {
+    /// PingPong instance.
+    static func pingPong(name: VariableName = .m0) -> MachineInstance {
+        MachineInstance(name: name, type: .pingPong)
+    }
 }
