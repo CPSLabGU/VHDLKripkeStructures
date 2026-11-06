@@ -8,9 +8,19 @@ extension Arrangement {
         mappings: [
             .pingPong(): MachineMapping(
                 machine: .pingPong,
-                with: [VariableMapping(source: .extY, destination: .y)]
+                with: [
+                    VariableMapping(source: .extY, destination: .y),
+                    VariableMapping(source: .x, destination: .timerPulse),
+                ]
                 // swiftlint:disable:next force_unwrapping
-            )!
+            )!,
+            .timer(): MachineMapping(
+                machine: .timer,
+                with: [
+                    VariableMapping(source: .x, destination: .pulse)
+                ]
+                // swiftlint:disable:next force_unwrapping
+            )!,
         ],
         externalSignals: [
             PortSignal(type: .stdLogic, name: .extX, mode: .input),
@@ -19,7 +29,7 @@ extension Arrangement {
         signals: [
             LocalSignal(type: .stdLogic, name: .x)
         ],
-        clocks: [Clock(name: .clk, frequency: 50, unit: .MHz)]
+        clocks: [.clk50]
         // swiftlint:disable:next force_unwrapping
     )!
 }
@@ -29,5 +39,10 @@ extension MachineInstance {
     /// PingPong instance.
     static func pingPong(name: VariableName = .m0) -> MachineInstance {
         MachineInstance(name: name, type: .pingPong)
+    }
+
+    /// Timer instance.
+    static func timer(name: VariableName = .m1) -> MachineInstance {
+        MachineInstance(name: name, type: .timer)
     }
 }

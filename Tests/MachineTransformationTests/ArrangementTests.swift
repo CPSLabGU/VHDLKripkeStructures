@@ -19,21 +19,33 @@ struct ArrangementTests {
     @Test("External mappings contains correct mappings for instances.")
     func externalMappingsAreCorrect() throws {
         let actual = Arrangement.testArrangement.externalMappings
-        #expect(actual.count == 1)
+        #expect(actual.count == 2)
         let mapping = try #require(actual[.m0])
-        #expect(mapping.count == 1)
+        #expect(mapping.count == 2)
         let yMapping = try #require(mapping[.extY])
         #expect(yMapping == .y)
+        let pulseMapping = try #require(mapping[.x])
+        #expect(pulseMapping == .timerPulse)
+        let timerMapping = try #require(actual[.m1])
+        #expect(timerMapping.count == 1)
+        let xMapping = try #require(timerMapping[.x])
+        #expect(xMapping == .pulse)
     }
 
     /// Test reverse mappings.
     @Test("Reverse mappings contains correct mappings for instances.")
     func reverseMappingsAreCorrect() throws {
         let actual = Arrangement.testArrangement.reverseExternalMappings
-        #expect(actual.count == 1)
+        #expect(actual.count == 2)
         let mapping = try #require(actual[.m0])
-        #expect(mapping.count == 1)
+        #expect(mapping.count == 2)
         let yMapping = try #require(mapping[.y])
         #expect(yMapping == .extY)
+        let pulseMapping = try #require(mapping[.timerPulse])
+        #expect(pulseMapping == .x)
+        let timerMapping = try #require(actual[.m1])
+        #expect(timerMapping.count == 1)
+        let xMapping = try #require(timerMapping[.pulse])
+        #expect(xMapping == .x)
     }
 }
