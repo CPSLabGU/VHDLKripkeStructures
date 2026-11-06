@@ -48,5 +48,14 @@ let package = Package(
                 .product(name: "VHDLParsing", package: "VHDLParsing"),
             ]
         ),
+        .testTarget(
+            name: "MachineTransformationTests",
+            dependencies: [
+                .target(name: "VHDLKripkeStructures"),
+                .target(name: "MachineTransformations"),
+                .product(name: "VHDLParsing", package: "VHDLParsing"),
+                .product(name: "VHDLMachines", package: "VHDLMachines"),
+            ]
+        ),
     ]
 )
