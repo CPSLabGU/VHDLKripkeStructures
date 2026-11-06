@@ -9,22 +9,10 @@ import VHDLParsing
 struct ScopedNodeTests {
 
     /// The underlying node.
-    let readNode = Node(
-        type: .read,
-        currentState: .ping,
-        executeOnEntry: true,
-        nextState: .pong,
-        properties: [.y: .bit(value: .low), .timerPulse: .bit(value: .high)]
-    )
+    let readNode = Node.pingReadNode
 
     /// The equivalent write node.
-    let writeNode = Node(
-        type: .write,
-        currentState: .ping,
-        executeOnEntry: true,
-        nextState: .pong,
-        properties: [.y: .bit(value: .high), .timerPulse: .bit(value: .high)]
-    )
+    let writeNode = Node.pingWriteNode
 
     /// The underlying instance.
     let instance = MachineInstance.pingPong(name: .m0)
