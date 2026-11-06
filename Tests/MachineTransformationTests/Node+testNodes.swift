@@ -22,4 +22,22 @@ extension Node {
         properties: [.y: .bit(value: .high), .timerPulse: .bit(value: .high)]
     )
 
+    /// Timer read node without pulse.
+    static let timerReadNode = Node(
+        type: .read,
+        currentState: .countTime,
+        executeOnEntry: false,
+        nextState: .countTime,
+        properties: [.pulse: .bit(value: .low), .counter: .integer(value: 27)]
+    )
+
+    /// Timer read node with pulse.
+    static let timerReadNodePulse = Node(
+        type: .read,
+        currentState: .countTime,
+        executeOnEntry: false,
+        nextState: .countTime,
+        properties: [.pulse: .bit(value: .high), .counter: .integer(value: 0)]
+    )
+
 }

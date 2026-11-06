@@ -93,13 +93,7 @@ struct ScopedNodeTests {
             !node.hasSameExternals(
                 as: ScopedNode(
                     instance: .timer(),
-                    node: Node(
-                        type: .read,
-                        currentState: .countTime,
-                        executeOnEntry: false,
-                        nextState: .countTime,
-                        properties: [.pulse: .bit(value: .low), .counter: .integer(value: 27)]
-                    )
+                    node: .timerReadNode
                 ),
                 in: .testArrangement
             )
@@ -113,13 +107,7 @@ struct ScopedNodeTests {
             node.hasSameExternals(
                 as: ScopedNode(
                     instance: .timer(),
-                    node: Node(
-                        type: .read,
-                        currentState: .countTime,
-                        executeOnEntry: false,
-                        nextState: .countTime,
-                        properties: [.pulse: .bit(value: .high), .counter: .integer(value: 0)]
-                    )
+                    node: .timerReadNodePulse
                 ),
                 in: .testArrangement
             )
