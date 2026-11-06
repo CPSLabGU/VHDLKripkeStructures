@@ -20,5 +20,6 @@ extension Arrangement {
             LocalSignal(type: .stdLogic, name: .x)
         ],
         clocks: [Clock(name: .clk, frequency: 50, unit: .MHz)]
-    )
+        // swiftlint:disable:next force_unwrapping
+    )!
 }
