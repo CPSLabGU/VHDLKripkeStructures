@@ -3,7 +3,7 @@ import VHDLMachines
 import VHDLParsing
 
 /// A collection of nodes that need to be processed when creating an Arrangements Kripke structure.
-final class CombinedNode: Hashable, Codable, Sendable, Equatable {
+final class CombinedNode: Hashable, Codable, Sendable, Equatable, CustomStringConvertible {
     /// The nodes sharing the same instance of execution.
     let nodes: [Node]
 
@@ -17,6 +17,12 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable {
 
     /// The type of the combined node.
     let type: NodeType
+
+    /// The debug description of the combined node.
+    var description: String {
+        self.nodes.indices.map { "\(self.instanceNames[$0].rawValue): \(self.nodes[$0].description)" }
+            .joined(separator: "\n\n")
+    }
 
     /// Whether all nodes in the combined node execute onEntry.
     var executeOnEntry: Bool {
