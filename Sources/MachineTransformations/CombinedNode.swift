@@ -81,23 +81,19 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable {
         )
         let scopedProperties = self.properties(excluding: excludeDictionary)
         let mappings = arrangement.externalMappings
-        let additionalPropertiesRaw = arrangement.externalVariablesSet.map { external in
+        let additionalPropertiesRaw = arrangement.externalVariablesSet.compactMap { external in
             for index in self.nodes.indices {
                 let node = self.nodes[index]
-                guard let mapping = mappings[self.instances[index].name], let localName = mapping[external]
+                guard let mapping = mappings[self.instanceNames[index]],
+                    let localName = mapping[external],
+                    let property = node.properties[localName]
                 else {
                     continue
                 }
-                guard
-                    let property = node.properties.first(where: {
-                        $0.key == localName
-                    })
-                else {
-                    continue
-                }
-                return (external, property.value)
+                return (external, property)
             }
-            fatalError("Failed to find mapping for external variable \(external)")
+            print("Failed to find any Machine that uses arrangement definition \(external)")
+            return nil
         }
         let additionalProperties = Dictionary(uniqueKeysWithValues: additionalPropertiesRaw)
         return scopedProperties.merging(additionalProperties) { _, _ in
