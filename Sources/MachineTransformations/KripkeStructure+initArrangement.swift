@@ -24,7 +24,7 @@ extension KripkeStructure {
         }
         var jobs = [CombinedNode](nodes: scopedNodes, arrangement: arrangement)
         var processedJobs: Set<CombinedNode> = []
-        let initialNodes = Set(jobs.map { Node(node: $0) })
+        let initialNodes = Set(jobs.map { Node(node: $0, arrangement: arrangement) })
         var nodes = initialNodes
         var allEdges: [Node: [Edge]] = [:]
         while let job = jobs.popLast() {
@@ -32,7 +32,7 @@ extension KripkeStructure {
                 continue
             }
             processedJobs.insert(job)
-            let sourceNode = Node(node: job)
+            let sourceNode = Node(node: job, arrangement: arrangement)
             nodes.insert(sourceNode)
             switch job.type {
             case .read, .write:
@@ -64,7 +64,7 @@ extension KripkeStructure {
                 let nodes = [CombinedNode](nodes: scopedNodes, arrangement: arrangement)
                 jobs.append(contentsOf: nodes)
                 let newEdges = nodes.map {
-                    Edge(target: Node(node: $0), cost: cost)
+                    Edge(target: Node(node: $0, arrangement: arrangement), cost: cost)
                 }
                 guard allEdges[sourceNode] == nil else {
                     fatalError("Edges for source node \(sourceNode) already exist")
