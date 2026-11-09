@@ -27,15 +27,26 @@ extension Array where Element == CombinedNode {
                         }
                 )
             }
-            let allCandidates = candidates.reduce(into: [[]]) { matrix, array in
-                matrix = matrix.flatMap { row in
-                    array.map { element in
-                        row + [element]
-                    }
-                }
-            }
-            combinedNodes.append(contentsOf: allCandidates.map { CombinedNode(scopedNodes: $0) })
+            combinedNodes.append(
+                contentsOf: candidates.cartesianProduct.map { CombinedNode(scopedNodes: $0) }
+            )
         }
         self = combinedNodes
+    }
+}
+
+/// Add cartesian product.
+extension Array where Element: Collection {
+    /// The cartesian product of the array of collections.
+    ///
+    /// For example, `[[1, 2], [3, 4]].cartesianProduct` will produce `[[1, 3], [1, 4], [2, 3], [2, 4]]`.
+    var cartesianProduct: [[Element.Element]] {
+        self.reduce(into: [[]]) { matrix, array in
+            matrix = matrix.flatMap { row in
+                array.map { element in
+                    row + [element]
+                }
+            }
+        }
     }
 }
