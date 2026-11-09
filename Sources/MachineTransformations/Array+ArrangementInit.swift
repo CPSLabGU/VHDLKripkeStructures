@@ -3,78 +3,39 @@ import VHDLMachines
 /// Add initialisation of a combined node.
 extension Array where Element == CombinedNode {
 
-    // swiftlint:disable function_body_length
-
     /// Combined nodes from multiple kripke structures in arrangement.
     init(nodes: [[ScopedNode]], arrangement: Arrangement) {
-        guard nodes.allSatisfy({ !$0.isEmpty }) else {
+        guard !nodes.isEmpty, nodes.allSatisfy({ !$0.isEmpty }) else {
             fatalError("Passed empty array when constructing combined kripke structure.")
         }
-        self.init(
-            accumulator: [],
-            nodeIndexes: [Int](repeating: 0, count: nodes.count),
-            nodes: nodes,
-            arrangement: arrangement
-        )
-    }
-
-    /// Attempt to combine kripke structures.
-    private init(
-        accumulator: [CombinedNode],
-        nodeIndexes: [Int],
-        nodes: [[ScopedNode]],
-        arrangement: Arrangement,
-    ) {
-        guard
-            let currentOffset = nodeIndexes.indices.reversed()
-                .first(where: {
-                    nodes[$0].endIndex > nodeIndexes[$0]
-                })
-        else {
-            self = accumulator
+        guard nodes.count > 1 else {
+            self = nodes[0].map { CombinedNode(scopedNodes: [$0]) }
             return
         }
-        let currentNodes = nodeIndexes.indices.map {
-            nodes[$0][nodeIndexes[$0]]
-        }
-        let offsetIndex = nodeIndexes[currentOffset]
-        let currentOffsetNode = nodes[currentOffset][offsetIndex]
-        var accumulator = accumulator
-        if currentNodes.allSatisfy({
-            $0.hasSameExternals(
-                as: currentOffsetNode,
-                in: arrangement
-            )
-        }) {
-            accumulator.append(CombinedNode(scopedNodes: currentNodes))
-        }
-        var newIndexes = nodeIndexes
-        newIndexes[currentOffset] += 1
-        let endIndex = newIndexes.endIndex
-        if newIndexes[currentOffset] >= nodes[currentOffset].endIndex {
-            guard currentOffset > 0 else {
-                self = accumulator
-                return
+        let firstNodes = nodes[0]
+        var combinedNodes: [CombinedNode] = []
+        for currentNode in firstNodes {
+            var candidates: [[ScopedNode]] = []
+            candidates.reserveCapacity(nodes.count)
+            candidates.append([currentNode])
+            for otherStructureIndex in 1..<nodes.count {
+                candidates.append(
+                    nodes[otherStructureIndex]
+                        .filter {
+                            currentNode.node.type == $0.node.type
+                                && currentNode.hasSameExternals(as: $0, in: arrangement)
+                        }
+                )
             }
-            newIndexes[currentOffset - 1] += 1
-            for i in currentOffset..<endIndex {
-                newIndexes[i] = 0
-            }
-        } else {
-            let nextIndex = newIndexes.index(after: currentOffset)
-            if nextIndex < endIndex {
-                for i in nextIndex..<endIndex {
-                    newIndexes[i] = 0
+            let allCandidates = candidates.reduce(into: [[]]) { matrix, array in
+                matrix = matrix.flatMap { row in
+                    array.map { element in
+                        row + [element]
+                    }
                 }
             }
+            combinedNodes.append(contentsOf: allCandidates.map { CombinedNode(scopedNodes: $0) })
         }
-        self.init(
-            accumulator: accumulator,
-            nodeIndexes: newIndexes,
-            nodes: nodes,
-            arrangement: arrangement
-        )
+        self = combinedNodes
     }
-
-    // swiftlint:enable function_body_length
 }
