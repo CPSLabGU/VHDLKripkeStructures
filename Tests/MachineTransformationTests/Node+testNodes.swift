@@ -9,7 +9,7 @@ extension Node {
         type: .read,
         currentState: .ping,
         executeOnEntry: true,
-        nextState: .pong,
+        nextState: .ping,
         properties: [.y: .bit(value: .low), .timerPulse: .bit(value: .high)]
     )
 

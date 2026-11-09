@@ -41,7 +41,7 @@ struct CombinedNodeTests {
     /// Next state is calculated correctly.
     @Test("Next state is calculated correctly.")
     func testNextState() throws {
-        let expected = try #require(VariableName(rawValue: "M0_Pong__M1_CountTime"))
+        let expected = try #require(VariableName(rawValue: "M0_Ping__M1_CountTime"))
         #expect(node.nextState == expected)
     }
 
