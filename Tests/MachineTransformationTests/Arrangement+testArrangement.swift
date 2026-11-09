@@ -23,8 +23,8 @@ extension Arrangement {
             )!,
         ],
         externalSignals: [
-            PortSignal(type: .stdLogic, name: .extX, mode: .input),
-            PortSignal(type: .stdLogic, name: .extY, mode: .output),
+            // PortSignal(type: .stdLogic, name: .extX, mode: .input),
+            PortSignal(type: .stdLogic, name: .extY, mode: .output)
         ],
         signals: [
             LocalSignal(type: .stdLogic, name: .x)

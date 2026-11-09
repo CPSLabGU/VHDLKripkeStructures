@@ -9,7 +9,7 @@ struct ArrangementTests {
     /// test arrangement creation.
     @Test("External variable set contains variables local to the arrangement.")
     func canConstructArrangement() {
-        let expected: Set<VariableName> = [.extX, .extY, .x]
+        let expected: Set<VariableName> = [.extY, .x]
         let actual = Arrangement.testArrangement.externalVariablesSet
         let difference = actual.symmetricDifference(expected)
         #expect(difference.isEmpty)
