@@ -86,4 +86,14 @@ struct CombinedNodeTests {
         // swiftlint:enable force_unwrapping
         #expect(node.properties(arrangement: .testArrangement) == expected)
     }
+
+    /// Test description.
+    @Test("Test custom description is formatted correctly.")
+    func testDescription() {
+        let expected = """
+            M0: \(nodes[0].description)
+            M1: \(nodes[1].description)
+            """
+        #expect(node.description == expected)
+    }
 }

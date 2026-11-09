@@ -21,7 +21,7 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable, CustomStringCo
     /// The debug description of the combined node.
     var description: String {
         self.nodes.indices.map { "\(self.instanceNames[$0].rawValue): \(self.nodes[$0].description)" }
-            .joined(separator: "\n\n")
+            .joined(separator: "\n")
     }
 
     /// Whether all nodes in the combined node execute onEntry.
