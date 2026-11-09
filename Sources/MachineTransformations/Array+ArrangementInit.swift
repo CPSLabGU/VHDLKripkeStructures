@@ -7,6 +7,9 @@ extension Array where Element == CombinedNode {
 
     /// Combined nodes from multiple kripke structures in arrangement.
     init(nodes: [[ScopedNode]], arrangement: Arrangement) {
+        guard nodes.allSatisfy({ !$0.isEmpty }) else {
+            fatalError("Passed empty array when constructing combined kripke structure.")
+        }
         self.init(
             accumulator: [],
             nodeIndexes: [Int](repeating: 0, count: nodes.count),
