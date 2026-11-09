@@ -42,4 +42,12 @@ struct ArrayTests {
         #expect(actual == expected)
     }
 
+    /// Test cartesian product.
+    @Test("Test cartesian product functionality.")
+    func testCartesianProduct() {
+        let original = [[1, 2], [3, 4]]
+        let expected = [[1, 3], [1, 4], [2, 3], [2, 4]]
+        #expect(original.cartesianProduct == expected)
+    }
+
 }
