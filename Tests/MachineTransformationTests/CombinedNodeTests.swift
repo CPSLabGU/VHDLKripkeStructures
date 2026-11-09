@@ -55,4 +55,35 @@ struct CombinedNodeTests {
         let combined = CombinedNode(scopedNodes: scopedNodes)
         #expect(combined == self.node)
     }
+
+    /// Test property creation.
+    @Test("Check that properties are derived correctly.")
+    func testDerivedProperties() {
+        // swiftlint:disable force_unwrapping
+        let expected: [VariableName: SignalLiteral] = [
+            VariableName(rawValue: "M0_y")!: .bit(value: .low),
+            VariableName(rawValue: "M0_timerPulse")!: .bit(value: .high),
+            VariableName(rawValue: "M0_executeOnEntry")!: .boolean(value: true),
+            VariableName(rawValue: "M1_pulse")!: .bit(value: .high),
+            VariableName(rawValue: "M1_counter")!: .integer(value: 0),
+            VariableName(rawValue: "M1_executeOnEntry")!: .boolean(value: false),
+        ]
+        // swiftlint:enable force_unwrapping
+        #expect(node.properties() == expected)
+    }
+
+    /// Test properties remove external variables from scoped values.
+    @Test("Check that derived properties include external variables correctly.")
+    func testExternalsInProperties() {
+        // swiftlint:disable force_unwrapping
+        let expected: [VariableName: SignalLiteral] = [
+            .extY: .bit(value: .low),
+            .x: .bit(value: .high),
+            VariableName(rawValue: "M0_executeOnEntry")!: .boolean(value: true),
+            VariableName(rawValue: "M1_counter")!: .integer(value: 0),
+            VariableName(rawValue: "M1_executeOnEntry")!: .boolean(value: false),
+        ]
+        // swiftlint:enable force_unwrapping
+        #expect(node.properties(arrangement: .testArrangement) == expected)
+    }
 }

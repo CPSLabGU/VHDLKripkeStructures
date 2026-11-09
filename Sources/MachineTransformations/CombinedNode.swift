@@ -74,8 +74,41 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable {
         hasher.combine(instances)
     }
 
+    /// Calculate properties for the combined node that exists in the given arrangement.
+    func properties(arrangement: Arrangement) -> [VariableName: SignalLiteral] {
+        let excludeDictionary = Dictionary(
+            uniqueKeysWithValues: arrangement.reverseExternalMappings.map { ($0.key, Set($0.value.keys)) }
+        )
+        let scopedProperties = self.properties(excluding: excludeDictionary)
+        let mappings = arrangement.externalMappings
+        let additionalPropertiesRaw = arrangement.externalVariablesSet.map { external in
+            for index in self.nodes.indices {
+                let node = self.nodes[index]
+                guard let mapping = mappings[self.instances[index].name], let localName = mapping[external]
+                else {
+                    continue
+                }
+                guard
+                    let property = node.properties.first(where: {
+                        $0.key == localName
+                    })
+                else {
+                    continue
+                }
+                return (external, property.value)
+            }
+            fatalError("Failed to find mapping for external variable \(external)")
+        }
+        let additionalProperties = Dictionary(uniqueKeysWithValues: additionalPropertiesRaw)
+        return scopedProperties.merging(additionalProperties) { _, _ in
+            fatalError("duplicate keys!")
+        }
+    }
+
     /// Derive the scoped properties for the combined node.
-    func properties(excluding: [VariableName: Set<VariableName>] = [:]) -> [VariableName: SignalLiteral] {
+    func properties(excluding: [VariableName: Set<VariableName>] = [:]) -> [VariableName:
+        SignalLiteral]
+    {
         let nodes = zip(self.instanceNames, self.nodes)
         var properties: [VariableName: SignalLiteral] = [:]
         for (instanceName, node) in nodes {
