@@ -32,6 +32,29 @@ extension Arrangement {
         clocks: [.clk50]
         // swiftlint:disable:next force_unwrapping
     )!
+
+    /// Add arrangement that only includes a ping pong machine.
+    static let pingPongArrangement = Arrangement(
+        mappings: [
+            .pingPong(): MachineMapping(
+                machine: .pingPong,
+                with: [
+                    VariableMapping(source: .extY, destination: .y),
+                    VariableMapping(source: .x, destination: .timerPulse),
+                ]
+                // swiftlint:disable:next force_unwrapping
+            )!
+        ],
+        externalSignals: [
+            // PortSignal(type: .stdLogic, name: .extX, mode: .input),
+            PortSignal(type: .stdLogic, name: .extY, mode: .output)
+        ],
+        signals: [
+            LocalSignal(type: .stdLogic, name: .x)
+        ],
+        clocks: [.clk50]
+        // swiftlint:disable:next force_unwrapping
+    )!
 }
 
 /// Add ping pong machine instance.
