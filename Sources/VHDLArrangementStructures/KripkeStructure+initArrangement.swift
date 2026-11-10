@@ -68,8 +68,23 @@ extension KripkeStructure {
             }
             allEdges[sourceNode] = newEdges
         }
-        print("\(nodes.count) Nodes found!")
-        print("\(allEdges.values.reduce(0) { $0 + $1.count }) Edges found!")
+        let edgeCount = allEdges.values.reduce(0) { $0 + $1.count }
+        let totalNodeCount = kripkeStructures.reduce(0) { $0 + $1.value.nodes.count }
+        let nodeReduction = (100.0 - Double(nodes.count) / Double(totalNodeCount) * 100.0)
+            .formatted(.number.precision(.fractionLength(2)))
+        print(
+            "Reduced total nodes from \(totalNodeCount) to \(nodes.count) combined nodes "
+                + "(\(nodeReduction)% reduction)."
+        )
+        let totalEdgeCount = kripkeStructures.reduce(0) {
+            $0 + $1.value.edges.reduce(0) { $0 + $1.value.count }
+        }
+        let edgeReduction = (100.0 - Double(edgeCount) / Double(totalEdgeCount) * 100.0)
+            .formatted(.number.precision(.fractionLength(2)))
+        print(
+            "Reduced total edges from \(totalEdgeCount) to \(edgeCount) combined edges "
+                + "(\(edgeReduction)% reduction)."
+        )
         self.init(
             nodes: Array(nodes),
             edges: allEdges,
