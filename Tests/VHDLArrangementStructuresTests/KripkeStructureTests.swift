@@ -32,11 +32,12 @@ struct KripkeStructureTests {
     /// Test kripke structure with multiple machines.
     @Test("Kripke structures can be created for arrangements with multiple machines.")
     func testMultipleMachineArrangement() {
-        let expected = KripkeStructure(
+        let actual = KripkeStructure(
             arrangement: .pingPongQuickTimerArrangement,
             kripkeStructures: [.pingPong(): .pingPong, .quickTimer(): .quickTimer]
         )
-        #expect(expected == .combinedStructure)
+        let expected = KripkeStructure.combinedStructure
+        #expect(actual == expected)
     }
 }
 

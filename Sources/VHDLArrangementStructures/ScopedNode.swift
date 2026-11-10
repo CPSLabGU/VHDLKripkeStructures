@@ -3,7 +3,7 @@ import VHDLMachines
 import VHDLParsing
 
 /// A node scoped to an instance.
-final class ScopedNode: Hashable, Equatable, Codable, Sendable {
+final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
     /// The name of the instance the node belongs too.
     let instance: MachineInstance
 
@@ -24,6 +24,11 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable {
     /// Equality conformance.
     static func == (lhs: ScopedNode, rhs: ScopedNode) -> Bool {
         lhs.instance == rhs.instance && lhs.node == rhs.node
+    }
+
+    /// Comparable conformance.
+    static func < (lhs: ScopedNode, rhs: ScopedNode) -> Bool {
+        lhs.instanceName < rhs.instanceName
     }
 
     /// Hashing function.

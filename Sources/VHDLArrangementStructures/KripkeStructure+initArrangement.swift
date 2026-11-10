@@ -14,12 +14,13 @@ extension KripkeStructure {
     ///   - kripkeStructures: A dictionary mapping machine instances to their kripke structures.
     /// - Throws: An error if the kripke structure cannot be created.
     public convenience init(arrangement: Arrangement, kripkeStructures: [MachineInstance: KripkeStructure]) {
-        let scopedNodes = arrangement.machines.keys.map { instance in
-            guard let structure = kripkeStructures[instance] else {
-                fatalError("Kripke structure not found for machine instance \(instance)")
+        let scopedNodes = arrangement.machines.keys.sorted { $0.name < $1.name }
+            .map { instance in
+                guard let structure = kripkeStructures[instance] else {
+                    fatalError("Kripke structure not found for machine instance \(instance)")
+                }
+                return structure.initialStates.map { ScopedNode(instance: instance, node: $0) }
             }
-            return structure.initialStates.map { ScopedNode(instance: instance, node: $0) }
-        }
         var jobs = [CombinedNode](nodes: scopedNodes, arrangement: arrangement)
         var processedJobs: Set<CombinedNode> = []
         let initialNodes = Set(jobs.map { Node(node: $0, arrangement: arrangement) })

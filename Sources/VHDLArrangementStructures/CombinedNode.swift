@@ -32,6 +32,7 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable, CustomStringCo
     /// The name of the combined node.
     var name: VariableName {
         let rawName = zip(instanceNames, nodes)
+            .sorted { $0.0 < $1.0 }
             .map {
                 "\($0.0.rawValue)_\($0.1.currentState.rawValue)"
             }
@@ -43,6 +44,7 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable, CustomStringCo
     /// The name of the next state.
     var nextState: VariableName {
         let nextStates = zip(instanceNames, nodes.map(\.nextState))
+            .sorted { $0.0 < $1.0 }
             .map { "\($0.0.rawValue)_\($0.1.rawValue)" }
             .joined(separator: "__")
         // swiftlint:disable:next force_unwrapping
@@ -50,23 +52,33 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable, CustomStringCo
     }
 
     /// Initialise the combined node.
-    init(nodes: [Node], instances: [MachineInstance]) {
-        guard !nodes.isEmpty, nodes.count == instances.count,
-            nodes.allSatisfy({ $0.type == nodes[0].type })
+    convenience init(nodes: [Node], instances: [MachineInstance]) {
+        guard nodes.count == instances.count else {
+            fatalError("The number of nodes must match the number of instances.")
+        }
+        let scopedNodes = zip(instances, nodes).map { ScopedNode(instance: $0, node: $1) }
+        self.init(scopedNodes: scopedNodes)
+    }
+
+    /// Conversion init.
+    convenience init(scopedNodes: [ScopedNode]) {
+        let sortedNodes = scopedNodes.sorted()
+        self.init(nodesSorted: sortedNodes.map { $0.node }, instancesSorted: sortedNodes.map { $0.instance })
+    }
+
+    /// Initialise the stored properties.
+    private init(nodesSorted: [Node], instancesSorted: [MachineInstance]) {
+        guard !nodesSorted.isEmpty, nodesSorted.count == instancesSorted.count,
+            nodesSorted.allSatisfy({ $0.type == nodesSorted[0].type })
         else {
             fatalError(
                 "The nodes are invalid. The number of nodes must match the number of instance names "
                     + "and must all have the same type."
             )
         }
-        self.nodes = nodes
-        self.instances = instances
-        self.type = nodes[0].type
-    }
-
-    /// Conversion init.
-    convenience init(scopedNodes: [ScopedNode]) {
-        self.init(nodes: scopedNodes.map { $0.node }, instances: scopedNodes.map { $0.instance })
+        self.nodes = nodesSorted
+        self.instances = instancesSorted
+        self.type = nodesSorted[0].type
     }
 
     /// Equality conformance.
