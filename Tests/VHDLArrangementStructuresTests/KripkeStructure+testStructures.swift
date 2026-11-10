@@ -262,6 +262,170 @@ extension KripkeStructure {
         return KripkeStructure(nodes: allNodes, edges: edges, initialStates: Set(initialStates))
     }()
 
+    // swiftlint:disable force_unwrapping
+
+    /// The combined structure between the Ping Pong and Quick timer kripke structures.
+    static let combinedStructure: KripkeStructure = {
+        let initialStates = [
+            Node(
+                type: .read,
+                currentState: VariableName(rawValue: "M0_Initial__M2_Initial")!,
+                executeOnEntry: true,
+                nextState: VariableName(rawValue: "M0_Initial__M2_Initial")!,
+                properties: [
+                    .extY: .bit(value: .low),
+                    .x: .bit(value: .low),
+                    VariableName(rawValue: "M0_executeOnEntry")!: .boolean(value: true),
+                    VariableName(rawValue: "M2_executeOnEntry")!: .boolean(value: true),
+                ]
+            )
+        ]
+        let initialWrites = [
+            Node(
+                type: .write,
+                currentState: VariableName(rawValue: "M0_Initial__M2_Initial")!,
+                executeOnEntry: true,
+                nextState: VariableName(rawValue: "M0_Ping__M2_SendPulse")!,
+                properties: [
+                    .extY: .bit(value: .low),
+                    .x: .bit(value: .low),
+                    VariableName(rawValue: "M0_executeOnEntry")!: .boolean(value: true),
+                    VariableName(rawValue: "M2_executeOnEntry")!: .boolean(value: true),
+                ]
+            )
+        ]
+        let pingSendPulseReads = [
+            Node(
+                type: .read,
+                currentState: VariableName(rawValue: "M0_Ping__M2_SendPulse")!,
+                executeOnEntry: true,
+                nextState: VariableName(rawValue: "M0_Ping__M2_SendPulse")!,
+                properties: [
+                    .extY: .bit(value: .low),
+                    .x: .bit(value: .low),
+                    VariableName(rawValue: "M0_executeOnEntry")!: .boolean(value: true),
+                    VariableName(rawValue: "M2_executeOnEntry")!: .boolean(value: true),
+                ]
+            )
+        ]
+        let pingSendPulseWrites = [
+            Node(
+                type: .write,
+                currentState: VariableName(rawValue: "M0_Ping__M2_SendPulse")!,
+                executeOnEntry: false,
+                nextState: VariableName(rawValue: "M0_Ping__M2_ClearPulse")!,
+                properties: [
+                    .extY: .bit(value: .low),
+                    .x: .bit(value: .high),
+                    VariableName(rawValue: "M0_executeOnEntry")!: .boolean(value: false),
+                    VariableName(rawValue: "M2_executeOnEntry")!: .boolean(value: true),
+                ]
+            )
+        ]
+        let pingClearPulseReads = [
+            Node(
+                type: .read,
+                currentState: VariableName(rawValue: "M0_Ping__M2_ClearPulse")!,
+                executeOnEntry: false,
+                nextState: VariableName(rawValue: "M0_Ping__M2_ClearPulse")!,
+                properties: [
+                    .extY: .bit(value: .low),
+                    .x: .bit(value: .high),
+                    VariableName(rawValue: "M0_executeOnEntry")!: .boolean(value: false),
+                    VariableName(rawValue: "M2_executeOnEntry")!: .boolean(value: true),
+                ]
+            )
+        ]
+        let pingClearPulseWrites = [
+            Node(
+                type: .write,
+                currentState: VariableName(rawValue: "M0_Ping__M2_ClearPulse")!,
+                executeOnEntry: true,
+                nextState: VariableName(rawValue: "M0_Pong__M2_SendPulse")!,
+                properties: [
+                    .extY: .bit(value: .high),
+                    .x: .bit(value: .low),
+                    VariableName(rawValue: "M0_executeOnEntry")!: .boolean(value: true),
+                    VariableName(rawValue: "M2_executeOnEntry")!: .boolean(value: true),
+                ]
+            )
+        ]
+        let pongSendPulseReads = [
+            Node(
+                type: .read,
+                currentState: VariableName(rawValue: "M0_Pong__M2_SendPulse")!,
+                executeOnEntry: true,
+                nextState: VariableName(rawValue: "M0_Pong__M2_SendPulse")!,
+                properties: [
+                    .extY: .bit(value: .high),
+                    .x: .bit(value: .low),
+                    VariableName(rawValue: "M0_executeOnEntry")!: .boolean(value: true),
+                    VariableName(rawValue: "M2_executeOnEntry")!: .boolean(value: true),
+                ]
+            )
+        ]
+        let pongSendPulseWrites = [
+            Node(
+                type: .write,
+                currentState: VariableName(rawValue: "M0_Pong__M2_SendPulse")!,
+                executeOnEntry: false,
+                nextState: VariableName(rawValue: "M0_Pong__M2_ClearPulse")!,
+                properties: [
+                    .extY: .bit(value: .high),
+                    .x: .bit(value: .high),
+                    VariableName(rawValue: "M0_executeOnEntry")!: .boolean(value: false),
+                    VariableName(rawValue: "M2_executeOnEntry")!: .boolean(value: true),
+                ]
+            )
+        ]
+        let pongClearPulseReads = [
+            Node(
+                type: .read,
+                currentState: VariableName(rawValue: "M0_Pong__M2_ClearPulse")!,
+                executeOnEntry: false,
+                nextState: VariableName(rawValue: "M0_Pong__M2_SendPulse")!,
+                properties: [
+                    .extY: .bit(value: .high),
+                    .x: .bit(value: .high),
+                    VariableName(rawValue: "M0_executeOnEntry")!: .boolean(value: false),
+                    VariableName(rawValue: "M2_executeOnEntry")!: .boolean(value: true),
+                ]
+            )
+        ]
+        let pongClearPulseWrites = [
+            Node(
+                type: .write,
+                currentState: VariableName(rawValue: "M0_Pong__M2_ClearPulse")!,
+                executeOnEntry: false,
+                nextState: VariableName(rawValue: "M0_Ping__M2_SendPulse")!,
+                properties: [
+                    .extY: .bit(value: .low),
+                    .x: .bit(value: .low),
+                    VariableName(rawValue: "M0_executeOnEntry")!: .boolean(value: false),
+                    VariableName(rawValue: "M2_executeOnEntry")!: .boolean(value: true),
+                ]
+            )
+        ]
+        let edges: [Node: [Edge]] = [
+            initialStates[0]: [Edge(target: initialWrites[0], cost: .readCost)],
+            initialWrites[0]: [Edge(target: pingSendPulseReads[0], cost: .writeCost)],
+            pingSendPulseReads[0]: [Edge(target: pingSendPulseWrites[0], cost: .readCost)],
+            pingSendPulseWrites[0]: [Edge(target: pingClearPulseReads[0], cost: .writeCost)],
+            pingClearPulseReads[0]: [Edge(target: pingClearPulseWrites[0], cost: .readCost)],
+            pingClearPulseWrites[0]: [Edge(target: pongSendPulseReads[0], cost: .writeCost)],
+            pongSendPulseReads[0]: [Edge(target: pongSendPulseWrites[0], cost: .readCost)],
+            pongSendPulseWrites[0]: [Edge(target: pongClearPulseReads[0], cost: .writeCost)],
+            pongClearPulseReads[0]: [Edge(target: pongClearPulseWrites[0], cost: .readCost)],
+            pongClearPulseWrites[0]: [Edge(target: pingSendPulseReads[0], cost: .writeCost)],
+        ]
+        let allNodes =
+            initialStates + initialWrites + pingSendPulseReads + pingSendPulseWrites + pingClearPulseReads
+            + pingClearPulseWrites + pongSendPulseReads + pongSendPulseWrites + pongClearPulseReads
+            + pongClearPulseWrites
+        return KripkeStructure(nodes: allNodes, edges: edges, initialStates: Set(initialStates))
+    }()
+
+    // swiftlint:enable force_unwrapping
     // swiftlint:enable closure_body_length
 
 }

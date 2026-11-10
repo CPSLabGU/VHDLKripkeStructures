@@ -28,6 +28,16 @@ struct KripkeStructureTests {
         )
         #expect(expected == actual)
     }
+
+    /// Test kripke structure with multiple machines.
+    @Test("Kripke structures can be created for arrangements with multiple machines.")
+    func testMultipleMachineArrangement() {
+        let expected = KripkeStructure(
+            arrangement: .pingPongQuickTimerArrangement,
+            kripkeStructures: [.pingPong(): .pingPong, .quickTimer(): .quickTimer]
+        )
+        #expect(expected == .combinedStructure)
+    }
 }
 
 /// Add helper to convert a node to a ping pong node.
