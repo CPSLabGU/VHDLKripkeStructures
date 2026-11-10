@@ -69,7 +69,8 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable, CustomStringCo
     /// Initialise the stored properties.
     private init(nodesSorted: [Node], instancesSorted: [MachineInstance]) {
         guard !nodesSorted.isEmpty, nodesSorted.count == instancesSorted.count,
-            nodesSorted.allSatisfy({ $0.type == nodesSorted[0].type })
+            nodesSorted.allSatisfy({ $0.type == nodesSorted[0].type }),
+            Set(instancesSorted.map(\.name)).count == instancesSorted.count
         else {
             fatalError(
                 "The nodes are invalid. The number of nodes must match the number of instance names "
