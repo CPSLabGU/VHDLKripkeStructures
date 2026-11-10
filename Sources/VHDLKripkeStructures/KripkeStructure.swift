@@ -86,13 +86,14 @@ public final class KripkeStructure: Equatable, Hashable, Codable, Sendable {
     /// Equality conformance.
     @inlinable
     public static func == (lhs: KripkeStructure, rhs: KripkeStructure) -> Bool {
-        lhs.nodes == rhs.nodes && lhs.edges == rhs.edges && lhs.initialStates == rhs.initialStates
+        lhs.nodes.sorted() == rhs.nodes.sorted() && lhs.edges == rhs.edges
+            && lhs.initialStates == rhs.initialStates
     }
 
     /// Hashable conformance.
     @inlinable
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(nodes)
+        hasher.combine(nodes.sorted())
         hasher.combine(edges)
         hasher.combine(initialStates)
     }

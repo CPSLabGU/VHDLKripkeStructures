@@ -59,7 +59,7 @@ import VHDLParsing
 /// A node within a Kripke Structure.
 ///
 /// A node represents a state within a kripke structure.
-public final class Node: Equatable, Hashable, Codable, Sendable {
+public final class Node: Equatable, Hashable, Codable, Sendable, Comparable {
 
     /// The type of the node.
     public let type: NodeType
@@ -106,6 +106,11 @@ public final class Node: Equatable, Hashable, Codable, Sendable {
             && lhs.executeOnEntry == rhs.executeOnEntry
             && lhs.nextState == rhs.nextState
             && lhs.properties == rhs.properties
+    }
+
+    /// Comparable conformance.
+    public static func < (lhs: Node, rhs: Node) -> Bool {
+        lhs.description < rhs.description
     }
 
     /// Hashable conformance.

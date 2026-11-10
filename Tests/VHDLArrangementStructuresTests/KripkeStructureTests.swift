@@ -12,7 +12,7 @@ struct KripkeStructureTests {
     @Test("Kripke structures can be created for arrangements with a single machine.")
     func testSingleMachineArrangement() {
         let originalStructure = KripkeStructure.pingPong
-        let structure = KripkeStructure(
+        let expected = KripkeStructure(
             arrangement: .pingPongArrangement,
             kripkeStructures: [.pingPong(): originalStructure]
         )
@@ -21,14 +21,12 @@ struct KripkeStructureTests {
         let edges = originalStructure.edges.map {
             ($0.key.toPingPongNode, $0.value.map(\.toPingPongEdge))
         }
-        let expected = KripkeStructure(
+        let actual = KripkeStructure(
             nodes: nodes,
             edges: Dictionary(uniqueKeysWithValues: edges),
             initialStates: initialStates
         )
-        #expect(Set(structure.nodes) == Set(expected.nodes))
-        #expect(structure.edges == expected.edges)
-        #expect(structure.initialStates == expected.initialStates)
+        #expect(expected == actual)
     }
 }
 
