@@ -26,10 +26,7 @@ struct KripkeStructureTests {
             edges: Dictionary(uniqueKeysWithValues: edges),
             initialStates: initialStates
         )
-        let expectedNodes = Set(expected.nodes)
-        let additionalNodes = structure.nodes.filter { !expectedNodes.contains($0) }
-        print(additionalNodes)
-        // #expect(Set(structure.nodes) == Set(expected.nodes))
+        #expect(Set(structure.nodes) == Set(expected.nodes))
         #expect(structure.edges == expected.edges)
         #expect(structure.initialStates == expected.initialStates)
     }

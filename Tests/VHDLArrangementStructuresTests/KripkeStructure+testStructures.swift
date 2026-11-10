@@ -132,7 +132,7 @@ extension KripkeStructure {
                 properties: [.y: .bit(value: .low), .timerPulse: .bit(value: .high)]
             ),
         ]
-        let allNodes = initialStates + pongReads + pongWrites
+        let allNodes = initialStates + initialWrites + pingReads + pingWrites + pongReads + pongWrites
         let edges: [Node: [Edge]] = [
             initialStates[0]: [
                 Edge(target: initialWrites[0], cost: .readCost)
