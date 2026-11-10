@@ -192,6 +192,76 @@ extension KripkeStructure {
         return KripkeStructure(nodes: allNodes, edges: edges, initialStates: Set(initialStates))
     }()
 
+    /// The QuickTimer structure.
+    static let quickTimer: KripkeStructure = {
+        let initialStates = [
+            Node(
+                type: .read,
+                currentState: .initial,
+                executeOnEntry: true,
+                nextState: .initial,
+                properties: [.pulse: .bit(value: .low)]
+            )
+        ]
+        let initialWrites = [
+            Node(
+                type: .write,
+                currentState: .initial,
+                executeOnEntry: true,
+                nextState: .sendPulse,
+                properties: [.pulse: .bit(value: .low)]
+            )
+        ]
+        let sendPulseReads = [
+            Node(
+                type: .read,
+                currentState: .sendPulse,
+                executeOnEntry: true,
+                nextState: .sendPulse,
+                properties: [.pulse: .bit(value: .low)]
+            )
+        ]
+        let sendPulseWrites = [
+            Node(
+                type: .write,
+                currentState: .sendPulse,
+                executeOnEntry: true,
+                nextState: .clearPulse,
+                properties: [.pulse: .bit(value: .high)]
+            )
+        ]
+        let clearPulseReads = [
+            Node(
+                type: .read,
+                currentState: .clearPulse,
+                executeOnEntry: true,
+                nextState: .clearPulse,
+                properties: [.pulse: .bit(value: .high)]
+            )
+        ]
+        let clearPulseWrites = [
+            Node(
+                type: .write,
+                currentState: .clearPulse,
+                executeOnEntry: true,
+                nextState: .sendPulse,
+                properties: [.pulse: .bit(value: .low)]
+            )
+        ]
+        let edges: [Node: [Edge]] = [
+            initialStates[0]: [Edge(target: initialWrites[0], cost: .readCost)],
+            initialWrites[0]: [Edge(target: sendPulseReads[0], cost: .writeCost)],
+            sendPulseReads[0]: [Edge(target: sendPulseWrites[0], cost: .readCost)],
+            sendPulseWrites[0]: [Edge(target: clearPulseReads[0], cost: .writeCost)],
+            clearPulseReads[0]: [Edge(target: clearPulseWrites[0], cost: .readCost)],
+            clearPulseWrites[0]: [Edge(target: sendPulseReads[0], cost: .writeCost)],
+        ]
+        let allNodes =
+            initialStates + initialWrites + sendPulseReads + sendPulseWrites + clearPulseReads
+            + clearPulseWrites
+        return KripkeStructure(nodes: allNodes, edges: edges, initialStates: Set(initialStates))
+    }()
+
     // swiftlint:enable closure_body_length
 
 }
