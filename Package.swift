@@ -11,9 +11,8 @@ let package = Package(
         // packages.
         .library(
             name: "VHDLKripkeStructures",
-            targets: ["VHDLKripkeStructures"]
-        ),
-        .library(name: "MachineTransformations", targets: ["MachineTransformations"]),
+            targets: ["VHDLKripkeStructures", "VHDLArrangementStructures"]
+        )
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -34,7 +33,7 @@ let package = Package(
             ]
         ),
         .target(
-            name: "MachineTransformations",
+            name: "VHDLArrangementStructures",
             dependencies: [
                 .product(name: "VHDLParsing", package: "VHDLParsing"),
                 .product(name: "VHDLMachines", package: "VHDLMachines"),
@@ -49,10 +48,10 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "MachineTransformationTests",
+            name: "VHDLArrangementStructuresTests",
             dependencies: [
                 .target(name: "VHDLKripkeStructures"),
-                .target(name: "MachineTransformations"),
+                .target(name: "VHDLArrangementStructures"),
                 .product(name: "VHDLParsing", package: "VHDLParsing"),
                 .product(name: "VHDLMachines", package: "VHDLMachines"),
             ]

@@ -1,5 +1,5 @@
-@testable import MachineTransformations
 import Testing
+@testable import VHDLArrangementStructures
 import VHDLKripkeStructures
 import VHDLMachines
 import VHDLParsing
