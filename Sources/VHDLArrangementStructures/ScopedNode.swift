@@ -28,7 +28,13 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
 
     /// Comparable conformance.
     static func < (lhs: ScopedNode, rhs: ScopedNode) -> Bool {
-        lhs.instanceName < rhs.instanceName
+        guard lhs.instanceName == rhs.instanceName else {
+            return lhs.instanceName < rhs.instanceName
+        }
+        guard lhs.instance.type == rhs.instance.type else {
+            return lhs.instance.type < rhs.instance.type
+        }
+        return lhs.node < rhs.node
     }
 
     /// Hashing function.
