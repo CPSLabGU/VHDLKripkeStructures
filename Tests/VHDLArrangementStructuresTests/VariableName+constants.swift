@@ -4,6 +4,9 @@ import VHDLParsing
 
 /// Add helper names for testing.
 extension VariableName {
+    /// ClearPulse
+    static let clearPulse = VariableName(rawValue: "ClearPulse")!
+
     /// clk.
     static let clk = VariableName(rawValue: "clk")!
 
@@ -40,6 +43,9 @@ extension VariableName {
     /// M1.
     static let m1 = VariableName(rawValue: "M1")!
 
+    /// M2.
+    static let m2 = VariableName(rawValue: "M2")!
+
     /// numberic_std.
     static let numericStd = VariableName(rawValue: "numeric_std")!
 
@@ -54,6 +60,12 @@ extension VariableName {
 
     /// pulse.
     static let pulse = VariableName(rawValue: "pulse")!
+
+    /// QuickTimer.
+    static let quickTimer = VariableName(rawValue: "QuickTimer")!
+
+    /// SendPulse.
+    static let sendPulse = VariableName(rawValue: "SendPulse")!
 
     /// std_logic_1164.
     static let stdLogic1164 = VariableName(rawValue: "std_logic_1164")!
