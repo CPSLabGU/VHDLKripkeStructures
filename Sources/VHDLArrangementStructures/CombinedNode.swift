@@ -100,16 +100,39 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable, CustomStringCo
         )
         let scopedProperties = self.properties(excluding: excludeDictionary)
         let mappings = arrangement.externalMappings
+        // swiftlint:disable:next closure_body_length
         let additionalPropertiesRaw = arrangement.externalVariablesSet.compactMap { external in
+            var properties: [SignalLiteral] = []
             for index in self.nodes.indices {
                 let node = self.nodes[index]
-                guard let mapping = mappings[self.instanceNames[index]],
+                let instance = self.instances[index]
+                let signals = arrangement.externals(instance: instance)
+                guard let mapping = mappings[instance.name],
                     let localName = mapping[external],
-                    let property = node.properties[localName]
+                    let property = node.properties[localName],
+                    let signal = signals[localName]
                 else {
                     continue
                 }
+                switch node.type {
+                case .read:
+                    if signal.mode == .output {
+                        properties.append(property)
+                        continue
+                    }
+                case .write:
+                    if signal.mode == .input {
+                        properties.append(property)
+                        continue
+                    }
+                }
                 return (external, property)
+            }
+            guard properties.isEmpty else {
+                guard Set(properties).count == 1 else {
+                    fatalError("Conflicting properties for external \(external): \(properties)")
+                }
+                return (external, properties[0])
             }
             print(
                 "Failed to find any Machine that uses arrangement definition \(external). "
