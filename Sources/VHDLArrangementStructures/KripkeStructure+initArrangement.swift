@@ -21,9 +21,10 @@ extension KripkeStructure {
                 }
                 return structure.initialStates.map { ScopedNode(instance: instance, node: $0) }
             }
-        var jobs = [CombinedNode](nodes: scopedNodes, arrangement: arrangement)
-        var processedJobs: Set<CombinedNode> = []
-        let initialNodes = Set(jobs.map { Node(node: $0, arrangement: arrangement) })
+        let jobNodes = [CombinedNode](nodes: scopedNodes, arrangement: arrangement)
+        var jobs = jobNodes.map { Job(node: $0, arrangement: arrangement) }
+        var processedJobs: Set<Job> = []
+        let initialNodes = Set(jobNodes.map { Node(node: $0, arrangement: arrangement) })
         var nodes = initialNodes
         var allEdges: [Node: [Edge]] = [:]
         while let job = jobs.popLast() {
@@ -31,16 +32,16 @@ extension KripkeStructure {
                 continue
             }
             processedJobs.insert(job)
-            let sourceNode = Node(node: job, arrangement: arrangement)
+            let sourceNode = Node(node: job.node, arrangement: arrangement)
             nodes.insert(sourceNode)
-            let kripkeStructures = job.instances.compactMap { kripkeStructures[$0] }
-            guard kripkeStructures.count == job.instances.count else {
+            let kripkeStructures = job.node.instances.compactMap { kripkeStructures[$0] }
+            guard kripkeStructures.count == job.node.instances.count else {
                 fatalError("Kripke structures not found for all instances in the combined node")
             }
             let edges = kripkeStructures.indices.map {
-                guard let edges = kripkeStructures[$0].edges[job.nodes[$0]] else {
+                guard let edges = kripkeStructures[$0].edges[job.node.nodes[$0]] else {
                     fatalError(
-                        "Edges not found for node \(job.nodes[$0]) in "
+                        "Edges not found for node \(job.node.nodes[$0]) in "
                             + "kripke structure \(kripkeStructures[$0])"
                     )
                 }
@@ -55,13 +56,16 @@ extension KripkeStructure {
             let scopedNodes = edges.indices.map { index in
                 edges[index]
                     .map {
-                        ScopedNode(instance: job.instances[index], node: $0.target)
+                        ScopedNode(instance: job.node.instances[index], node: $0.target)
                     }
             }
             let nodes = [CombinedNode](nodes: scopedNodes, arrangement: arrangement)
+                .map {
+                    Job(node: $0, arrangement: arrangement)
+                }
             jobs.append(contentsOf: nodes)
             let newEdges = nodes.map {
-                Edge(target: Node(node: $0, arrangement: arrangement), cost: cost)
+                Edge(target: Node(node: $0.node, arrangement: arrangement), cost: cost)
             }
             guard allEdges[sourceNode] == nil else {
                 fatalError("Edges for source node \(sourceNode) already exist")
