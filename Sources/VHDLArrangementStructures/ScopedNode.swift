@@ -44,23 +44,59 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
     }
 
     /// Checks whether another node as the same values for their external variables if they exist.
-    func hasSameExternals(
-        as other: ScopedNode,
-        in arrangement: Arrangement
-    )
-        -> Bool
-    {
+    func hasSameExternals(as other: ScopedNode, in arrangement: Arrangement) -> Bool {
+        switch self.node.type {
+        case .write:
+            return hasSameExternalsWrite(other: other, arrangement: arrangement)
+        case .read:
+            return hasSameExternalsRead(other: other, arrangement: arrangement)
+        }
+    }
+
+    /// Check same externals for read node.
+    private func hasSameExternalsRead(other: ScopedNode, arrangement: Arrangement) -> Bool {
         guard let reverseMapping = arrangement.reverseExternalMappings[self.instanceName],
             let otherMapping = arrangement.externalMappings[other.instanceName]
         else {
             return true
         }
         let properties = node.properties.lazy.filter { reverseMapping.keys.contains($0.key) }
-        return properties.allSatisfy {
-            guard let externalName = reverseMapping[$0.key], let localName = otherMapping[externalName] else {
+        return properties.allSatisfy { property in
+            guard let externalName = reverseMapping[property.key], let localName = otherMapping[externalName]
+            else {
                 return true
             }
-            return $0.value == other.node.properties[localName]
+            return property.value == other.node.properties[localName]
+        }
+    }
+
+    /// Check same externals for write node.
+    private func hasSameExternalsWrite(other: ScopedNode, arrangement: Arrangement) -> Bool {
+        guard let reverseMapping = arrangement.reverseExternalMappings[self.instanceName],
+            let otherMapping = arrangement.externalMappings[other.instanceName]
+        else {
+            return true
+        }
+        guard let machineMapping = arrangement.machines[self.instance] else {
+            fatalError("Machine for instance \(self.instanceName) not found in arrangement")
+        }
+        let rawSignals = machineMapping.machine.externalSignals
+        let signals = Dictionary(uniqueKeysWithValues: rawSignals.map { ($0.name, $0) })
+        let properties = node.properties.lazy.filter { reverseMapping.keys.contains($0.key) }
+        return properties.allSatisfy { property in
+            guard let externalName = reverseMapping[property.key], let localName = otherMapping[externalName]
+            else {
+                return true
+            }
+            guard let externalSignal = signals[property.key] else {
+                fatalError("External signal \(externalName) not found in machine \(self.instanceName)")
+            }
+            switch externalSignal.mode {
+            case .input:
+                return true
+            default:
+                return property.value == other.node.properties[localName]
+            }
         }
     }
 }
