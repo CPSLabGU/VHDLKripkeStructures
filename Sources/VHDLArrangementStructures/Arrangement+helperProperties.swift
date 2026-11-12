@@ -33,4 +33,12 @@ extension Arrangement {
             }
         )
     }
+
+    /// Fetch the external varible definitions for a machine instance.
+    func externals(instance: MachineInstance) -> [VariableName: PortSignal] {
+        guard let machineMapping = self.machines[instance] else {
+            fatalError("Machine for instance \(instance.name) not found in arrangement")
+        }
+        return Dictionary(uniqueKeysWithValues: machineMapping.machine.externalSignals.map { ($0.name, $0) })
+    }
 }

@@ -60,11 +60,7 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
         else {
             return true
         }
-        guard let machineMapping = arrangement.machines[other.instance] else {
-            fatalError("Machine for instance \(other.instanceName) not found in arrangement")
-        }
-        let rawSignals = machineMapping.machine.externalSignals
-        let signals = Dictionary(uniqueKeysWithValues: rawSignals.map { ($0.name, $0) })
+        let signals = arrangement.externals(instance: other.instance)
         let properties = node.properties.lazy.filter { reverseMapping.keys.contains($0.key) }
         return properties.allSatisfy { property in
             guard let externalName = reverseMapping[property.key], let localName = otherMapping[externalName]
@@ -90,11 +86,7 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
         else {
             return true
         }
-        guard let machineMapping = arrangement.machines[self.instance] else {
-            fatalError("Machine for instance \(self.instanceName) not found in arrangement")
-        }
-        let rawSignals = machineMapping.machine.externalSignals
-        let signals = Dictionary(uniqueKeysWithValues: rawSignals.map { ($0.name, $0) })
+        let signals = arrangement.externals(instance: self.instance)
         let properties = node.properties.lazy.filter { reverseMapping.keys.contains($0.key) }
         return properties.allSatisfy { property in
             guard let externalName = reverseMapping[property.key], let localName = otherMapping[externalName]
