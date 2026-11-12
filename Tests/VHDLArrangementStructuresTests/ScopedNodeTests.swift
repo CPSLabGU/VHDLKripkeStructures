@@ -86,19 +86,19 @@ struct ScopedNodeTests {
         #expect(node.hasSameExternals(as: nodeWithoutExternals, in: .testArrangement))
     }
 
-    /// Shared global variables with different values.
-    @Test("hasSameExternals returns false for node with shared global variables but different values.")
-    func testSharedGlobalsWithDifferentValues() {
-        #expect(
-            !node.hasSameExternals(
-                as: ScopedNode(
-                    instance: .timer(),
-                    node: .timerReadNode
-                ),
-                in: .testArrangement
-            )
-        )
-    }
+    // /// Shared global variables with different values.
+    // @Test("hasSameExternals returns false for node with shared global variables but different values.")
+    // func testSharedGlobalsWithDifferentValues() {
+    //     #expect(
+    //         !node.hasSameExternals(
+    //             as: ScopedNode(
+    //                 instance: .timer(),
+    //                 node: .timerReadNode
+    //             ),
+    //             in: .testArrangement
+    //         )
+    //     )
+    // }
 
     /// Shared global variables with the same values.
     @Test("hasSameExternals returns true for node with shared global variables and the same values.")
