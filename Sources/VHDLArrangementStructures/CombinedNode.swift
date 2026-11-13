@@ -134,10 +134,10 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable, CustomStringCo
                 }
                 return (external, properties[0])
             }
-            print(
-                "Failed to find any Machine that uses arrangement definition \(external). "
-                    + "Thus, pruning references to \(external) from the graph."
-            )
+            // print(
+            //     "Failed to find any Machine that uses arrangement definition \(external). "
+            //         + "Thus, pruning references to \(external) from the graph."
+            // )
             return nil
         }
         let additionalProperties = Dictionary(uniqueKeysWithValues: additionalPropertiesRaw)
