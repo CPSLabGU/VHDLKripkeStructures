@@ -44,17 +44,25 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
     }
 
     /// Checks whether another node as the same values for their external variables if they exist.
-    func hasSameExternals(as other: ScopedNode, in arrangement: Arrangement) -> Bool {
+    func hasSameExternals(
+        as other: ScopedNode,
+        in arrangement: Arrangement,
+        globalState: [VariableName: SignalLiteral]
+    ) -> Bool {
         switch self.node.type {
         case .write:
-            return hasSameExternalsWrite(other: other, arrangement: arrangement)
+            return hasSameExternalsWrite(other: other, arrangement: arrangement, globalState: globalState)
         case .read:
-            return hasSameExternalsRead(other: other, arrangement: arrangement)
+            return hasSameExternalsRead(other: other, arrangement: arrangement, globalState: globalState)
         }
     }
 
     /// Check same externals for read node.
-    private func hasSameExternalsRead(other: ScopedNode, arrangement: Arrangement) -> Bool {
+    private func hasSameExternalsRead(
+        other: ScopedNode,
+        arrangement: Arrangement,
+        globalState: [VariableName: SignalLiteral]
+    ) -> Bool {
         guard let reverseMapping = arrangement.reverseExternalMappings[self.instanceName],
             let otherMapping = arrangement.externalMappings[other.instanceName]
         else {
@@ -72,7 +80,10 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
             }
             switch externalSignal.mode {
             case .output:
-                return true
+                guard let previousValue = globalState[externalName] else {
+                    return true
+                }
+                return property.value == previousValue
             default:
                 return property.value == other.node.properties[localName]
             }
@@ -80,7 +91,11 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
     }
 
     /// Check same externals for write node.
-    private func hasSameExternalsWrite(other: ScopedNode, arrangement: Arrangement) -> Bool {
+    private func hasSameExternalsWrite(
+        other: ScopedNode,
+        arrangement: Arrangement,
+        globalState: [VariableName: SignalLiteral]
+    ) -> Bool {
         guard let reverseMapping = arrangement.reverseExternalMappings[self.instanceName],
             let otherMapping = arrangement.externalMappings[other.instanceName]
         else {
@@ -98,7 +113,10 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
             }
             switch externalSignal.mode {
             case .input:
-                return true
+                guard let previousValue = globalState[externalName] else {
+                    return true
+                }
+                return property.value == previousValue
             default:
                 return property.value == other.node.properties[localName]
             }

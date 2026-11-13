@@ -1,5 +1,6 @@
 import Foundation
 import VHDLMachines
+import VHDLParsing
 
 /// Add initialisation of a combined node.
 extension Array where Element == CombinedNode {
@@ -36,7 +37,7 @@ extension Array where Element == CombinedNode {
     // }
 
     /// Combined nodes from multiple kripke structures in arrangement, computed concurrently.
-    init(nodes: [[ScopedNode]], arrangement: Arrangement) async {
+    init(nodes: [[ScopedNode]], arrangement: Arrangement, globalState: [VariableName: SignalLiteral]) async {
         guard !nodes.isEmpty, nodes.allSatisfy({ !$0.isEmpty }) else {
             fatalError("Passed empty array when constructing combined kripke structure.")
         }
@@ -50,7 +51,7 @@ extension Array where Element == CombinedNode {
                 .concurrentMap { structureNodes in
                     structureNodes.filter {
                         currentNode.node.type == $0.node.type
-                            && currentNode.hasSameExternals(as: $0, in: arrangement)
+                            && currentNode.hasSameExternals(as: $0, in: arrangement, globalState: globalState)
                     }
                 }
             let candidates = [[currentNode]] + matchingNodes

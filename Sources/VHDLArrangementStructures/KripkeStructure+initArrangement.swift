@@ -24,7 +24,7 @@ extension KripkeStructure {
                 }
                 return structure.initialStates.map { ScopedNode(instance: instance, node: $0) }
             }
-        let jobNodes = await [CombinedNode](nodes: scopedNodes, arrangement: arrangement)
+        let jobNodes = await [CombinedNode](nodes: scopedNodes, arrangement: arrangement, globalState: [:])
         var jobs = await jobNodes.concurrentMap { Job(node: $0, arrangement: arrangement) }
         var processedJobs: Set<Job> = []
         let initialNodes = Set(await jobNodes.concurrentMap { Node(node: $0, arrangement: arrangement) })
@@ -68,10 +68,14 @@ extension KripkeStructure {
                         ScopedNode(instance: job.node.instances[index], node: $0.target)
                     }
             }
-            let nodes = await [CombinedNode](nodes: scopedNodes, arrangement: arrangement)
-                .concurrentMap {
-                    Job(node: $0, arrangement: arrangement)
-                }
+            let nodes = await [CombinedNode](
+                nodes: scopedNodes,
+                arrangement: arrangement,
+                globalState: job.globalProperties
+            )
+            .concurrentMap {
+                Job(node: $0, arrangement: arrangement)
+            }
             jobs.append(contentsOf: nodes.filter { !processedJobs.contains($0) })
             let newEdges = await nodes.concurrentMap {
                 Edge(target: Node(node: $0.node, arrangement: arrangement), cost: cost)

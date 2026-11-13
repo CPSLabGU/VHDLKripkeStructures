@@ -83,7 +83,7 @@ struct ScopedNodeTests {
                 properties: [:]
             )
         )
-        #expect(node.hasSameExternals(as: nodeWithoutExternals, in: .testArrangement))
+        #expect(node.hasSameExternals(as: nodeWithoutExternals, in: .testArrangement, globalState: [:]))
     }
 
     // /// Shared global variables with different values.
@@ -109,7 +109,8 @@ struct ScopedNodeTests {
                     instance: .timer(),
                     node: .timerReadNodePulse
                 ),
-                in: .testArrangement
+                in: .testArrangement,
+                globalState: [:]
             )
         )
     }

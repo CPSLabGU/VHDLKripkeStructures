@@ -43,7 +43,7 @@ struct ArrayTests {
             CombinedNode(nodes: [.pingWriteNodeNoPulse, .timerWriteNodePulse], instances: instances),
             CombinedNode(nodes: [.pingWriteNodeNoPulse, .timerWriteNodeSetPulse], instances: instances),
         ]
-        let actual = await [CombinedNode](nodes: self.nodes, arrangement: .testArrangement)
+        let actual = await [CombinedNode](nodes: self.nodes, arrangement: .testArrangement, globalState: [:])
         #expect(actual == expected)
     }
 

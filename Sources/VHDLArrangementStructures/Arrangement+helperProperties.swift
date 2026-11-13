@@ -8,6 +8,11 @@ extension Arrangement {
         Set(self.externalSignals.map(\.name) + self.signals.map(\.name))
     }
 
+    /// The set of global variables.
+    var globalVariables: Set<VariableName> {
+        Set(self.signals.map(\.name))
+    }
+
     /// The renamed external variables in each machine.
     var externalMappings: [VariableName: [VariableName: VariableName]] {
         Dictionary(

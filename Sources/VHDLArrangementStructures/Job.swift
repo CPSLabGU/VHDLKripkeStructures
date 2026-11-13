@@ -10,8 +10,19 @@ final class Job: Equatable, Hashable, Codable, Sendable {
     /// The underlying node.
     let node: CombinedNode
 
+    /// The arrangement this job belongs to.
+    let arrangement: Arrangement
+
     /// The properties of the node scoped to the arrangement.
-    let properties: [VariableName: SignalLiteral]
+    var properties: [VariableName: SignalLiteral] {
+        self.node.properties(arrangement: self.arrangement)
+    }
+
+    /// The global variables in this job.
+    var globalProperties: [VariableName: SignalLiteral] {
+        let globals = self.arrangement.globalVariables
+        return Dictionary(uniqueKeysWithValues: self.properties.filter { globals.contains($0.key) })
+    }
 
     /// The current state of the node to process.
     var currentState: VariableName {
@@ -39,7 +50,7 @@ final class Job: Equatable, Hashable, Codable, Sendable {
         arrangement: Arrangement
     ) {
         self.node = node
-        self.properties = node.properties(arrangement: arrangement)
+        self.arrangement = arrangement
     }
 
     /// Equality operation.
