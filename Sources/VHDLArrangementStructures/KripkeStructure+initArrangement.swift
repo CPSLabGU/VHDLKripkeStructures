@@ -31,15 +31,17 @@ extension KripkeStructure {
         var nodes = initialNodes
         var allEdges: [Node: [Edge]] = [:]
         var lastProgressUpdate = -Double.infinity
+        var jobsProcessed = 0
         func showJobsLeft(force: Bool = false) {
             let now = ProcessInfo.processInfo.systemUptime
             guard force || now - lastProgressUpdate >= 0.1 else { return }
             lastProgressUpdate = now
-            let line = "\rJobs left: \(jobs.count)\u{1B}[K"
+            let line = "\rJobs left: \(jobs.count), Jobs Processed: \(jobsProcessed)\u{1B}[K"
             FileHandle.standardOutput.write(Data(line.utf8))
         }
         showJobsLeft()
         while let job = jobs.popLast() {
+            jobsProcessed += 1
             showJobsLeft()
             guard !processedJobs.contains(job) else {
                 continue
