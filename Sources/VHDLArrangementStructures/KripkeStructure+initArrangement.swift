@@ -16,6 +16,7 @@ extension KripkeStructure {
     public convenience init(arrangement: Arrangement, kripkeStructures: [MachineInstance: KripkeStructure])
         async
     {
+        print("Attempting to fold Kripke structures together...")
         let scopedNodes = arrangement.machines.keys.sorted { $0.name < $1.name }
             .map { instance in
                 guard let structure = kripkeStructures[instance] else {
@@ -29,7 +30,13 @@ extension KripkeStructure {
         let initialNodes = Set(await jobNodes.concurrentMap { Node(node: $0, arrangement: arrangement) })
         var nodes = initialNodes
         var allEdges: [Node: [Edge]] = [:]
+        let showJobsLeft = {
+            let line = "\rJobs left: \(jobs.count)\u{1B}[K"
+            FileHandle.standardOutput.write(Data(line.utf8))
+        }
+        showJobsLeft()
         while let job = jobs.popLast() {
+            showJobsLeft()
             guard !processedJobs.contains(job) else {
                 continue
             }
@@ -74,6 +81,7 @@ extension KripkeStructure {
             }
             allEdges[sourceNode] = newEdges
         }
+        FileHandle.standardOutput.write(Data("\n".utf8))
         let edgeCount = allEdges.values.reduce(0) { $0 + $1.count }
         let totalNodeCount = kripkeStructures.reduce(0) { $0 + $1.value.nodes.count }
         let nodeReduction = (Double(nodes.count) / Double(totalNodeCount) * 100.0 - 100.0)
