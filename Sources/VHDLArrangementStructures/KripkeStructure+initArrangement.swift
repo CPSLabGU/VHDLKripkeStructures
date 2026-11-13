@@ -13,7 +13,9 @@ extension KripkeStructure {
     ///   - arrangement: The arrangement containing the machines.
     ///   - kripkeStructures: A dictionary mapping machine instances to their kripke structures.
     /// - Throws: An error if the kripke structure cannot be created.
-    public convenience init(arrangement: Arrangement, kripkeStructures: [MachineInstance: KripkeStructure]) {
+    public convenience init(arrangement: Arrangement, kripkeStructures: [MachineInstance: KripkeStructure])
+        async
+    {
         let scopedNodes = arrangement.machines.keys.sorted { $0.name < $1.name }
             .map { instance in
                 guard let structure = kripkeStructures[instance] else {
@@ -21,10 +23,10 @@ extension KripkeStructure {
                 }
                 return structure.initialStates.map { ScopedNode(instance: instance, node: $0) }
             }
-        let jobNodes = [CombinedNode](nodes: scopedNodes, arrangement: arrangement)
-        var jobs = jobNodes.map { Job(node: $0, arrangement: arrangement) }
+        let jobNodes = await [CombinedNode](nodes: scopedNodes, arrangement: arrangement)
+        var jobs = await jobNodes.concurrentMap { Job(node: $0, arrangement: arrangement) }
         var processedJobs: Set<Job> = []
-        let initialNodes = Set(jobNodes.map { Node(node: $0, arrangement: arrangement) })
+        let initialNodes = Set(await jobNodes.concurrentMap { Node(node: $0, arrangement: arrangement) })
         var nodes = initialNodes
         var allEdges: [Node: [Edge]] = [:]
         while let job = jobs.popLast() {
@@ -53,18 +55,18 @@ extension KripkeStructure {
                 fatalError("Edges are either empty or have inconsistent costs for combined node \(job)")
             }
             let cost = edges[0][0].cost
-            let scopedNodes = edges.indices.map { index in
-                edges[index]
-                    .map {
+            let scopedNodes = await edges.indices.concurrentMap { index in
+                await edges[index]
+                    .concurrentMap {
                         ScopedNode(instance: job.node.instances[index], node: $0.target)
                     }
             }
-            let nodes = [CombinedNode](nodes: scopedNodes, arrangement: arrangement)
-                .map {
+            let nodes = await [CombinedNode](nodes: scopedNodes, arrangement: arrangement)
+                .concurrentMap {
                     Job(node: $0, arrangement: arrangement)
                 }
             jobs.append(contentsOf: nodes)
-            let newEdges = nodes.map {
+            let newEdges = await nodes.concurrentMap {
                 Edge(target: Node(node: $0.node, arrangement: arrangement), cost: cost)
             }
             guard allEdges[sourceNode] == nil else {

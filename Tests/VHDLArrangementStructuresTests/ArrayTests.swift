@@ -30,7 +30,7 @@ struct ArrayTests {
 
     /// Test kripke folding.
     @Test("Can fold kripke nodes into a single structure.")
-    func testKripkeFolding() {
+    func testKripkeFolding() async {
         let expected = [
             CombinedNode(nodes: [.pingReadNode, .timerReadNode], instances: instances),
             CombinedNode(nodes: [.pingReadNode, .timerReadNodePulse], instances: instances),
@@ -43,7 +43,7 @@ struct ArrayTests {
             CombinedNode(nodes: [.pingWriteNodeNoPulse, .timerWriteNodePulse], instances: instances),
             CombinedNode(nodes: [.pingWriteNodeNoPulse, .timerWriteNodeSetPulse], instances: instances),
         ]
-        let actual = [CombinedNode](nodes: self.nodes, arrangement: .testArrangement)
+        let actual = await [CombinedNode](nodes: self.nodes, arrangement: .testArrangement)
         #expect(actual == expected)
     }
 
