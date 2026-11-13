@@ -72,7 +72,7 @@ extension KripkeStructure {
                 .concurrentMap {
                     Job(node: $0, arrangement: arrangement)
                 }
-            jobs.append(contentsOf: nodes)
+            jobs.append(contentsOf: nodes.filter { !processedJobs.contains($0) })
             let newEdges = await nodes.concurrentMap {
                 Edge(target: Node(node: $0.node, arrangement: arrangement), cost: cost)
             }
