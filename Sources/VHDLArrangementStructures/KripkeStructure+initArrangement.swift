@@ -30,7 +30,11 @@ extension KripkeStructure {
         let initialNodes = Set(await jobNodes.concurrentMap { Node(node: $0, arrangement: arrangement) })
         var nodes = initialNodes
         var allEdges: [Node: [Edge]] = [:]
-        let showJobsLeft = {
+        var lastProgressUpdate = -Double.infinity
+        func showJobsLeft(force: Bool = false) {
+            let now = ProcessInfo.processInfo.systemUptime
+            guard force || now - lastProgressUpdate >= 0.5 else { return }
+            lastProgressUpdate = now
             let line = "\rJobs left: \(jobs.count)\u{1B}[K"
             FileHandle.standardOutput.write(Data(line.utf8))
         }
@@ -85,6 +89,7 @@ extension KripkeStructure {
             }
             allEdges[sourceNode] = newEdges
         }
+        showJobsLeft(force: true)
         FileHandle.standardOutput.write(Data("\n".utf8))
         let edgeCount = allEdges.values.reduce(0) { $0 + $1.count }
         let totalNodeCount = kripkeStructures.reduce(0) { $0 + $1.value.nodes.count }
