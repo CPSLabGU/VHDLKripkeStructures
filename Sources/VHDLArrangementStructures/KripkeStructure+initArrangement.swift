@@ -33,7 +33,7 @@ extension KripkeStructure {
         var lastProgressUpdate = -Double.infinity
         func showJobsLeft(force: Bool = false) {
             let now = ProcessInfo.processInfo.systemUptime
-            guard force || now - lastProgressUpdate >= 0.5 else { return }
+            guard force || now - lastProgressUpdate >= 0.1 else { return }
             lastProgressUpdate = now
             let line = "\rJobs left: \(jobs.count)\u{1B}[K"
             FileHandle.standardOutput.write(Data(line.utf8))
