@@ -78,15 +78,10 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
             guard let externalSignal = signals[localName] else {
                 fatalError("External signal \(localName) not found in machine \(other.instanceName)")
             }
-            switch externalSignal.mode {
-            case .output:
-                guard let previousValue = globalState[externalName] else {
-                    return true
-                }
-                return property.value == previousValue
-            default:
-                return property.value == other.node.properties[localName]
+            guard let previousValue = globalState[externalName] else {
+                return externalSignal.mode == .output || property.value == other.node.properties[localName]
             }
+            return property.value == previousValue
         }
     }
 
@@ -111,15 +106,10 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
             guard let externalSignal = signals[property.key] else {
                 fatalError("External signal \(property.key) not found in machine \(self.instanceName)")
             }
-            switch externalSignal.mode {
-            case .input:
-                guard let previousValue = globalState[externalName] else {
-                    return true
-                }
-                return property.value == previousValue
-            default:
-                return property.value == other.node.properties[localName]
+            guard let previousValue = globalState[externalName] else {
+                return externalSignal.mode == .input || property.value == other.node.properties[localName]
             }
+            return property.value == previousValue
         }
     }
 }
