@@ -196,8 +196,8 @@ extension Edge {
     /// Check whether the edge is valid from the previous state.
     func hasSameGlobals(
         instance: MachineInstance,
-        previousState: [VariableName: SignalLiteral],
-        globals: [VariableName: SignalLiteral],
+        previousState: [MachineVariableName: SignalLiteral],
+        globals: [ArrangementVariableName: SignalLiteral],
         arrangement: Arrangement
     ) -> Bool {
         let externalSignals = arrangement.externals(instance: instance)

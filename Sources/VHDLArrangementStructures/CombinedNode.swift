@@ -11,7 +11,7 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable, CustomStringCo
     let instances: [MachineInstance]
 
     /// The name of the instance associated with these nodes.
-    var instanceNames: [VariableName] {
+    var instanceNames: [MachineInstanceName] {
         self.instances.map(\.name)
     }
 
@@ -147,7 +147,7 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable, CustomStringCo
     }
 
     /// Derive the scoped properties for the combined node.
-    func properties(excluding: [VariableName: Set<VariableName>] = [:]) -> [VariableName:
+    func properties(excluding: [MachineInstanceName: Set<VariableName>] = [:]) -> [VariableName:
         SignalLiteral]
     {
         let nodes = zip(self.instanceNames, self.nodes)

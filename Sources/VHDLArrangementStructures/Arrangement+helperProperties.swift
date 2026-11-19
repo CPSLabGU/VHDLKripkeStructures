@@ -4,17 +4,17 @@ import VHDLParsing
 /// Add helper functions to Arrangement.
 extension Arrangement {
     /// The set of external variable names.
-    var externalVariablesSet: Set<VariableName> {
+    var externalVariablesSet: Set<ArrangementVariableName> {
         Set(self.externalSignals.map(\.name) + self.signals.map(\.name))
     }
 
     /// The set of global variables.
-    var globalVariables: Set<VariableName> {
+    var globalVariables: Set<ArrangementVariableName> {
         Set(self.signals.map(\.name))
     }
 
     /// The renamed external variables in each machine.
-    var externalMappings: [VariableName: [VariableName: VariableName]] {
+    var externalMappings: [MachineInstanceName: [ArrangementVariableName: MachineVariableName]] {
         Dictionary(
             uniqueKeysWithValues: self.machines.map {
                 let mappings = $0.value.mappings.filter { externalVariablesSet.contains($0.source) }
@@ -27,7 +27,7 @@ extension Arrangement {
     }
 
     /// The reverse relationship of `externalMappings`.
-    var reverseExternalMappings: [VariableName: [VariableName: VariableName]] {
+    var reverseExternalMappings: [MachineInstanceName: [MachineVariableName: ArrangementVariableName]] {
         Dictionary(
             uniqueKeysWithValues: self.machines.map {
                 let mappings = $0.value.mappings.filter { externalVariablesSet.contains($0.source) }
@@ -40,7 +40,7 @@ extension Arrangement {
     }
 
     /// Fetch the external varible definitions for a machine instance.
-    func externals(instance: MachineInstance) -> [VariableName: PortSignal] {
+    func externals(instance: MachineInstance) -> [MachineVariableName: PortSignal] {
         guard let machineMapping = self.machines[instance] else {
             fatalError("Machine for instance \(instance.name) not found in arrangement")
         }

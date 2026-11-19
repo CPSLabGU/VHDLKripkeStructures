@@ -19,7 +19,7 @@ final class Job: Equatable, Hashable, Codable, Sendable {
     }
 
     /// The global variables in this job.
-    var globalProperties: [VariableName: SignalLiteral] {
+    var globalProperties: [ArrangementVariableName: SignalLiteral] {
         let globals = self.arrangement.globalVariables
         return Dictionary(uniqueKeysWithValues: self.properties.filter { globals.contains($0.key) })
     }

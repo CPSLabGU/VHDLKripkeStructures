@@ -37,7 +37,11 @@ extension Array where Element == CombinedNode {
     // }
 
     /// Combined nodes from multiple kripke structures in arrangement, computed concurrently.
-    init(nodes: [[ScopedNode]], arrangement: Arrangement, globalState: [VariableName: SignalLiteral]) async {
+    init(
+        nodes: [[ScopedNode]],
+        arrangement: Arrangement,
+        globalState: [ArrangementVariableName: SignalLiteral]
+    ) async {
         guard !nodes.isEmpty, nodes.allSatisfy({ !$0.isEmpty }) else {
             fatalError("Passed empty array when constructing combined kripke structure.")
         }

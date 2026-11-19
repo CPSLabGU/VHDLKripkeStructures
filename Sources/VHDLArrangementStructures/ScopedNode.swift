@@ -11,7 +11,7 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
     let node: Node
 
     /// The name of the instance.
-    var instanceName: VariableName {
+    var instanceName: MachineInstanceName {
         self.instance.name
     }
 
@@ -47,7 +47,7 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
     func hasSameExternals(
         as other: ScopedNode,
         in arrangement: Arrangement,
-        globalState: [VariableName: SignalLiteral]
+        globalState: [ArrangementVariableName: SignalLiteral]
     ) -> Bool {
         switch self.node.type {
         case .write:
@@ -61,7 +61,7 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
     private func hasSameExternalsRead(
         other: ScopedNode,
         arrangement: Arrangement,
-        globalState: [VariableName: SignalLiteral]
+        globalState: [ArrangementVariableName: SignalLiteral]
     ) -> Bool {
         guard let reverseMapping = arrangement.reverseExternalMappings[self.instanceName],
             let otherMapping = arrangement.externalMappings[other.instanceName]
@@ -89,7 +89,7 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
     private func hasSameExternalsWrite(
         other: ScopedNode,
         arrangement: Arrangement,
-        globalState: [VariableName: SignalLiteral]
+        globalState: [ArrangementVariableName: SignalLiteral]
     ) -> Bool {
         guard let reverseMapping = arrangement.reverseExternalMappings[self.instanceName],
             let otherMapping = arrangement.externalMappings[other.instanceName]
