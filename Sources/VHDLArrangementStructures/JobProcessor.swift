@@ -52,13 +52,14 @@ actor JobProcessor {
             let cost = edges[0][0].cost
             let scopedNodes = await edges.indices.concurrentMap { index in
                 await edges[index]
-                    // .filter {
-                    //     $0.hasSameGlobals(
-                    //         instance: job.node.instances[index],
-                    //         globals: job.globalProperties,
-                    //         arrangement: arrangement
-                    //     )
-                    // }
+                    .filter {
+                        $0.hasSameGlobals(
+                            instance: job.node.instances[index],
+                            previousState: job.node.nodes[index].properties,
+                            globals: job.globalProperties,
+                            arrangement: arrangement
+                        )
+                    }
                     .concurrentMap {
                         ScopedNode(instance: job.node.instances[index], node: $0.target)
                     }
@@ -187,4 +188,43 @@ actor JobProcessor {
     }
 
     // swiftlint:enable function_body_length
+}
+
+extension Edge {
+    func hasSameGlobals(
+        instance: MachineInstance,
+        previousState: [VariableName: SignalLiteral],
+        globals: [VariableName: SignalLiteral],
+        arrangement: Arrangement
+    ) -> Bool {
+        let externalSignals = arrangement.externals(instance: instance)
+        return self.target.properties.allSatisfy {
+            guard let previousExternal = externalSignals[$0.key] else {
+                return true
+            }
+            let target = self.target
+            switch target.type {
+            case .read:
+                switch previousExternal.mode {
+                case .output:
+                    guard let previousValue = previousState[$0.key] else {
+                        return true
+                    }
+                    return $0.value == previousValue
+                default:
+                    return true
+                }
+            case .write:
+                switch previousExternal.mode {
+                case .input:
+                    guard let previousValue = previousState[$0.key] else {
+                        return true
+                    }
+                    return $0.value == previousValue
+                default:
+                    return true
+                }
+            }
+        }
+    }
 }
