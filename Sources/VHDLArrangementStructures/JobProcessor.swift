@@ -212,6 +212,7 @@ extension Edge {
                 switch previousExternal.mode {
                 case .output:
                     guard let previousValue = previousState[$0.key] else {
+                        print("Failed to find previous value for key \($0.key) in previous state.")
                         return true
                     }
                     return $0.value == previousValue
@@ -219,6 +220,7 @@ extension Edge {
                     guard let reverseMapping = arrangement.reverseExternalMappings[instance.name],
                         let externalName = reverseMapping[$0.key], let globalValue = globals[externalName]
                     else {
+                        print("Failed to find global value for key \($0.key) in globals.")
                         return true
                     }
                     return $0.value == globalValue
@@ -227,6 +229,7 @@ extension Edge {
                 switch previousExternal.mode {
                 case .input:
                     guard let previousValue = previousState[$0.key] else {
+                        print("Failed to find previous value for key \($0.key) in previous state.")
                         return true
                     }
                     return $0.value == previousValue
