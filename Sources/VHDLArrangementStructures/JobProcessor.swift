@@ -190,7 +190,10 @@ actor JobProcessor {
     // swiftlint:enable function_body_length
 }
 
+/// Add helpers for filtering edges.
 extension Edge {
+
+    /// Check whether the edge is valid from the previous state.
     func hasSameGlobals(
         instance: MachineInstance,
         previousState: [VariableName: SignalLiteral],
@@ -198,6 +201,7 @@ extension Edge {
         arrangement: Arrangement
     ) -> Bool {
         let externalSignals = arrangement.externals(instance: instance)
+        // swiftlint:disable:next closure_body_length
         return self.target.properties.allSatisfy {
             guard let previousExternal = externalSignals[$0.key] else {
                 return true
@@ -212,7 +216,12 @@ extension Edge {
                     }
                     return $0.value == previousValue
                 default:
-                    return true
+                    guard let reverseMapping = arrangement.reverseExternalMappings[instance.name],
+                        let externalName = reverseMapping[$0.key], let globalValue = globals[externalName]
+                    else {
+                        return true
+                    }
+                    return $0.value == globalValue
                 }
             case .write:
                 switch previousExternal.mode {
