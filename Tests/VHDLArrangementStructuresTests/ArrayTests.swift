@@ -47,6 +47,77 @@ struct ArrayTests {
         #expect(actual == expected)
     }
 
+    /// Test filtering mapped global values in each machine.
+    @Test("Global state filters mapped properties in each machine.")
+    func testGlobalStateFiltering() async {
+        let actual = await [CombinedNode](
+            nodes: nodes,
+            arrangement: .testArrangement,
+            currentState: [.x: .bit(value: .high), .extY: .bit(value: .low)]
+        )
+        #expect(
+            actual == [
+                CombinedNode(nodes: [.pingReadNode, .timerReadNodePulse], instances: instances)
+            ]
+        )
+
+        let noMatches = await [CombinedNode](
+            nodes: [[nodes[0][0]], [nodes[1][0]]],
+            arrangement: .testArrangement,
+            currentState: [.x: .bit(value: .high)]
+        )
+        #expect(noMatches.isEmpty)
+    }
+
+    /// Test grouping across three machines when a property is absent.
+    @Test("Missing properties do not constrain groups across three machines.")
+    func testMissingPropertiesAcrossMachines() async {
+        let missingProperty = Node(
+            type: .read,
+            currentState: .ping,
+            executeOnEntry: true,
+            nextState: .ping,
+            properties: [:]
+        )
+        let quickTimer = MachineInstance.quickTimer()
+        let actual = await [CombinedNode](
+            nodes: [
+                [ScopedNode(instance: .pingPong(), node: missingProperty)],
+                [
+                    ScopedNode(instance: .quickTimer(), node: .timerReadNodePulse),
+                    ScopedNode(instance: .quickTimer(), node: .timerReadNode),
+                ],
+                [ScopedNode(instance: .timer(), node: .timerReadNodePulse)],
+            ],
+            arrangement: .pingPongQuickTimerArrangement,
+            currentState: [.x: .bit(value: .high)]
+        )
+        #expect(
+            actual == [
+                CombinedNode(
+                    nodes: [missingProperty, .timerReadNodePulse, .timerReadNodePulse],
+                    instances: [.pingPong(), quickTimer, .timer()]
+                )
+            ]
+        )
+    }
+
+    /// Test filtering global values for a single machine.
+    @Test("Global state also filters a single machine.")
+    func testSingleMachineFiltering() async {
+        let actual = await [CombinedNode](
+            nodes: [nodes[0]],
+            arrangement: .testArrangement,
+            currentState: [.x: .bit(value: .low)]
+        )
+        #expect(
+            actual == [
+                CombinedNode(scopedNodes: [nodes[0][2]]),
+                CombinedNode(scopedNodes: [nodes[0][3]]),
+            ]
+        )
+    }
+
     /// Test cartesian product.
     @Test("Test cartesian product functionality.")
     func testCartesianProduct() {

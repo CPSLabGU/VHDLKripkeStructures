@@ -45,37 +45,31 @@ extension Array where Element == CombinedNode {
         guard !nodes.isEmpty, nodes.allSatisfy({ !$0.isEmpty }) else {
             fatalError("Passed empty array when constructing combined kripke structure.")
         }
-        guard nodes.count > 1 else {
-            self = await nodes[0].concurrentMap { CombinedNode(scopedNodes: [$0]) }
-            return
-        }
-        let firstNodes = nodes[0]
-        let batches = await firstNodes.concurrentMap { currentNode in
-            var globalState = currentState
-            guard let reverseMapping = arrangement.reverseExternalMappings[currentNode.instanceName] else {
-                fatalError("Cannot find reverse mapping for instance \(currentNode.instanceName)")
-            }
-            currentNode.node.properties.forEach { localName, value in
-                if let globalName = reverseMapping[localName], globalState[globalName] != nil {
-                    globalState[globalName] = value
-                }
-            }
-            let matchingNodes = [[ScopedNode]](nodes.dropFirst())
-                .map { structureNodes in
-                    structureNodes.filter {
-                        currentNode.node.type == $0.node.type
-                            && currentNode.hasSameExternals(
-                                as: $0,
-                                in: arrangement,
-                                currentState: globalState
-                            )
+        let mappings = arrangement.externalMappings
+        let candidates = nodes.map { structure in
+            structure.filter { scopedNode in
+                currentState.allSatisfy { externalName, value in
+                    guard let localName = mappings[scopedNode.instanceName]?[externalName],
+                        let property = scopedNode.node.properties[localName]
+                    else {
+                        return true
                     }
+                    return property == value
                 }
-            let candidates = [[currentNode]] + matchingNodes
-            let product = await candidates.concurrentCartesianProduct
-            return await product.concurrentMap { CombinedNode(scopedNodes: $0) }
+            }
         }
-        self = batches.flatMap { $0 }
+        var groups: [[ScopedNode]] = [[]]
+        for structure in candidates {
+            groups = groups.flatMap { group in
+                structure.compactMap { node in
+                    guard group.first.map({ $0.node.type == node.node.type }) ?? true else {
+                        return nil
+                    }
+                    return group + [node]
+                }
+            }
+        }
+        self = await groups.concurrentMap { CombinedNode(scopedNodes: $0) }
     }
 }
 
