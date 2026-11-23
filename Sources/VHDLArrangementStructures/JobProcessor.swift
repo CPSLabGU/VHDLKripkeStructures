@@ -134,13 +134,21 @@ actor JobProcessor {
         var lastProgressUpdate = -Double.infinity
         var jobsProcessed = 0
         var inFlight = 0
+        var lastJob: Job?
         func showJobsLeft(force: Bool = false) {
             let now = ProcessInfo.processInfo.systemUptime
             guard force || now - lastProgressUpdate >= 0.1 else { return }
             lastProgressUpdate = now
+            let lastDescription = lastJob.map { job in
+                let properties = job.properties.sorted { $0.key < $1.key }
+                    .map { "\($0.key.rawValue)=\($0.value.rawValue)" }
+                    .joined(separator: ",")
+                return "\(job.currentState.rawValue) {\(properties)}"
+            }
             let line =
                 "\rJobs left: \(self.jobs.count + inFlight) | Jobs in progress: \(inFlight) "
-                + "| Jobs Processed: \(jobsProcessed)\u{1B}[K"
+                + "| Jobs Processed: \(jobsProcessed) | Nodes: \(self.nodes.count) "
+                + "| Last: \((lastDescription ?? "").prefix(200))\u{1B}[K"
             FileHandle.standardOutput.write(Data(line.utf8))
         }
         showJobsLeft()
@@ -154,6 +162,7 @@ actor JobProcessor {
                     }
                     jobsProcessed += 1
                     inFlight += 1
+                    lastJob = job
                     group.addTask {
                         await JobExpansion(
                             job: job,
