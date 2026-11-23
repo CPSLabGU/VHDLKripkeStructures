@@ -24,6 +24,8 @@ actor JobProcessor {
             self.edges = edges
         }
 
+        // swiftlint:disable function_body_length
+
         /// Compute the outgoing edges and successor jobs without modifying the graph.
         init(
             job: Job,
@@ -85,6 +87,8 @@ actor JobProcessor {
         }
     }
 
+    // swiftlint:enable function_body_length
+
     /// An array of jobs to process.
     var jobs: [Job] = []
 
@@ -120,7 +124,9 @@ actor JobProcessor {
                 return structure.initialStates.map { ScopedNode(instance: instance, node: $0) }
             }
         let jobNodes = await [CombinedNode](nodes: scopedNodes, arrangement: arrangement, currentState: [:])
-        self.jobs = await jobNodes.concurrentMap { Job(node: $0, arrangement: arrangement) }
+        let initialJobs = await jobNodes.concurrentMap { Job(node: $0, arrangement: arrangement) }
+        var scheduledJobs: Set<Job> = []
+        self.jobs = initialJobs.filter { scheduledJobs.insert($0).inserted }
         self.processedJobs = []
         let initialNodes = Set(await jobNodes.concurrentMap { Node(node: $0, arrangement: arrangement) })
         self.nodes = initialNodes
@@ -140,11 +146,11 @@ actor JobProcessor {
         await withTaskGroup(of: JobExpansion.self) { group in
             while !self.jobs.isEmpty || inFlight > 0 {
                 while inFlight < workerCount, let job = self.jobs.popLast() {
-                    jobsProcessed += 1
                     guard self.processedJobs.insert(job).inserted else {
                         showJobsLeft()
                         continue
                     }
+                    jobsProcessed += 1
                     inFlight += 1
                     group.addTask {
                         await JobExpansion(
@@ -160,7 +166,7 @@ actor JobProcessor {
                 }
                 inFlight -= 1
                 self.nodes.insert(result.sourceNode)
-                self.jobs.append(contentsOf: result.jobs.filter { !self.processedJobs.contains($0) })
+                self.jobs.append(contentsOf: result.jobs.filter { scheduledJobs.insert($0).inserted })
                 guard self.allEdges[result.sourceNode] == nil else {
                     fatalError("Edges for source node \(result.sourceNode) already exist")
                 }
