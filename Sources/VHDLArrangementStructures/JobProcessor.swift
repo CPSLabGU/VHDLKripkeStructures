@@ -148,7 +148,7 @@ actor JobProcessor {
             let line =
                 "\rJobs left: \(self.jobs.count + inFlight) | Jobs in progress: \(inFlight) "
                 + "| Jobs Processed: \(jobsProcessed) | Nodes: \(self.nodes.count) "
-                + "| Last: \((lastDescription ?? "").prefix(200))\u{1B}[K"
+                + "| Last: \((lastDescription ?? ""))\u{1B}[K"
             FileHandle.standardOutput.write(Data(line.utf8))
         }
         showJobsLeft()
