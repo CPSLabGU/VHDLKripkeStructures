@@ -100,6 +100,30 @@ struct KripkeStructureTests {
         )
         #expect(actual == expected)
     }
+
+    /// Test duplicate edges do not repeatedly schedule cyclic jobs.
+    @Test("Duplicate cyclic edges preserve edges without repeating jobs.")
+    func testDuplicateCyclicEdges() async {
+        let first = KripkeStructure.pingPong.nodes[0]
+        let second = KripkeStructure.pingPong.nodes[2]
+        let forward = Edge(target: second, cost: .readCost)
+        let backward = Edge(target: first, cost: .writeCost)
+        let structure = KripkeStructure(
+            nodes: [first, second],
+            edges: [first: [forward, forward], second: [backward, backward]],
+            initialStates: [first]
+        )
+        let processor = JobProcessor()
+        let result = await processor.combineKripkeStructures(
+            arrangement: .pingPongArrangement,
+            kripkeStructures: [.pingPong(): structure]
+        )
+        let processedCount = await processor.processedJobs.count
+        #expect(processedCount == 2)
+        #expect(result.nodes.count == 2)
+        #expect(result.edges[first.toPingPongNode]?.count == 2)
+        #expect(result.edges[second.toPingPongNode]?.count == 2)
+    }
 }
 
 /// Add helper to convert a node to a ping pong node.

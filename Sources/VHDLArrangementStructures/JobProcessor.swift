@@ -138,7 +138,9 @@ actor JobProcessor {
             let now = ProcessInfo.processInfo.systemUptime
             guard force || now - lastProgressUpdate >= 0.1 else { return }
             lastProgressUpdate = now
-            let line = "\rJobs left: \(self.jobs.count + inFlight) | Jobs Processed: \(jobsProcessed)\u{1B}[K"
+            let line =
+                "\rJobs left: \(self.jobs.count + inFlight) | Jobs in progress: \(inFlight) "
+                + "| Jobs Processed: \(jobsProcessed)\u{1B}[K"
             FileHandle.standardOutput.write(Data(line.utf8))
         }
         showJobsLeft()
