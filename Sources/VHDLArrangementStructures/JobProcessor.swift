@@ -52,17 +52,31 @@ actor JobProcessor {
             let cost = edges[0][0].cost
             let scopedNodes = await edges.indices.concurrentMap { index in
                 await edges[index]
+                    .filter {
+                        edges.count == 1
+                            || $0.hasSameGlobals(
+                                instance: job.node.instances[index],
+                                previousState: job.node.nodes[index].properties,
+                                globals: job.globalProperties,
+                                arrangement: arrangement
+                            )
+                    }
                     .concurrentMap {
                         ScopedNode(instance: job.node.instances[index], node: $0.target)
                     }
             }
-            let jobs = await [CombinedNode](
-                nodes: scopedNodes,
-                arrangement: arrangement,
-                currentState: job.globalProperties
-            )
-            .concurrentMap {
-                Job(node: $0, arrangement: arrangement)
+            let jobs: [Job]
+            if scopedNodes.allSatisfy({ !$0.isEmpty }) {
+                jobs = await [CombinedNode](
+                    nodes: scopedNodes,
+                    arrangement: arrangement,
+                    currentState: [:]
+                )
+                .concurrentMap {
+                    Job(node: $0, arrangement: arrangement)
+                }
+            } else {
+                jobs = []
             }
             let newEdges = await jobs.concurrentMap {
                 Edge(target: Node(node: $0.node, arrangement: arrangement), cost: cost)

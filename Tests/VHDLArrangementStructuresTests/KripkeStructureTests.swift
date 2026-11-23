@@ -40,6 +40,32 @@ struct KripkeStructureTests {
         #expect(actual == expected)
     }
 
+    /// Test that a writer can change a shared signal while another machine retains its input.
+    @Test("Shared output changes retain their incoming edge.")
+    func testSharedOutputChange() async throws {
+        let arrangement = Arrangement.pingPongQuickTimerArrangement
+        let pingPong = KripkeStructure.pingPong
+        let quickTimer = KripkeStructure.quickTimer
+        let instances: [MachineInstance] = [.pingPong(), .quickTimer()]
+        let source = Node(
+            node: CombinedNode(nodes: [pingPong.nodes[4], quickTimer.nodes[2]], instances: instances),
+            arrangement: arrangement
+        )
+        let target = Node(
+            node: CombinedNode(nodes: [pingPong.nodes[8], quickTimer.nodes[3]], instances: instances),
+            arrangement: arrangement
+        )
+        let structure = await KripkeStructure(
+            arrangement: arrangement,
+            kripkeStructures: [.pingPong(): pingPong, .quickTimer(): quickTimer]
+        )
+        let edges = try #require(structure.edges[source])
+        #expect(edges.contains { $0.target == target })
+        #expect(structure.nodes.contains(target))
+        #expect(source.properties[.x] == .bit(value: .low))
+        #expect(target.properties[.x] == .bit(value: .high))
+    }
+
     /// Test concurrent branches that converge and form cycles.
     @Test("Concurrent branches can converge and form cycles.")
     func testConvergingCycles() async {
