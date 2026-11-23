@@ -47,13 +47,13 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
     func hasSameExternals(
         as other: ScopedNode,
         in arrangement: Arrangement,
-        globalState: [ArrangementVariableName: SignalLiteral]
+        currentState: [ArrangementVariableName: SignalLiteral]
     ) -> Bool {
         switch self.node.type {
         case .write:
-            return hasSameExternalsWrite(other: other, arrangement: arrangement, globalState: globalState)
+            return hasSameExternalsWrite(other: other, arrangement: arrangement, currentState: currentState)
         case .read:
-            return hasSameExternalsRead(other: other, arrangement: arrangement, globalState: globalState)
+            return hasSameExternalsRead(other: other, arrangement: arrangement, currentState: currentState)
         }
     }
 
@@ -61,25 +61,17 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
     private func hasSameExternalsRead(
         other: ScopedNode,
         arrangement: Arrangement,
-        globalState: [ArrangementVariableName: SignalLiteral]
+        currentState: [ArrangementVariableName: SignalLiteral]
     ) -> Bool {
-        guard let reverseMapping = arrangement.reverseExternalMappings[self.instanceName],
-            let otherMapping = arrangement.externalMappings[other.instanceName]
-        else {
+        guard let reverseMapping = arrangement.reverseExternalMappings[self.instanceName] else {
             return true
         }
-        let signals = arrangement.externals(instance: other.instance)
         let properties = node.properties.lazy.filter { reverseMapping.keys.contains($0.key) }
         return properties.allSatisfy { property in
-            guard let externalName = reverseMapping[property.key], let localName = otherMapping[externalName]
+            guard let externalName = reverseMapping[property.key],
+                let previousValue = currentState[externalName]
             else {
                 return true
-            }
-            guard let externalSignal = signals[localName] else {
-                fatalError("External signal \(localName) not found in machine \(other.instanceName)")
-            }
-            guard let previousValue = globalState[externalName] else {
-                return externalSignal.mode == .output || property.value == other.node.properties[localName]
             }
             return property.value == previousValue
         }
@@ -89,25 +81,18 @@ final class ScopedNode: Hashable, Equatable, Codable, Sendable, Comparable {
     private func hasSameExternalsWrite(
         other: ScopedNode,
         arrangement: Arrangement,
-        globalState: [ArrangementVariableName: SignalLiteral]
+        currentState: [ArrangementVariableName: SignalLiteral]
     ) -> Bool {
-        guard let reverseMapping = arrangement.reverseExternalMappings[self.instanceName],
-            let otherMapping = arrangement.externalMappings[other.instanceName]
+        guard let reverseMapping = arrangement.reverseExternalMappings[self.instanceName]
         else {
             return true
         }
-        let signals = arrangement.externals(instance: self.instance)
         let properties = node.properties.lazy.filter { reverseMapping.keys.contains($0.key) }
         return properties.allSatisfy { property in
-            guard let externalName = reverseMapping[property.key], let localName = otherMapping[externalName]
+            guard let externalName = reverseMapping[property.key],
+                let previousValue = currentState[externalName]
             else {
                 return true
-            }
-            guard let externalSignal = signals[property.key] else {
-                fatalError("External signal \(property.key) not found in machine \(self.instanceName)")
-            }
-            guard let previousValue = globalState[externalName] else {
-                return externalSignal.mode == .input || property.value == other.node.properties[localName]
             }
             return property.value == previousValue
         }

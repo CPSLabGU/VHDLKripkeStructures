@@ -40,7 +40,7 @@ extension Array where Element == CombinedNode {
     init(
         nodes: [[ScopedNode]],
         arrangement: Arrangement,
-        globalState: [ArrangementVariableName: SignalLiteral]
+        currentState: [ArrangementVariableName: SignalLiteral]
     ) async {
         guard !nodes.isEmpty, nodes.allSatisfy({ !$0.isEmpty }) else {
             fatalError("Passed empty array when constructing combined kripke structure.")
@@ -51,11 +51,24 @@ extension Array where Element == CombinedNode {
         }
         let firstNodes = nodes[0]
         let batches = await firstNodes.concurrentMap { currentNode in
-            let matchingNodes = await [[ScopedNode]](nodes.dropFirst())
-                .concurrentMap { structureNodes in
+            var globalState = currentState
+            guard let reverseMapping = arrangement.reverseExternalMappings[currentNode.instanceName] else {
+                fatalError("Cannot find reverse mapping for instance \(currentNode.instanceName)")
+            }
+            currentNode.node.properties.forEach { localName, value in
+                if let globalName = reverseMapping[localName], globalState[globalName] != nil {
+                    globalState[globalName] = value
+                }
+            }
+            let matchingNodes = [[ScopedNode]](nodes.dropFirst())
+                .map { structureNodes in
                     structureNodes.filter {
                         currentNode.node.type == $0.node.type
-                            && currentNode.hasSameExternals(as: $0, in: arrangement, globalState: globalState)
+                            && currentNode.hasSameExternals(
+                                as: $0,
+                                in: arrangement,
+                                currentState: globalState
+                            )
                     }
                 }
             let candidates = [[currentNode]] + matchingNodes

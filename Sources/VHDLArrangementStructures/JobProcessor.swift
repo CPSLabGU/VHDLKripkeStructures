@@ -67,7 +67,7 @@ actor JobProcessor {
             let jobs = await [CombinedNode](
                 nodes: scopedNodes,
                 arrangement: arrangement,
-                globalState: job.globalProperties
+                currentState: job.globalProperties
             )
             .concurrentMap {
                 Job(node: $0, arrangement: arrangement)
@@ -113,7 +113,7 @@ actor JobProcessor {
                 }
                 return structure.initialStates.map { ScopedNode(instance: instance, node: $0) }
             }
-        let jobNodes = await [CombinedNode](nodes: scopedNodes, arrangement: arrangement, globalState: [:])
+        let jobNodes = await [CombinedNode](nodes: scopedNodes, arrangement: arrangement, currentState: [:])
         self.jobs = await jobNodes.concurrentMap { Job(node: $0, arrangement: arrangement) }
         self.processedJobs = []
         let initialNodes = Set(await jobNodes.concurrentMap { Node(node: $0, arrangement: arrangement) })
