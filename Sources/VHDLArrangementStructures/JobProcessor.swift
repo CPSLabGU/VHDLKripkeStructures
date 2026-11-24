@@ -118,6 +118,7 @@ actor JobProcessor {
     ) async -> KripkeStructure {
         print("Attempting to fold Kripke structures together...")
         let startState = arrangement.startState
+        let globals = arrangement.globalVariables
         let scopedNodes = arrangement.machines.keys.sorted { $0.name < $1.name }
             .map { instance in
                 guard let structure = kripkeStructures[instance],
@@ -127,7 +128,7 @@ actor JobProcessor {
                 }
                 let reachableInitialStates = structure.initialStates.filter {
                     $0.properties.allSatisfy {
-                        guard let arrangementName = mapping[$0.key] else {
+                        guard let arrangementName = mapping[$0.key], globals.contains(arrangementName) else {
                             return true
                         }
                         return startState[arrangementName] == $0.value
