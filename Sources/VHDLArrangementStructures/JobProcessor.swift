@@ -69,14 +69,15 @@ actor JobProcessor {
             }
             let jobs: [Job]
             if scopedNodes.allSatisfy({ !$0.isEmpty }) {
-                jobs = await [CombinedNode](
-                    nodes: scopedNodes,
-                    arrangement: arrangement,
-                    currentState: [:]
-                )
-                .concurrentMap {
-                    Job(node: $0, arrangement: arrangement)
-                }
+                jobs =
+                    await scopedNodes
+                    .cartesianProduct
+                    .concurrentMap {
+                        CombinedNode(scopedNodes: $0)
+                    }
+                    .concurrentMap {
+                        Job(node: $0, arrangement: arrangement)
+                    }
             } else {
                 jobs = []
             }
