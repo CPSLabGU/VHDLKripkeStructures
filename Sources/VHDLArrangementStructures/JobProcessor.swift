@@ -117,12 +117,23 @@ actor JobProcessor {
         kripkeStructures: [MachineInstance: KripkeStructure]
     ) async -> KripkeStructure {
         print("Attempting to fold Kripke structures together...")
+        let startState = arrangement.startState
         let scopedNodes = arrangement.machines.keys.sorted { $0.name < $1.name }
             .map { instance in
-                guard let structure = kripkeStructures[instance] else {
+                guard let structure = kripkeStructures[instance],
+                    let mapping = arrangement.reverseExternalMappings[instance.name]
+                else {
                     fatalError("Kripke structure not found for machine instance \(instance)")
                 }
-                return structure.initialStates.map { ScopedNode(instance: instance, node: $0) }
+                let reachableInitialStates = structure.initialStates.filter {
+                    $0.properties.allSatisfy {
+                        guard let arrangementName = mapping[$0.key] else {
+                            return true
+                        }
+                        return startState[arrangementName] == $0.value
+                    }
+                }
+                return reachableInitialStates.map { ScopedNode(instance: instance, node: $0) }
             }
         let jobNodes = await [CombinedNode](nodes: scopedNodes, arrangement: arrangement, currentState: [:])
         let initialJobs = await jobNodes.concurrentMap { Job(node: $0, arrangement: arrangement) }
@@ -135,21 +146,13 @@ actor JobProcessor {
         var lastProgressUpdate = -Double.infinity
         var jobsProcessed = 0
         var inFlight = 0
-        var lastJob: Job?
         func showJobsLeft(force: Bool = false) {
             let now = ProcessInfo.processInfo.systemUptime
             guard force || now - lastProgressUpdate >= 0.1 else { return }
             lastProgressUpdate = now
-            let lastDescription = lastJob.map { job in
-                let properties = job.properties.sorted { $0.key < $1.key }
-                    .map { "\($0.key.rawValue)=\($0.value.rawValue)" }
-                    .joined(separator: ",")
-                return "\(job.currentState.rawValue) {\(properties)}"
-            }
             let line =
                 "\rJobs left: \(self.jobs.count + inFlight) | Jobs in progress: \(inFlight) "
-                + "| Jobs Processed: \(jobsProcessed) | Nodes: \(self.nodes.count) "
-                + "| Last: \((lastDescription ?? ""))\u{1B}[K"
+                + "| Jobs Processed: \(jobsProcessed) | Nodes: \(self.nodes.count)\u{1B}[K"
             FileHandle.standardOutput.write(Data(line.utf8))
         }
         showJobsLeft()
@@ -163,7 +166,6 @@ actor JobProcessor {
                     }
                     jobsProcessed += 1
                     inFlight += 1
-                    lastJob = job
                     group.addTask {
                         await JobExpansion(
                             job: job,

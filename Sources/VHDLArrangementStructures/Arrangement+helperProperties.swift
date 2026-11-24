@@ -39,6 +39,17 @@ extension Arrangement {
         )
     }
 
+    /// The starting state of the global and external variables.
+    var startState: [ArrangementVariableName: SignalLiteral] {
+        let externals = self.externalSignals.map {
+            ($0.name, $0.defaultValue?.literal ?? $0.type.signal.default)
+        }
+        let globals = self.signals.map {
+            ($0.name, $0.defaultValue?.literal ?? $0.type.signal.default)
+        }
+        return Dictionary(uniqueKeysWithValues: externals + globals)
+    }
+
     /// Fetch the external varible definitions for a machine instance.
     func externals(instance: MachineInstance) -> [MachineVariableName: PortSignal] {
         guard let machineMapping = self.machines[instance] else {
