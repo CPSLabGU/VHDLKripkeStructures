@@ -52,6 +52,7 @@ actor JobProcessor {
                 fatalError("Edges are either empty or have inconsistent costs for combined node \(job)")
             }
             let cost = edges[0][0].cost
+            let globalProperties = job.globalProperties
             let scopedNodes = await edges.indices.concurrentMap { index in
                 await edges[index]
                     .filter {
@@ -59,7 +60,7 @@ actor JobProcessor {
                             || $0.hasSameGlobals(
                                 instance: job.node.instances[index],
                                 previousState: job.node.nodes[index].properties,
-                                globals: job.globalProperties,
+                                globals: globalProperties,
                                 arrangement: arrangement
                             )
                     }
