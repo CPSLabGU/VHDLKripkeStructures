@@ -132,7 +132,12 @@ actor JobProcessor {
                         guard let arrangementName = mapping[$0.key], globals.contains(arrangementName) else {
                             return true
                         }
-                        return startState[arrangementName] == $0.value
+                        guard let startValue = startState[arrangementName] else {
+                            fatalError(
+                                "Cannot find corresponding initial value for variable \(arrangementName)."
+                            )
+                        }
+                        return startValue == $0.value
                     }
                 }
                 return reachableInitialStates.map { ScopedNode(instance: instance, node: $0) }
