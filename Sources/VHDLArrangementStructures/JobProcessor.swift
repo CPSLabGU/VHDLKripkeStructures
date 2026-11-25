@@ -103,6 +103,15 @@ actor JobProcessor {
     /// The edges for each combined node in the Kripke structure.
     var allEdges: [Node: [Edge]] = [:]
 
+    /// Whether the job processor is currently running.
+    var isRunning: Bool = false {
+        willSet {
+            if newValue && isRunning {
+                fatalError("You cannot start simultaneous job processing within the same instance.")
+            }
+        }
+    }
+
     /// Initialize an empty job processor.
     init() {}
 
@@ -117,6 +126,8 @@ actor JobProcessor {
         arrangement: Arrangement,
         kripkeStructures: [MachineInstance: KripkeStructure]
     ) async -> KripkeStructure {
+        self.isRunning = true
+        defer { self.isRunning = false }
         print("Attempting to fold Kripke structures together...")
         let startState = arrangement.startState
         let globals = arrangement.globalVariables
