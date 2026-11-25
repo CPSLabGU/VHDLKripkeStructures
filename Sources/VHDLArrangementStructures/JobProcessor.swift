@@ -154,7 +154,7 @@ actor JobProcessor {
             lastProgressUpdate = now
             let line =
                 "\rJobs left: \(self.jobs.count + inFlight) | Jobs in progress: \(inFlight) "
-                + "| Jobs Processed: \(jobsProcessed) | Nodes: \(self.nodes.count)\u{1B}[K"
+                + "| Jobs Processed: \(jobsProcessed) | Nodes: \(self.nodes.count)...\u{1B}[K"
             FileHandle.standardOutput.write(Data(line.utf8))
         }
         showJobsLeft()
@@ -191,6 +191,7 @@ actor JobProcessor {
         }
         showJobsLeft(force: true)
         FileHandle.standardOutput.write(Data("\n".utf8))
+        print("...Done!")
         let edgeCount = self.allEdges.values.reduce(0) { $0 + $1.count }
         let totalNodeCount = kripkeStructures.reduce(0) { $0 + $1.value.nodes.count }
         let reduction = (Double(self.nodes.count) / Double(totalNodeCount) * 100.0 - 100.0)
