@@ -131,26 +131,28 @@ actor JobProcessor {
         print("Attempting to fold Kripke structures together...")
         let startState = arrangement.startState
         let globals = arrangement.globalVariables
-        let scopedNodes = arrangement.machines.keys.sorted { $0.name < $1.name }
-            .map { instance in
+        let scopedNodes = await arrangement.machines.keys.sorted { $0.name < $1.name }
+            .concurrentMap { instance in
                 guard let structure = kripkeStructures[instance],
                     let mapping = arrangement.reverseExternalMappings[instance.name]
                 else {
                     fatalError("Kripke structure not found for machine instance \(instance)")
                 }
-                let reachableInitialStates = structure.initialStates.filter {
-                    $0.properties.allSatisfy {
-                        guard let arrangementName = mapping[$0.key], globals.contains(arrangementName) else {
-                            return true
+                let reachableInitialStates = await Array(structure.initialStates)
+                    .concurrentFilter {
+                        $0.properties.allSatisfy {
+                            guard let arrangementName = mapping[$0.key], globals.contains(arrangementName)
+                            else {
+                                return true
+                            }
+                            guard let startValue = startState[arrangementName] else {
+                                fatalError(
+                                    "Cannot find corresponding initial value for variable \(arrangementName)."
+                                )
+                            }
+                            return startValue == $0.value
                         }
-                        guard let startValue = startState[arrangementName] else {
-                            fatalError(
-                                "Cannot find corresponding initial value for variable \(arrangementName)."
-                            )
-                        }
-                        return startValue == $0.value
                     }
-                }
                 print(
                     "Reduced \(structure.initialStates.count) initial states to "
                         + "\(reachableInitialStates.count) in \(instance.name)"

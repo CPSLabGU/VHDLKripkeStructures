@@ -50,6 +50,38 @@ extension Collection where Self: Sendable, Element: Sendable, Index == Int {
             return batches.flatMap { $0 }
         }
     }
+
+    /// A filter that executes concurrently on the array elements.
+    func concurrentFilter(_ isIncluded: @escaping @Sendable (Element) async -> Bool) async -> [Element] {
+        guard !isEmpty else {
+            return []
+        }
+        let workerCount = Swift.min(count, ProcessInfo.processInfo.activeProcessorCount)
+        return await withTaskGroup(of: (Self.Index, [Element]).self) { group in
+            for worker in 0..<workerCount {
+                let start = count / workerCount * worker + Swift.min(worker, count % workerCount)
+                let end = start + count / workerCount + (worker < count % workerCount ? 1 : 0)
+                group.addTask {
+                    var results: [Element] = []
+                    results.reserveCapacity(end - start)
+                    var index = self.index(self.startIndex, offsetBy: start)
+                    for _ in start..<end {
+                        let element = self[index]
+                        if await isIncluded(element) {
+                            results.append(element)
+                        }
+                        self.formIndex(after: &index)
+                    }
+                    return (worker, results)
+                }
+            }
+            var batches: [[Element]] = .init(repeating: [], count: workerCount)
+            for await (worker, results) in group {
+                batches[worker] = results
+            }
+            return batches.flatMap { $0 }
+        }
+    }
 }
 
 /// Add concurrent cartesian product.
