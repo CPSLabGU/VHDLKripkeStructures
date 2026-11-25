@@ -137,7 +137,7 @@ actor JobProcessor {
                 }
                 return reachableInitialStates.map { ScopedNode(instance: instance, node: $0) }
             }
-        let jobNodes = await [CombinedNode](nodes: scopedNodes, arrangement: arrangement, currentState: [:])
+        let jobNodes = await scopedNodes.cartesianProduct.concurrentMap { CombinedNode(scopedNodes: $0) }
         let initialJobs = await jobNodes.concurrentMap { Job(node: $0, arrangement: arrangement) }
         var scheduledJobs: Set<Job> = []
         self.jobs = initialJobs.filter { scheduledJobs.insert($0).inserted }
@@ -193,21 +193,26 @@ actor JobProcessor {
         FileHandle.standardOutput.write(Data("\n".utf8))
         let edgeCount = self.allEdges.values.reduce(0) { $0 + $1.count }
         let totalNodeCount = kripkeStructures.reduce(0) { $0 + $1.value.nodes.count }
-        let nodeReduction = (Double(self.nodes.count) / Double(totalNodeCount) * 100.0 - 100.0)
-            .formatted(.number.precision(.fractionLength(2)))
+        let reduction = (Double(self.nodes.count) / Double(totalNodeCount) * 100.0 - 100.0)
+        let nodeReduction = abs(reduction).formatted(.number.precision(.fractionLength(2)))
+        let nodeIncreased = reduction < 0 ? "Decreased" : "Increased"
+        let nodeReductionPrint = reduction < 0 ? "reduction" : "increase"
         print(
-            "Increased total nodes from \(totalNodeCount) to \(self.nodes.count) combined nodes "
-                + "(\(nodeReduction)% increase)."
+            "\(nodeIncreased) total nodes from \(totalNodeCount) to \(self.nodes.count) combined nodes "
+                + "(\(nodeReduction)% \(nodeReductionPrint))."
         )
         let totalEdgeCount = kripkeStructures.reduce(0) {
             $0 + $1.value.edges.reduce(0) { $0 + $1.value.count }
         }
-        let edgeReduction = (Double(edgeCount) / Double(totalEdgeCount) * 100.0 - 100.0)
-            .formatted(.number.precision(.fractionLength(2)))
+        let edgeRawReduction = (Double(edgeCount) / Double(totalEdgeCount) * 100.0 - 100.0)
+        let edgeReduction = abs(edgeRawReduction).formatted(.number.precision(.fractionLength(2)))
+        let edgeIncreased = edgeRawReduction < 0 ? "Decreased" : "Increased"
+        let edgeReductionPrint = edgeRawReduction < 0 ? "reduction" : "increase"
         print(
-            "Increased total edges from \(totalEdgeCount) to \(edgeCount) combined edges "
-                + "(\(edgeReduction)% increase)."
+            "\(edgeIncreased) total edges from \(totalEdgeCount) to \(edgeCount) combined edges "
+                + "(\(edgeReduction)% \(edgeReductionPrint))."
         )
+        print("Cyclomatic complexity: \(edgeCount - self.nodes.count + 2)")
         return KripkeStructure(
             nodes: Array(self.nodes),
             edges: self.allEdges,
@@ -240,16 +245,14 @@ extension Edge {
                 switch previousExternal.mode {
                 case .output:
                     guard let previousValue = previousState[$0.key] else {
-                        print("Failed to find previous value for key \($0.key) in previous state.")
-                        return true
+                        fatalError("Failed to find previous value for key \($0.key) in previous state.")
                     }
                     return $0.value == previousValue
                 default:
                     guard let reverseMapping = arrangement.reverseExternalMappings[instance.name],
                         let externalName = reverseMapping[$0.key], let globalValue = globals[externalName]
                     else {
-                        print("Failed to find global value for key \($0.key) in globals.")
-                        return true
+                        fatalError("Failed to find global value for key \($0.key) in globals.")
                     }
                     return $0.value == globalValue
                 }
@@ -257,8 +260,7 @@ extension Edge {
                 switch previousExternal.mode {
                 case .input:
                     guard let previousValue = previousState[$0.key] else {
-                        print("Failed to find previous value for key \($0.key) in previous state.")
-                        return true
+                        fatalError("Failed to find previous value for key \($0.key) in previous state.")
                     }
                     return $0.value == previousValue
                 default:
