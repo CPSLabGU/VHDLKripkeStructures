@@ -251,9 +251,12 @@ extension Edge {
                     return $0.value == previousValue
                 default:
                     guard let reverseMapping = arrangement.reverseExternalMappings[instance.name],
-                        let externalName = reverseMapping[$0.key], let globalValue = globals[externalName]
+                        let externalName = reverseMapping[$0.key]
                     else {
-                        fatalError("Failed to find global value for key \($0.key) in globals.")
+                        fatalError("Failed to find external value for key \($0.key).")
+                    }
+                    guard let globalValue = globals[externalName] else {
+                        return true
                     }
                     return $0.value == globalValue
                 }
