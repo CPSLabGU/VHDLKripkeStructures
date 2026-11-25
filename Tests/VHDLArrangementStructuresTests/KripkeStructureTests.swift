@@ -11,7 +11,7 @@ struct KripkeStructureTests {
     /// Test kripke structure is created for simple arrangements.
     @Test("Kripke structures can be created for arrangements with a single machine.")
     func testSingleMachineArrangement() async {
-        let originalStructure = KripkeStructure.pingPong
+        let originalStructure = KripkeStructure.pingPongSingle
         let expected = await KripkeStructure(
             arrangement: .pingPongArrangement,
             kripkeStructures: [.pingPong(): originalStructure]

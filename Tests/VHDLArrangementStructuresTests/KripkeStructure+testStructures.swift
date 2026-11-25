@@ -1,6 +1,8 @@
 import VHDLKripkeStructures
 import VHDLParsing
 
+// swiftlint:disable file_length
+
 /// Add test structures.
 extension KripkeStructure {
 
@@ -187,6 +189,72 @@ extension KripkeStructure {
             pongWrites[1]: [
                 Edge(target: pingReads[0], cost: .writeCost),
                 Edge(target: pingReads[1], cost: .writeCost),
+            ],
+        ]
+        return KripkeStructure(nodes: allNodes, edges: edges, initialStates: Set(initialStates))
+    }()
+
+    /// The kripke structure of an arrangement with just a ping pong machine.
+    static let pingPongSingle: KripkeStructure = {
+        let initialStates = [
+            Node(
+                type: .read,
+                currentState: .initial,
+                executeOnEntry: true,
+                nextState: .initial,
+                properties: [.y: .bit(value: .low), .timerPulse: .bit(value: .low)]
+            )
+        ]
+        let initialWrites = [
+            Node(
+                type: .write,
+                currentState: .initial,
+                executeOnEntry: true,
+                nextState: .ping,
+                properties: [.y: .bit(value: .low), .timerPulse: .bit(value: .low)]
+            )
+        ]
+        let pingReads = [
+            Node(
+                type: .read,
+                currentState: .ping,
+                executeOnEntry: true,
+                nextState: .ping,
+                properties: [.y: .bit(value: .low), .timerPulse: .bit(value: .low)]
+            ),
+            Node(
+                type: .read,
+                currentState: .ping,
+                executeOnEntry: false,
+                nextState: .ping,
+                properties: [.y: .bit(value: .low), .timerPulse: .bit(value: .low)]
+            ),
+        ]
+        let pingWrites = [
+            Node(
+                type: .write,
+                currentState: .ping,
+                executeOnEntry: false,
+                nextState: .ping,
+                properties: [.y: .bit(value: .low), .timerPulse: .bit(value: .low)]
+            )
+        ]
+        let allNodes = initialStates + initialWrites + pingReads + pingWrites
+        let edges: [Node: [Edge]] = [
+            initialStates[0]: [
+                Edge(target: initialWrites[0], cost: .readCost)
+            ],
+            initialWrites[0]: [
+                Edge(target: pingReads[0], cost: .writeCost)
+            ],
+            pingReads[0]: [
+                Edge(target: pingWrites[0], cost: .readCost)
+            ],
+            pingReads[1]: [
+                Edge(target: pingWrites[0], cost: .readCost)
+            ],
+            pingWrites[0]: [
+                Edge(target: pingReads[1], cost: .writeCost)
             ],
         ]
         return KripkeStructure(nodes: allNodes, edges: edges, initialStates: Set(initialStates))
@@ -438,3 +506,5 @@ extension Cost {
     /// The cost of a write -> read edge.
     static let writeCost = Cost(time: ScientificQuantity(coefficient: 20, exponent: -9), energy: .zero)
 }
+
+// swiftlint:enable file_length
