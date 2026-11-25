@@ -451,7 +451,7 @@ extension KripkeStructure {
                 type: .read,
                 currentState: VariableName(rawValue: "M0_Pong__M2_ClearPulse")!,
                 executeOnEntry: false,
-                nextState: VariableName(rawValue: "M0_Pong__M2_SendPulse")!,
+                nextState: VariableName(rawValue: "M0_Pong__M2_ClearPulse")!,
                 properties: [
                     .extY: .bit(value: .high),
                     .x: .bit(value: .high),
@@ -464,12 +464,12 @@ extension KripkeStructure {
             Node(
                 type: .write,
                 currentState: VariableName(rawValue: "M0_Pong__M2_ClearPulse")!,
-                executeOnEntry: false,
+                executeOnEntry: true,
                 nextState: VariableName(rawValue: "M0_Ping__M2_SendPulse")!,
                 properties: [
                     .extY: .bit(value: .low),
                     .x: .bit(value: .low),
-                    VariableName(rawValue: "M0_executeOnEntry")!: .boolean(value: false),
+                    VariableName(rawValue: "M0_executeOnEntry")!: .boolean(value: true),
                     VariableName(rawValue: "M2_executeOnEntry")!: .boolean(value: true),
                 ]
             )
