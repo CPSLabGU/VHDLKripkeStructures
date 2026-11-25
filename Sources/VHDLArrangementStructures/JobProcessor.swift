@@ -155,7 +155,7 @@ actor JobProcessor {
                     "Reduced \(structure.initialStates.count) initial states to "
                         + "\(reachableInitialStates.count) in \(instance.name)"
                 )
-                print("Initial states: \(structure.initialStates.sorted())")
+                // print("Initial states: \(structure.initialStates.sorted())")
                 return reachableInitialStates.map { ScopedNode(instance: instance, node: $0) }
             }
         let jobNodes = await scopedNodes.cartesianProduct.concurrentMap { CombinedNode(scopedNodes: $0) }
