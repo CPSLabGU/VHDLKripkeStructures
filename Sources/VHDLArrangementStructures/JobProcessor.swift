@@ -131,6 +131,7 @@ actor JobProcessor {
         print("Attempting to fold Kripke structures together...")
         let startState = arrangement.startState
         let globals = arrangement.globalVariables
+        print("Finding reachable initial nodes...")
         let scopedNodes = await arrangement.machines.keys.sorted { $0.name < $1.name }
             .concurrentMap { instance in
                 guard let structure = kripkeStructures[instance],
@@ -153,13 +154,15 @@ actor JobProcessor {
                             return startValue == $0.value
                         }
                     }
-                print(
-                    "Reduced \(structure.initialStates.count) initial states to "
-                        + "\(reachableInitialStates.count) in \(instance.name)"
-                )
+                // print(
+                //     "Reduced \(structure.initialStates.count) initial states to "
+                //         + "\(reachableInitialStates.count) in \(instance.name)"
+                // )
                 // print("Initial states: \(structure.initialStates.sorted())")
                 return reachableInitialStates.map { ScopedNode(instance: instance, node: $0) }
             }
+        print("...Done!")
+        print("Folding Kripke structures together...")
         let jobNodes = await scopedNodes.cartesianProduct.concurrentMap { CombinedNode(scopedNodes: $0) }
         let initialJobs = await jobNodes.concurrentMap { Job(node: $0, arrangement: arrangement) }
         var scheduledJobs: Set<Job> = []
@@ -177,7 +180,7 @@ actor JobProcessor {
             lastProgressUpdate = now
             let line =
                 "\rJobs left: \(self.jobs.count + inFlight) | Jobs in progress: \(inFlight) "
-                + "| Jobs Processed: \(jobsProcessed) | Nodes: \(self.nodes.count)...\u{1B}[K"
+                + "| Jobs Processed: \(jobsProcessed)...\u{1B}[K"
             FileHandle.standardOutput.write(Data(line.utf8))
         }
         showJobsLeft()
