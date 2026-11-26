@@ -37,8 +37,11 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable, CustomStringCo
                 "\($0.0.rawValue)_\($0.1.currentState.rawValue)"
             }
             .joined(separator: "__")
-        // swiftlint:disable:next force_unwrapping
-        return VariableName(rawValue: rawName)!
+        guard let name = VariableName(rawValue: rawName) else {
+            // swiftlint:disable:next force_unwrapping
+            return VariableName(rawValue: "Combined_State")!
+        }
+        return name
     }
 
     /// The name of the next state.
