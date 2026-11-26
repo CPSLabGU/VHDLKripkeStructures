@@ -67,6 +67,7 @@ final class Job: Equatable, Hashable, Codable, Sendable {
         hasher.combine(executeOnEntry)
         hasher.combine(type)
         hasher.combine(properties)
+        hasher.combine(node)
     }
 
 }
