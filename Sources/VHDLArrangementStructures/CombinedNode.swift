@@ -50,8 +50,11 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable, CustomStringCo
             .sorted { $0.0 < $1.0 }
             .map { "\($0.0.rawValue)_\($0.1.rawValue)" }
             .joined(separator: "__")
-        // swiftlint:disable:next force_unwrapping
-        return VariableName(rawValue: nextStates)!
+        guard let name = VariableName(rawValue: nextStates) else {
+            // swiftlint:disable:next force_unwrapping
+            return VariableName(rawValue: "Combined_State")!
+        }
+        return name
     }
 
     /// Initialise the combined node.
