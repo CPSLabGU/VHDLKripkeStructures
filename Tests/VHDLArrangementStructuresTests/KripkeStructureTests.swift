@@ -108,9 +108,9 @@ extension Node {
         // swiftlint:disable force_unwrapping
         return Node(
             type: self.type,
-            currentState: VariableName(rawValue: "M0_\(self.currentState)")!,
+            currentState: VariableName(rawValue: "\(self.currentState)")!,
             executeOnEntry: self.executeOnEntry,
-            nextState: VariableName(rawValue: "M0_\(self.nextState)")!,
+            nextState: VariableName(rawValue: "\(self.nextState)")!,
             properties: Dictionary(
                 uniqueKeysWithValues: rawProperties + [
                     (VariableName(rawValue: "M0_executeOnEntry")!, .boolean(value: self.executeOnEntry))

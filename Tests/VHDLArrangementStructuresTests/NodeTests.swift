@@ -15,9 +15,9 @@ struct NodeTests {
     func testInitWithoutArrangement() {
         let node = Node(node: self.node)
         #expect(node.type == .read)
-        #expect(node.currentState == VariableName(rawValue: "M0_Ping__M1_CountTime"))
+        #expect(node.currentState == VariableName(rawValue: "Ping__CountTime"))
         #expect(!node.executeOnEntry)
-        #expect(node.nextState == VariableName(rawValue: "M0_Ping__M1_CountTime"))
+        #expect(node.nextState == VariableName(rawValue: "Ping__CountTime"))
         // swiftlint:disable force_unwrapping
         let expected: [VariableName: SignalLiteral] = [
             VariableName(rawValue: "M0_y")!: .bit(value: .low),
@@ -36,9 +36,9 @@ struct NodeTests {
     func testInitWithArrangement() {
         let node = Node(node: self.node, arrangement: .testArrangement)
         #expect(node.type == .read)
-        #expect(node.currentState == VariableName(rawValue: "M0_Ping__M1_CountTime"))
+        #expect(node.currentState == VariableName(rawValue: "Ping__CountTime"))
         #expect(!node.executeOnEntry)
-        #expect(node.nextState == VariableName(rawValue: "M0_Ping__M1_CountTime"))
+        #expect(node.nextState == VariableName(rawValue: "Ping__CountTime"))
         // swiftlint:disable force_unwrapping
         let expected: [VariableName: SignalLiteral] = [
             .extY: .bit(value: .low),

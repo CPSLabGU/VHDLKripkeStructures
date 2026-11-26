@@ -337,9 +337,9 @@ extension KripkeStructure {
         let initialStates = [
             Node(
                 type: .read,
-                currentState: VariableName(rawValue: "M0_Initial__M2_Initial")!,
+                currentState: VariableName(rawValue: "Initial__Initial")!,
                 executeOnEntry: true,
-                nextState: VariableName(rawValue: "M0_Initial__M2_Initial")!,
+                nextState: VariableName(rawValue: "Initial__Initial")!,
                 properties: [
                     .extY: .bit(value: .low),
                     .x: .bit(value: .low),
@@ -351,9 +351,9 @@ extension KripkeStructure {
         let initialWrites = [
             Node(
                 type: .write,
-                currentState: VariableName(rawValue: "M0_Initial__M2_Initial")!,
+                currentState: VariableName(rawValue: "Initial__Initial")!,
                 executeOnEntry: true,
-                nextState: VariableName(rawValue: "M0_Ping__M2_SendPulse")!,
+                nextState: VariableName(rawValue: "Ping__SendPulse")!,
                 properties: [
                     .extY: .bit(value: .low),
                     .x: .bit(value: .low),
@@ -365,9 +365,9 @@ extension KripkeStructure {
         let pingSendPulseReads = [
             Node(
                 type: .read,
-                currentState: VariableName(rawValue: "M0_Ping__M2_SendPulse")!,
+                currentState: VariableName(rawValue: "Ping__SendPulse")!,
                 executeOnEntry: true,
-                nextState: VariableName(rawValue: "M0_Ping__M2_SendPulse")!,
+                nextState: VariableName(rawValue: "Ping__SendPulse")!,
                 properties: [
                     .extY: .bit(value: .low),
                     .x: .bit(value: .low),
@@ -379,9 +379,9 @@ extension KripkeStructure {
         let pingSendPulseWrites = [
             Node(
                 type: .write,
-                currentState: VariableName(rawValue: "M0_Ping__M2_SendPulse")!,
+                currentState: VariableName(rawValue: "Ping__SendPulse")!,
                 executeOnEntry: false,
-                nextState: VariableName(rawValue: "M0_Ping__M2_ClearPulse")!,
+                nextState: VariableName(rawValue: "Ping__ClearPulse")!,
                 properties: [
                     .extY: .bit(value: .low),
                     .x: .bit(value: .high),
@@ -393,9 +393,9 @@ extension KripkeStructure {
         let pingClearPulseReads = [
             Node(
                 type: .read,
-                currentState: VariableName(rawValue: "M0_Ping__M2_ClearPulse")!,
+                currentState: VariableName(rawValue: "Ping__ClearPulse")!,
                 executeOnEntry: false,
-                nextState: VariableName(rawValue: "M0_Ping__M2_ClearPulse")!,
+                nextState: VariableName(rawValue: "Ping__ClearPulse")!,
                 properties: [
                     .extY: .bit(value: .low),
                     .x: .bit(value: .high),
@@ -407,9 +407,9 @@ extension KripkeStructure {
         let pingClearPulseWrites = [
             Node(
                 type: .write,
-                currentState: VariableName(rawValue: "M0_Ping__M2_ClearPulse")!,
+                currentState: VariableName(rawValue: "Ping__ClearPulse")!,
                 executeOnEntry: true,
-                nextState: VariableName(rawValue: "M0_Pong__M2_SendPulse")!,
+                nextState: VariableName(rawValue: "Pong__SendPulse")!,
                 properties: [
                     .extY: .bit(value: .high),
                     .x: .bit(value: .low),
@@ -421,9 +421,9 @@ extension KripkeStructure {
         let pongSendPulseReads = [
             Node(
                 type: .read,
-                currentState: VariableName(rawValue: "M0_Pong__M2_SendPulse")!,
+                currentState: VariableName(rawValue: "Pong__SendPulse")!,
                 executeOnEntry: true,
-                nextState: VariableName(rawValue: "M0_Pong__M2_SendPulse")!,
+                nextState: VariableName(rawValue: "Pong__SendPulse")!,
                 properties: [
                     .extY: .bit(value: .high),
                     .x: .bit(value: .low),
@@ -435,9 +435,9 @@ extension KripkeStructure {
         let pongSendPulseWrites = [
             Node(
                 type: .write,
-                currentState: VariableName(rawValue: "M0_Pong__M2_SendPulse")!,
+                currentState: VariableName(rawValue: "Pong__SendPulse")!,
                 executeOnEntry: false,
-                nextState: VariableName(rawValue: "M0_Pong__M2_ClearPulse")!,
+                nextState: VariableName(rawValue: "Pong__ClearPulse")!,
                 properties: [
                     .extY: .bit(value: .high),
                     .x: .bit(value: .high),
@@ -449,9 +449,9 @@ extension KripkeStructure {
         let pongClearPulseReads = [
             Node(
                 type: .read,
-                currentState: VariableName(rawValue: "M0_Pong__M2_ClearPulse")!,
+                currentState: VariableName(rawValue: "Pong__ClearPulse")!,
                 executeOnEntry: false,
-                nextState: VariableName(rawValue: "M0_Pong__M2_ClearPulse")!,
+                nextState: VariableName(rawValue: "Pong__ClearPulse")!,
                 properties: [
                     .extY: .bit(value: .high),
                     .x: .bit(value: .high),
@@ -463,9 +463,9 @@ extension KripkeStructure {
         let pongClearPulseWrites = [
             Node(
                 type: .write,
-                currentState: VariableName(rawValue: "M0_Pong__M2_ClearPulse")!,
+                currentState: VariableName(rawValue: "Pong__ClearPulse")!,
                 executeOnEntry: true,
-                nextState: VariableName(rawValue: "M0_Ping__M2_SendPulse")!,
+                nextState: VariableName(rawValue: "Ping__SendPulse")!,
                 properties: [
                     .extY: .bit(value: .low),
                     .x: .bit(value: .low),

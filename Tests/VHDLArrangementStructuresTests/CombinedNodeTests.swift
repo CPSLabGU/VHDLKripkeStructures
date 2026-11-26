@@ -34,14 +34,14 @@ struct CombinedNodeTests {
     /// Name is calculated correctly.
     @Test("Name is calculated correctly.")
     func testName() throws {
-        let expected = try #require(VariableName(rawValue: "M0_Ping__M1_CountTime"))
+        let expected = try #require(VariableName(rawValue: "Ping__CountTime"))
         #expect(node.name == expected)
     }
 
     /// Next state is calculated correctly.
     @Test("Next state is calculated correctly.")
     func testNextState() throws {
-        let expected = try #require(VariableName(rawValue: "M0_Ping__M1_CountTime"))
+        let expected = try #require(VariableName(rawValue: "Ping__CountTime"))
         #expect(node.nextState == expected)
     }
 

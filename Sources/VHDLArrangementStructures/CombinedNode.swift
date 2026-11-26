@@ -1,3 +1,4 @@
+import Foundation
 import VHDLKripkeStructures
 import VHDLMachines
 import VHDLParsing
@@ -31,28 +32,40 @@ final class CombinedNode: Hashable, Codable, Sendable, Equatable, CustomStringCo
 
     /// The name of the combined node.
     var name: VariableName {
+        let underscores = 2 * (self.instances.count - 1)
+        let availableCharacters = 255 - underscores
+        let charactersPerInstance = availableCharacters / instances.count
+        guard charactersPerInstance > 0 else {
+            fatalError("Cannot construct name for the combined node due to character limit.")
+        }
         let rawName = zip(instanceNames, nodes)
             .sorted { $0.0 < $1.0 }
             .map {
-                "\($0.0.rawValue)_\($0.1.currentState.rawValue)"
+                "\($0.1.currentState.rawValue)".prefix(charactersPerInstance)
             }
             .joined(separator: "__")
         guard let name = VariableName(rawValue: rawName) else {
-            // swiftlint:disable:next force_unwrapping
-            return VariableName(rawValue: "Combined_State")!
+            fatalError("Cannot construct name of state from \(rawName)")
         }
         return name
     }
 
     /// The name of the next state.
     var nextState: VariableName {
-        let nextStates = zip(instanceNames, nodes.map(\.nextState))
+        let underscores = 2 * (self.instances.count - 1)
+        let availableCharacters = 255 - underscores
+        let charactersPerInstance = availableCharacters / instances.count
+        guard charactersPerInstance > 0 else {
+            fatalError("Cannot construct name for the combined node due to character limit.")
+        }
+        let rawName = zip(instanceNames, nodes)
             .sorted { $0.0 < $1.0 }
-            .map { "\($0.0.rawValue)_\($0.1.rawValue)" }
+            .map {
+                "\($0.1.nextState.rawValue)".prefix(charactersPerInstance)
+            }
             .joined(separator: "__")
-        guard let name = VariableName(rawValue: nextStates) else {
-            // swiftlint:disable:next force_unwrapping
-            return VariableName(rawValue: "Combined_State")!
+        guard let name = VariableName(rawValue: rawName) else {
+            fatalError("Cannot construct name of state from \(rawName)")
         }
         return name
     }

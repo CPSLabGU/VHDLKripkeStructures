@@ -58,7 +58,6 @@ final class Job: Equatable, Hashable, Codable, Sendable {
         lhs.currentState == rhs.currentState && lhs.nextState == rhs.nextState
             && lhs.executeOnEntry == rhs.executeOnEntry && lhs.type == rhs.type
             && lhs.properties == rhs.properties
-            && lhs.node == rhs.node
     }
 
     /// Hashing function.
@@ -68,7 +67,6 @@ final class Job: Equatable, Hashable, Codable, Sendable {
         hasher.combine(executeOnEntry)
         hasher.combine(type)
         hasher.combine(properties)
-        hasher.combine(node)
     }
 
 }
