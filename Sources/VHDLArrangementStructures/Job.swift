@@ -58,6 +58,7 @@ final class Job: Equatable, Hashable, Codable, Sendable {
         lhs.currentState == rhs.currentState && lhs.nextState == rhs.nextState
             && lhs.executeOnEntry == rhs.executeOnEntry && lhs.type == rhs.type
             && lhs.properties == rhs.properties
+            && lhs.node == rhs.node
     }
 
     /// Hashing function.
