@@ -124,7 +124,6 @@ actor JobProcessor {
     ) async -> KripkeStructure {
         self.isRunning = true
         defer { self.isRunning = false }
-        print("Attempting to fold Kripke structures together...")
         let startState = arrangement.startState
         let globals = arrangement.globalVariables
         print("Finding reachable initial nodes...")
@@ -158,10 +157,10 @@ actor JobProcessor {
                 // print("Initial states: \(structure.initialStates.sorted())")
                 return reachableInitialStates.map { ScopedNode(instance: instance, node: $0) }
             }
-        print("...Done!")
-        print("Folding Kripke structures together...")
         let jobNodes = await scopedNodes.cartesianProduct.concurrentMap { CombinedNode(scopedNodes: $0) }
         let initialJobs = await jobNodes.concurrentMap { Job(node: $0, arrangement: arrangement) }
+        print("...Done! Found \(jobNodes.count) initial nodes.")
+        print("Folding Kripke structures together...")
         var scheduledJobs: Set<Job> = []
         self.jobs = initialJobs.filter { scheduledJobs.insert($0).inserted }
         self.processedJobs = []
@@ -173,7 +172,8 @@ actor JobProcessor {
         var inFlight = 0
         var jobDeltaStore = JobDeltaStore()
         var lastJobCount = self.jobs.count
-        jobDeltaStore.append(delta: self.jobs.count)
+        var deltas = 0
+        var numberOfDeltas = 0
         func showJobsLeft(force: Bool = false) {
             let now = ProcessInfo.processInfo.systemUptime
             guard force || now - lastProgressUpdate >= 0.1 else { return }
@@ -181,10 +181,13 @@ actor JobProcessor {
             let jobsLeft = self.jobs.count + inFlight
             let delta = jobsLeft - lastJobCount
             jobDeltaStore.append(delta: delta)
+            deltas += delta
+            numberOfDeltas += 1
             lastJobCount = jobsLeft
             let line =
                 "\rJobs left: \(jobsLeft) | Jobs in progress: \(inFlight) "
-                + "| Jobs Processed: \(jobsProcessed) | Job Delta Avg: \(jobDeltaStore.average)\u{1B}[K"
+                + "| Jobs Processed: \(jobsProcessed) | Job Delta Avg: \(deltas / numberOfDeltas) "
+                + "| Job Delta (Last Second): \(jobDeltaStore.average)\u{1B}[K"
             FileHandle.standardOutput.write(Data(line.utf8))
         }
         try? FileHandle.standardOutput.synchronize()
