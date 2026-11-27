@@ -55,18 +55,13 @@ final class Job: Equatable, Hashable, Codable, Sendable {
 
     /// Equality operation.
     static func == (lhs: Job, rhs: Job) -> Bool {
-        lhs.currentState == rhs.currentState && lhs.nextState == rhs.nextState
-            && lhs.executeOnEntry == rhs.executeOnEntry && lhs.type == rhs.type
-            && lhs.properties == rhs.properties
+        lhs.node == rhs.node && lhs.arrangement == rhs.arrangement
     }
 
     /// Hashing function.
     func hash(into hasher: inout Hasher) {
-        hasher.combine(currentState)
-        hasher.combine(nextState)
-        hasher.combine(executeOnEntry)
-        hasher.combine(type)
-        hasher.combine(properties)
+        hasher.combine(self.node)
+        hasher.combine(self.arrangement)
     }
 
 }
