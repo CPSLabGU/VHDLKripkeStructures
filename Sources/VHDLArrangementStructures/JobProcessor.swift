@@ -162,6 +162,7 @@ actor JobProcessor {
         let initialNodes = Set(await jobNodes.concurrentMap { Node(node: $0, arrangement: arrangement) })
         self.nodes = initialNodes
         self.allEdges = [:]
+        var dispatchedNodes: Set<Node> = []
         var lastProgressUpdate = -Double.infinity
         var jobsProcessed = 0
         var inFlight = 0
@@ -192,7 +193,8 @@ actor JobProcessor {
         await withTaskGroup(of: JobExpansion.self) { group in
             while !self.jobs.isEmpty || inFlight > 0 {
                 while inFlight < workerCount, let job = self.jobs.popLast() {
-                    guard self.allEdges[Node(node: job.node, arrangement: job.arrangement)] == nil else {
+                    guard dispatchedNodes.insert(Node(node: job.node, arrangement: job.arrangement)).inserted
+                    else {
                         showJobsLeft()
                         continue
                     }
