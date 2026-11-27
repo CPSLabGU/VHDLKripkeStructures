@@ -31,7 +31,7 @@ actor JobProcessor {
             job: Job,
             arrangement: Arrangement,
             kripkeStructures: [MachineInstance: KripkeStructure]
-        ) async {
+        ) {
             let sourceNode = Node(node: job.node, arrangement: arrangement)
             let structures = job.node.instances.compactMap { kripkeStructures[$0] }
             guard structures.count == job.node.instances.count else {
@@ -53,8 +53,8 @@ actor JobProcessor {
             }
             let cost = edges[0][0].cost
             let globalProperties = job.globalProperties
-            let scopedNodes = await edges.indices.concurrentMap { index in
-                await edges[index]
+            let scopedNodes = edges.indices.map { index in
+                edges[index]
                     .filter {
                         edges.count == 1
                             || $0.hasSameGlobals(
@@ -64,25 +64,21 @@ actor JobProcessor {
                                 arrangement: arrangement
                             )
                     }
-                    .concurrentMap {
+                    .map {
                         ScopedNode(instance: job.node.instances[index], node: $0.target)
                     }
             }
             let jobs: [Job]
             if scopedNodes.allSatisfy({ !$0.isEmpty }) {
-                jobs =
-                    await scopedNodes
+                jobs = scopedNodes
                     .cartesianProduct
-                    .concurrentMap {
-                        CombinedNode(scopedNodes: $0)
-                    }
-                    .concurrentMap {
-                        Job(node: $0, arrangement: arrangement)
+                    .map {
+                        Job(node: CombinedNode(scopedNodes: $0), arrangement: arrangement)
                     }
             } else {
                 jobs = []
             }
-            let newEdges = await jobs.concurrentMap {
+            let newEdges = jobs.map {
                 Edge(target: Node(node: $0.node, arrangement: arrangement), cost: cost)
             }
             self.init(sourceNode: sourceNode, jobs: jobs, edges: newEdges)
@@ -132,6 +128,7 @@ actor JobProcessor {
         let startState = arrangement.startState
         let globals = arrangement.globalVariables
         print("Finding reachable initial nodes...")
+        try? FileHandle.standardOutput.synchronize()
         let scopedNodes = await arrangement.machines.keys.sorted { $0.name < $1.name }
             .concurrentMap { instance in
                 guard let structure = kripkeStructures[instance],
@@ -139,8 +136,8 @@ actor JobProcessor {
                 else {
                     fatalError("Kripke structure not found for machine instance \(instance)")
                 }
-                let reachableInitialStates = await Array(structure.initialStates)
-                    .concurrentFilter {
+                let reachableInitialStates = structure.initialStates
+                    .filter {
                         $0.properties.allSatisfy {
                             guard let arrangementName = mapping[$0.key], globals.contains(arrangementName)
                             else {
@@ -174,15 +171,23 @@ actor JobProcessor {
         var lastProgressUpdate = -Double.infinity
         var jobsProcessed = 0
         var inFlight = 0
+        var jobDeltaStore = JobDeltaStore()
+        var lastJobCount = self.jobs.count
+        jobDeltaStore.append(delta: self.jobs.count)
         func showJobsLeft(force: Bool = false) {
             let now = ProcessInfo.processInfo.systemUptime
             guard force || now - lastProgressUpdate >= 0.1 else { return }
             lastProgressUpdate = now
+            let jobsLeft = self.jobs.count + inFlight
+            let delta = jobsLeft - lastJobCount
+            jobDeltaStore.append(delta: delta)
+            lastJobCount = jobsLeft
             let line =
-                "\rJobs left: \(self.jobs.count + inFlight) | Jobs in progress: \(inFlight) "
-                + "| Jobs Processed: \(jobsProcessed)...\u{1B}[K"
+                "\rJobs left: \(jobsLeft) | Jobs in progress: \(inFlight) "
+                + "| Jobs Processed: \(jobsProcessed) | Job Delta Avg: \(jobDeltaStore.average)\u{1B}[K"
             FileHandle.standardOutput.write(Data(line.utf8))
         }
+        try? FileHandle.standardOutput.synchronize()
         showJobsLeft()
         let workerCount = max(1, ProcessInfo.processInfo.activeProcessorCount)
         await withTaskGroup(of: JobExpansion.self) { group in
@@ -195,7 +200,7 @@ actor JobProcessor {
                     jobsProcessed += 1
                     inFlight += 1
                     group.addTask {
-                        await JobExpansion(
+                        JobExpansion(
                             job: job,
                             arrangement: arrangement,
                             kripkeStructures: kripkeStructures
