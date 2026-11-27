@@ -56,13 +56,12 @@ actor JobProcessor {
             let scopedNodes = edges.indices.map { index in
                 edges[index]
                     .filter {
-                        edges.count == 1
-                            || $0.hasSameGlobals(
-                                instance: job.node.instances[index],
-                                previousState: job.node.nodes[index].properties,
-                                globals: globalProperties,
-                                arrangement: arrangement
-                            )
+                        $0.hasSameGlobals(
+                            instance: job.node.instances[index],
+                            previousState: job.node.nodes[index].properties,
+                            globals: globalProperties,
+                            arrangement: arrangement
+                        )
                     }
                     .map {
                         ScopedNode(instance: job.node.instances[index], node: $0.target)
@@ -193,6 +192,7 @@ actor JobProcessor {
         try? FileHandle.standardOutput.synchronize()
         showJobsLeft()
         let workerCount = max(1, ProcessInfo.processInfo.activeProcessorCount)
+        // swiftlint:disable:next closure_body_length
         await withTaskGroup(of: JobExpansion.self) { group in
             while !self.jobs.isEmpty || inFlight > 0 {
                 while inFlight < workerCount, let job = self.jobs.popLast() {
@@ -213,6 +213,9 @@ actor JobProcessor {
                 }
                 guard let result = await group.next() else {
                     break
+                }
+                guard !result.jobs.isEmpty, !result.edges.isEmpty else {
+                    fatalError("Result for source node contains no jobs or edges: \(result.sourceNode)")
                 }
                 inFlight -= 1
                 self.nodes.insert(result.sourceNode)
