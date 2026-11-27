@@ -89,9 +89,6 @@ actor JobProcessor {
     /// An array of jobs to process.
     var jobs: [Job] = []
 
-    /// The set of processed jobs.
-    var processedJobs: Set<Job> = []
-
     /// The combined nodes in the Kripke structure.
     var nodes: Set<Node> = []
 
@@ -162,7 +159,6 @@ actor JobProcessor {
         print("Folding Kripke structures together...")
         var scheduledJobs: Set<Job> = []
         self.jobs = initialJobs.filter { scheduledJobs.insert($0).inserted }
-        self.processedJobs = []
         let initialNodes = Set(await jobNodes.concurrentMap { Node(node: $0, arrangement: arrangement) })
         self.nodes = initialNodes
         self.allEdges = [:]
@@ -196,7 +192,7 @@ actor JobProcessor {
         await withTaskGroup(of: JobExpansion.self) { group in
             while !self.jobs.isEmpty || inFlight > 0 {
                 while inFlight < workerCount, let job = self.jobs.popLast() {
-                    guard self.processedJobs.insert(job).inserted else {
+                    guard self.allEdges[Node(node: job.node, arrangement: job.arrangement)] == nil else {
                         showJobsLeft()
                         continue
                     }

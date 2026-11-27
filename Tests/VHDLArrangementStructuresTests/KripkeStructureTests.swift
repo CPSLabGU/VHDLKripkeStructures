@@ -83,7 +83,7 @@ struct KripkeStructureTests {
             arrangement: .pingPongArrangement,
             kripkeStructures: [.pingPong(): structure]
         )
-        let processedCount = await processor.processedJobs.count
+        let processedCount = await processor.allEdges.count
         #expect(processedCount == 2)
         #expect(result.nodes.count == 2)
         #expect(result.edges[first.toPingPongNode]?.count == 2)
