@@ -217,7 +217,11 @@ actor JobProcessor {
                 }
                 inFlight -= 1
                 self.nodes.insert(result.sourceNode)
-                self.jobs.append(contentsOf: result.jobs.filter { scheduledJobs.insert($0).inserted })
+                self.jobs.append(
+                    contentsOf: result.jobs.filter {
+                        !dispatchedNodes.contains(Node(node: $0.node, arrangement: $0.arrangement))
+                    }
+                )
                 guard self.allEdges[result.sourceNode] == nil else {
                     fatalError("Edges for source node \(result.sourceNode) already exist")
                 }
